@@ -1,14 +1,15 @@
 const mariadb = require("mariadb");
 const fs = require("fs").promises;
+require("dotenv").config();
 
 class DatabaseService {
   constructor() {
     this.pool = mariadb.createPool({
-      host: "localhost",
-      user: "root",
-      password: "gQZXl&t%7N7a8a",
-      port: 3307,
-      connectionLimit: 5,
+      host: process.env.DB_HOST,
+      user: process.env.DB_USER,
+      password: process.env.DB_PASS,
+      port: parseInt(process.env.DB_PORT, 10),
+      connectionLimit: parseInt(process.env.DB_CONNECT_LIMIT, 10),
     });
   }
 
