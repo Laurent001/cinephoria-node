@@ -4,9 +4,7 @@ const jwt = require("jsonwebtoken");
 
 const getUsers = async (req, res) => {
   try {
-    const [rows] = await dbService.query(
-      "SELECT id, name, email, role FROM users"
-    );
+    const rows = await dbService.query("SELECT * FROM user");
     res.json(rows);
   } catch (error) {
     res.status(500).json({
