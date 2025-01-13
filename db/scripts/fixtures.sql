@@ -1,3 +1,5 @@
+START TRANSACTION;
+
 -- MariaDB dump 10.19  Distrib 10.11.6-MariaDB, for debian-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: cinephoria
@@ -3063,3 +3065,5 @@ UNLOCK TABLES;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2025-01-06  9:16:49
+
+COMMIT;
