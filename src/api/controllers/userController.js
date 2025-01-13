@@ -2,7 +2,6 @@ const dbService = require("../../services/database.service");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-// Obtenir tous les utilisateurs
 const getUsers = async (req, res) => {
   try {
     const [rows] = await dbService.query(
