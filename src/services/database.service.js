@@ -13,9 +13,12 @@ class DatabaseService {
     });
   }
 
-  async connect() {
+  async connect(db_name = process.env.DB_NAME) {
     try {
       this.connection = await this.pool.getConnection();
+      if (db_name) {
+        await this.connection.query(`USE \`${db_name}\``);
+      }
     } catch (error) {
       console.error("Error connecting to the database:", error);
       throw error;

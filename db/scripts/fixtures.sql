@@ -190,13 +190,14 @@ UNLOCK TABLES;
 LOCK TABLES `film` WRITE;
 /*!40000 ALTER TABLE `film` DISABLE KEYS */;
 INSERT INTO `film` VALUES
-(1,'Le Grand Voyage','Une aventure épique',12,0,'grand_voyage.jpg'),
-(2,'Mystère en Ville','Un thriller palpitant',16,1,'mystere_ville.jpg'),
-(3,'Rires en Famille','Une comédie pour tous',3,0,'rires_famille.jpg'),
-(4,'L\'Aventure Mystérieuse','Un groupe d\'amis se lance dans une quête pour résoudre un ancien mystère.',10,0,'aventure_mysterieuse.jpg'),
-(5,'Les Étoiles de la Nuit','Un drame romantique qui explore les relations humaines à travers le temps.',12,1,'etoiles_nuit.jpg');
+(1, 'Matrix', 'Un hacker découvre la vérité sur sa réalité et son combat contre des machines.', '1999-03-31 00:00:00', 13, 0, 'assets/images/matrix.jpg'),
+(2, 'Chihiro', 'Une jeune fille se retrouve dans un monde magique et doit sauver ses parents.', '2001-07-20 00:00:00', 7, 1, 'assets/images/chihiro.jpg'),
+(3, 'Dune', 'L’histoire d’un jeune noble qui doit protéger son peuple sur une planète désertique.', '2021-10-22 00:00:00', 12, 0, 'assets/images/dune.jpg'),
+(4, 'Notting Hill', 'L’histoire d’amour entre un libraire et une célèbre actrice.', '1999-05-28 00:00:00', 10, 0, 'assets/images/notting_hill.jpg'),
+(5, 'Pulp Fiction', 'Un récit entrecroisé de divers criminels à Los Angeles.', '1994-10-14 00:00:00', 16, 1, 'assets/images/pulp_fiction.jpg');
 /*!40000 ALTER TABLE `film` ENABLE KEYS */;
 UNLOCK TABLES;
+
 
 --
 -- Dumping data for table `film_genre`
