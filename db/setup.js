@@ -1,4 +1,4 @@
-const databaseService = require("../services/database.service.js");
+const databaseService = require("../src/services/database.service.js");
 const path = require("path");
 
 async function setupDatabase() {
@@ -8,14 +8,14 @@ async function setupDatabase() {
 
     const createDatabaseAbsolutePath = path.resolve(
       __dirname,
-      "../scripts/database/create_database.sql"
+      "../db/scripts/create_database.sql"
     );
     await databaseService.executeSQL(createDatabaseAbsolutePath);
     console.log("Database created");
 
     const fixturesAbsolutePath = path.resolve(
       __dirname,
-      "../scripts/database/fixtures.sql"
+      "../db/scripts/fixtures.sql"
     );
     console.log("Fixtures imported");
     await databaseService.executeSQL(fixturesAbsolutePath);
