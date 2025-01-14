@@ -13,7 +13,7 @@ class DatabaseService {
     });
   }
 
-  async connect(db_name = process.env.DB_NAME) {
+  async connect(db_name) {
     try {
       this.connection = await this.pool.getConnection();
       if (db_name) {
@@ -27,7 +27,7 @@ class DatabaseService {
 
   async query(sql, params) {
     if (!this.connection) {
-      await this.connect();
+      await this.connect(process.env.DB_NAME);
     }
     try {
       const result = await this.connection.query(sql, params);
