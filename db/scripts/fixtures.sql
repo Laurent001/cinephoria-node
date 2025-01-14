@@ -207,10 +207,17 @@ LOCK TABLES `film_genre` WRITE;
 /*!40000 ALTER TABLE `film_genre` DISABLE KEYS */;
 INSERT INTO `film_genre` VALUES
 (1,1),
-(2,1),
-(3,2),
+(1,4),
 (1,3),
-(2,5);
+(2,6),
+(2,2),
+(2,4),
+(3,1),
+(3,4),
+(4,2),
+(4,7),
+(5,2),
+(5,3);
 /*!40000 ALTER TABLE `film_genre` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -225,7 +232,9 @@ INSERT INTO `genre` VALUES
 (2,'Comédie'),
 (3,'Drame'),
 (4,'Science-Fiction'),
-(5,'Horreur');
+(5,'Horreur'),
+(6,'Anime'),
+(7,'Romantique');
 /*!40000 ALTER TABLE `genre` ENABLE KEYS */;
 UNLOCK TABLES;
 
