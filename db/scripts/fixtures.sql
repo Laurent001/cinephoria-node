@@ -332,9 +332,9 @@ LOCK TABLES `role` WRITE;
 /*!40000 ALTER TABLE `role` DISABLE KEYS */;
 INSERT INTO `role` VALUES
 (1,'admin'),
-(2,'employé'),
-(3,'utilisateur'),
-(4,'visiteur');
+(2,'employee'),
+(3,'user'),
+(4,'guest');
 /*!40000 ALTER TABLE `role` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -3062,7 +3062,8 @@ INSERT INTO `user` VALUES
 (97,'user17','password123',0,'Quentin','Faure','quentin.faure@example.com','quentin_f',3,'2024-12-28 17:45:37'),
 (98,'user18','password123',0,'Rachel','Morel','rachel.morel@example.com','rachel_m',3,'2024-12-28 17:45:37'),
 (99,'user19','password123',0,'Simon','Blanc','simon.blanc@example.com','simon_b',3,'2024-12-28 17:45:37'),
-(100,'user20','password123',0,'Thérèse','Chevalier','therese.chevalier@example.com','therese_c',3,'2024-12-28 17:45:37');
+(100,'user20','password123',0,'Thérèse','Chevalier','therese.chevalier@example.com','therese_c',3,'2024-12-28 17:45:37'),
+(101,'user21','password123',0,'Laurent','Guest','laurent.guest@example.com','laurent_g',4,'2024-12-28 17:48:37');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
