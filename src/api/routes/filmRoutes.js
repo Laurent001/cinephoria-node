@@ -3,12 +3,9 @@ const router = express.Router();
 const filmController = require("../controllers/filmController");
 
 router.get("/", filmController.getFilms);
-//router.get("/:id", filmController.getFilmById);
-
-// Routes protégées (nécessitent une authentification)
-//router.use(authMiddleware);
-
-//router.put("/:id", filmController.updateFilm);
-//router.delete("/:id", filmController.deleteFilm);
+router.get("/cinema/:id", filmController.getFilmsByCinemaId);
+router.get("/genre/:id", filmController.getFilmsByGenreId);
+router.get("/date/:date", filmController.getFilmsByDate);
+router.get("/:id/screenings", filmController.getScreeningsByFilmsId);
 
 module.exports = router;
