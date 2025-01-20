@@ -107,7 +107,7 @@ const getFilmsByDate = async (req, res) => {
   const date = req.params.date;
   try {
     const rows = await dbService.query(
-      `SELECT DISTINCT f.id AS film_id, f.title, f.description, f.release_date, f.age_minimum, f.favorite, f.poster, s.id AS screening_id, s.auditorium_id, s.remaining_seat, s.remaining_handi_seat, s.start_time, s.end_time
+      `SELECT DISTINCT f.id, f.title, f.description, f.release_date, f.age_minimum, f.favorite, f.poster, s.id AS screening_id, s.auditorium_id, s.remaining_seat, s.remaining_handi_seat, s.start_time, s.end_time
       FROM 
         film f
       INNER JOIN 
@@ -116,7 +116,7 @@ const getFilmsByDate = async (req, res) => {
         DATE(s.start_time) = ?`,
       [date]
     );
-
+    console.log("rwos = ", rows);
     res.json(rows);
   } catch (error) {
     res.status(500).json({
