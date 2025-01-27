@@ -1,3 +1,4 @@
+const { log } = require("console");
 const mariadb = require("mariadb");
 const fs = require("fs").promises;
 require("dotenv").config();
@@ -34,6 +35,22 @@ class DatabaseService {
       return result;
     } catch (error) {
       console.error("Erreur lors de l'exécution de la requête :", error);
+      throw error;
+    }
+  }
+
+  async executeTransaction(callback) {
+    try {
+      if (!this.connection) {
+        await this.connect(process.env.DB_NAME);
+      }
+      await this.connection.beginTransaction();
+      const result = await callback(this.connection);
+      await this.connection.commit();
+      return result;
+    } catch (error) {
+      await this.connection.rollback();
+      console.error("Erreur lors de l'exécution de la transaction :", error);
       throw error;
     }
   }

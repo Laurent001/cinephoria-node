@@ -13,13 +13,6 @@ async function setupDatabase() {
     await databaseService.executeSQL(createDatabaseAbsolutePath);
     console.log("Database created");
 
-    // const triggerAbsolutePath = path.resolve(
-    //   __dirname,
-    //   "../db/scripts/trigger.sql"
-    // );
-    // await databaseService.executeSQL(triggerAbsolutePath);
-    // console.log("Trigger activated");
-
     const fixturesAbsolutePath = path.resolve(
       __dirname,
       "../db/scripts/fixtures.sql"
