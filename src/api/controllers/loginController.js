@@ -3,7 +3,6 @@ const dbService = require("../../services/database.service");
 const getLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log("req.params : ", req.params);
     const [rows] = await dbService.query(
       "SELECT u.*, r.name as role FROM user u JOIN role r ON u.role_id = r.id WHERE u.email = ? AND u.password = ?",
       [email, password]
