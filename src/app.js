@@ -28,11 +28,11 @@ app.use("/genre", genreRoutes);
 app.use("/cinema", cinemaRoutes);
 app.use("/screening", screeningRoutes);
 app.use("/api", emailRoutes);
+app.use("/api/db", dbRoutes);
 
 app.use("/api", authMiddleware);
 
 app.use("/api/logout", logoutRoutes);
-app.use("/api/db", dbRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/booking", bookingRoutes);
 app.use("/api/contact", contactRoutes);
