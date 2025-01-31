@@ -1,6 +1,6 @@
 const express = require("express");
-const cors = require("cors");
 const app = express();
+const cors = require("cors");
 
 const loginRoutes = require("./api/routes/loginRoutes");
 const logoutRoutes = require("./api/routes/logoutRoutes");
@@ -20,32 +20,7 @@ const screeningRoutes = require("./api/routes/screeningRoutes");
 const emailRoutes = require("./api/routes/emailRoutes");
 const authMiddleware = require("./middleware/authMiddleware");
 
-//app.use(cors());
-app.use(
-  cors({
-    origin: "*",
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    allowedHeaders:
-      "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version",
-    credentials: true,
-  })
-);
-
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET,HEAD,PUT,PATCH,POST,DELETE"
-  );
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version"
-  );
-  res.setHeader("Access-Control-Allow-Credentials", "true");
-  next();
-});
-
-app.options("*", cors());
+app.use(cors());
 app.use(express.json());
 
 app.get("/api/example", (req, res) => {
