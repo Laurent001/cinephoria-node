@@ -40,12 +40,13 @@ const getBookingsByUserId = async (req, res) => {
   }
 };
 
-const createBookingByUserId = async (req, res) => {
+  const createBookingByUserId = async (req, res) => {
   const { userId, screeningId, totalPrice, seatsSelected } = req.body;
 
   try {
     const result = await dbService.executeTransaction(async (conn) => {
       const bookingResult = await conn.query(
+
         "INSERT INTO booking (user_id, total_price) VALUES (?, ?)",
         [userId, totalPrice]
       );
@@ -95,6 +96,7 @@ const getSeatsByScreeningId = async (req, res) => {
         q.price AS auditorium_price,
         CASE 
           WHEN bsc.seat_id IS NULL THEN TRUE 
+
           ELSE FALSE 
         END AS is_available 
       FROM 
