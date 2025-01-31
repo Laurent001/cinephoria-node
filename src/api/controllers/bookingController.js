@@ -8,7 +8,6 @@ const getBookingsByUserId = async (req, res) => {
       `SELECT 
         b.added_date, 
         b.user_id, 
-        b.screening_id, 
         s.number AS seat_number, 
         s.is_handicap, 
         s.id, 
@@ -24,8 +23,8 @@ const getBookingsByUserId = async (req, res) => {
         c.postcode 
       FROM 
         booking b 
-        INNER JOIN booking_seat bs ON bs.booking_id = b.id 
-        INNER JOIN seat s ON s.id = bs.seat_id 
+        INNER JOIN booking_screening_seat bsc ON bsc.booking_id = b.id 
+        INNER JOIN seat s ON s.id = bsc.seat_id 
         INNER JOIN auditorium a ON a.id = s.auditorium_id 
         INNER JOIN cinema c ON c.id = a.cinema_id 
       WHERE 
@@ -41,25 +40,24 @@ const getBookingsByUserId = async (req, res) => {
   }
 };
 
-const createBookingByUserId = async (req, res) => {
-  const { userId, screeningId, totalPrice, seatIds } = req.body;
+  const createBookingByUserId = async (req, res) => {
+  const { userId, screeningId, totalPrice, seatsSelected } = req.body;
 
   try {
     const result = await dbService.executeTransaction(async (conn) => {
       const bookingResult = await conn.query(
-        "INSERT INTO booking (user_id, screening_id, total_price) VALUES (?, ?, ?)",
-        [userId, screeningId, totalPrice]
+
+        "INSERT INTO booking (user_id, total_price) VALUES (?, ?)",
+        [userId, totalPrice]
       );
 
       const bookingId = bookingResult.insertId.toString(); // toString() nécessaire pour sérialisation json
-      const seatValues = seatIds
-        .map((seatId) => `(${bookingId}, ${seatId})`)
+      const seatValues = seatsSelected
+        .map((seat) => `(${bookingId}, ${seat.id}, ${screeningId})`)
         .join(", ");
 
-      console.log("seatValues : ", seatValues);
-
       await conn.query(
-        `INSERT INTO booking_seat (booking_id, seat_id) VALUES ${seatValues}`
+        `INSERT INTO booking_screening_seat (booking_id, seat_id, screening_id) VALUES ${seatValues}`
       );
 
       return { bookingId };
@@ -80,6 +78,7 @@ const createBookingByUserId = async (req, res) => {
 
 const getSeatsByScreeningId = async (req, res) => {
   const screeningId = req.params.id;
+
   try {
     const rows = await dbService.query(
       `SELECT DISTINCT 
@@ -96,15 +95,15 @@ const getSeatsByScreeningId = async (req, res) => {
         q.name AS auditorium_quality,
         q.price AS auditorium_price,
         CASE 
-          WHEN bs.seat_id IS NULL THEN TRUE 
+          WHEN bsc.seat_id IS NULL THEN TRUE 
+
           ELSE FALSE 
         END AS is_available 
       FROM 
         screening sc 
         INNER JOIN auditorium a ON a.id = sc.auditorium_id 
         INNER JOIN seat se ON se.auditorium_id = a.id 
-        LEFT JOIN booking_seat bs ON bs.seat_id = se.id 
-        LEFT JOIN booking b ON b.id = bs.booking_id 
+        LEFT JOIN booking_screening_seat bsc ON bsc.seat_id = se.id AND bsc.screening_id = sc.id
         INNER JOIN quality q ON q.id = a.quality_id
       WHERE 
         sc.id = ?`,

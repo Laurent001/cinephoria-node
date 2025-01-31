@@ -54,14 +54,11 @@ DROP TABLE IF EXISTS `booking`;
 CREATE TABLE `booking` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
-  `screening_id` int(11) NOT NULL,
   `total_price` decimal(10,2) NOT NULL,
   `added_date` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
-  KEY `screening_id` (`screening_id`),
-  CONSTRAINT `booking_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
-  CONSTRAINT `booking_ibfk_2` FOREIGN KEY (`screening_id`) REFERENCES `screening` (`id`)
+  CONSTRAINT `booking_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -69,16 +66,19 @@ CREATE TABLE `booking` (
 -- Table structure for table `booking_seat`
 --
 
-DROP TABLE IF EXISTS `booking_seat`;
+DROP TABLE IF EXISTS `booking_screening_seat`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `booking_seat` (
+CREATE TABLE `booking_screening_seat` (
   `booking_id` int(11) NOT NULL,
   `seat_id` int(11) NOT NULL,
-  PRIMARY KEY (`booking_id`,`seat_id`),
+  `screening_id` int(11) NOT NULL,
+  PRIMARY KEY (`booking_id`,`screening_id`,`seat_id`),
   KEY `seat_id` (`seat_id`),
-  CONSTRAINT `booking_seat_ibfk_1` FOREIGN KEY (`booking_id`) REFERENCES `booking` (`id`),
-  CONSTRAINT `booking_seat_ibfk_2` FOREIGN KEY (`seat_id`) REFERENCES `seat` (`id`)
+  KEY `screening_id` (`screening_id`),
+  CONSTRAINT `booking_seat_screening_ibfk_1` FOREIGN KEY (`booking_id`) REFERENCES `booking` (`id`),
+  CONSTRAINT `booking_seat_screening_ibfk_2` FOREIGN KEY (`seat_id`) REFERENCES `seat` (`id`),
+  CONSTRAINT `booking_seat_screening_ibfk_3` FOREIGN KEY (`screening_id`) REFERENCES `screening` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -307,17 +307,15 @@ DROP TABLE IF EXISTS `user`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `user` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `login` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   `reset_password` tinyint(1) DEFAULT 0,
   `first_name` varchar(255) NOT NULL,
   `last_name` varchar(255) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `username` varchar(255) NOT NULL,
   `role_id` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
-  UNIQUE KEY `login` (`login`),
+  UNIQUE KEY `email` (`email`),
   KEY `role_id` (`role_id`),
   CONSTRAINT `user_ibfk_1` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
