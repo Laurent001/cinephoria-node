@@ -1,7 +1,6 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const helloRoutes = require("./api/routes/helloRoutes");
 const loginRoutes = require("./api/routes/loginRoutes");
 const logoutRoutes = require("./api/routes/logoutRoutes");
 const userRoutes = require("./api/routes/userRoutes");
@@ -18,19 +17,24 @@ const cinemaRoutes = require("./api/routes/cinemaRoutes");
 
 app.use(cors());
 app.use(express.json());
-app.use("/api/hello", helloRoutes);
-app.use("/api/login", loginRoutes);
+app.use("/login", loginRoutes);
+app.use("/register", registerRoutes);
+app.use("/film", filmRoutes);
+app.use("/genre", genreRoutes);
+app.use("/cinema", cinemaRoutes);
+app.use("/screening", screeningRoutes);
+app.use("/api", emailRoutes);
+
+app.use("/api", authMiddleware);
+
 app.use("/api/logout", logoutRoutes);
 app.use("/api/db", dbRoutes);
 app.use("/api/user", userRoutes);
-app.use("/api/film", filmRoutes);
-app.use("/api/genre", genreRoutes);
 app.use("/api/booking", bookingRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/incident", incidentRoutes);
 app.use("/api/intranet", intranetRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/space", spaceRoutes);
-app.use("/api/cinema", cinemaRoutes);
 
 module.exports = app;
