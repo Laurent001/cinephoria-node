@@ -3,6 +3,7 @@ const app = express();
 const cors = require("cors");
 const loginRoutes = require("./api/routes/loginRoutes");
 const logoutRoutes = require("./api/routes/logoutRoutes");
+const registerRoutes = require("./api/routes/registerRoutes");
 const userRoutes = require("./api/routes/userRoutes");
 const filmRoutes = require("./api/routes/filmRoutes");
 const genreRoutes = require("./api/routes/genreRoutes");
@@ -14,6 +15,9 @@ const intranetRoutes = require("./api/routes/intranetRoutes");
 const adminRoutes = require("./api/routes/adminRoutes");
 const spaceRoutes = require("./api/routes/spaceRoutes");
 const cinemaRoutes = require("./api/routes/cinemaRoutes");
+const screeningRoutes = require("./api/routes/screeningRoutes");
+const emailRoutes = require("./api/routes/emailRoutes");
+const authMiddleware = require("./middleware/authMiddleware");
 
 app.use(cors());
 app.use(express.json());

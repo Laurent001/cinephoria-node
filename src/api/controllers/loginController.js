@@ -1,17 +1,29 @@
 const dbService = require("../../services/database.service");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const getLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const [rows] = await dbService.query(
-      "SELECT u.*, r.name as role FROM user u JOIN role r ON u.role_id = r.id WHERE u.email = ? AND u.password = ?",
-      [email, password]
+    const [user] = await dbService.query(
+      "SELECT u.*, r.name as role FROM user u JOIN role r ON u.role_id = r.id WHERE u.email = ?",
+      [email]
     );
 
-    if (rows && Object.keys(rows).length > 0) {
-      res.json(rows);
-    } else {
-      res.status(401).json({ message: "Invalid credentials" });
+    if (user) {
+      const passwordMatch = await bcrypt.compare(password, user.password);
+
+      if (passwordMatch) {
+        const token = jwt.sign(
+          { id: user.id.toString(), email: user.email },
+          process.env.SECRET_KEY,
+          { expiresIn: "1h" }
+        );
+
+        res.json({ user: { ...user, password: undefined }, token });
+      } else {
+        res.status(401).json({ message: "Invalid credentials" });
+      }
     }
   } catch (error) {
     res.status(500).json({
