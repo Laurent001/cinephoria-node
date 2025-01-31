@@ -1,6 +1,15 @@
 const express = require("express");
 const app = express();
-const cors = require("cors");
+app.use(
+  cors({
+    origin: "*",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    allowedHeaders:
+      "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version",
+    credentials: true,
+  })
+);
+
 const loginRoutes = require("./api/routes/loginRoutes");
 const logoutRoutes = require("./api/routes/logoutRoutes");
 const registerRoutes = require("./api/routes/registerRoutes");
