@@ -1,7 +1,7 @@
 const dbService = require("../../services/database.service");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
-const { sendWelcomeEmail } = require("./emailController");
+const { sendWelcome } = require("./emailController");
 
 const ROLE_ADMIN = 1;
 const ROLE_EMPLOYE = 2;
@@ -29,7 +29,7 @@ const registerUser = async (req, res) => {
     );
 
     if (result && result.affectedRows > 0) {
-      sendWelcomeEmail(email, firstName);
+      sendWelcome(email, firstName);
       res.status(201).json({ message: "utilisateur créé avec succès" });
     } else {
       res

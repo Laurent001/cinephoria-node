@@ -21,13 +21,13 @@ const authMiddleware = require("./middleware/authMiddleware");
 
 app.use(cors());
 app.use(express.json());
-app.use("/login", loginRoutes);
-app.use("/register", registerRoutes);
-app.use("/film", filmRoutes);
-app.use("/genre", genreRoutes);
-app.use("/cinema", cinemaRoutes);
-app.use("/screening", screeningRoutes);
-app.use("/api", emailRoutes);
+app.use("/api/login", loginRoutes);
+app.use("/api/register", registerRoutes);
+app.use("/api/film", filmRoutes);
+app.use("/api/genre", genreRoutes);
+app.use("/api/cinema", cinemaRoutes);
+app.use("/api/screening", screeningRoutes);
+app.use("/api/mail", emailRoutes);
 app.use("/api/db", dbRoutes);
 
 app.use("/api", authMiddleware);
