@@ -43,13 +43,13 @@ SELECT
 	COUNT(*) INTO seats_already_taken 
 FROM 
 	booking b 
-	JOIN booking_seat bss ON b.id = bss.booking_id 
+	JOIN booking_screening_seat bss ON b.id = bss.booking_id 
 WHERE 
-	b.screening_id = ( 
+	bss.screening_id = ( 
 		SELECT 
 			screening_id 
 		FROM 
-			booking 
+			booking_screening_seat 
 		WHERE 
 			id = NEW.booking_id 
 	) 
