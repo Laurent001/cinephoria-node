@@ -1,11 +1,12 @@
 const dbService = require("../../services/database.service");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const saltRounds = 10;
 const { sendWelcome } = require("./emailController");
 
-const ROLE_ADMIN = 1;
-const ROLE_EMPLOYE = 2;
-const ROLE_USER = 3;
+const ROLE_ADMIN = "admin";
+const ROLE_EMPLOYE = "employe";
+const ROLE_USER = "user";
 
 const registerUser = async (req, res) => {
   try {
@@ -20,12 +21,15 @@ const registerUser = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, saltRounds);
-    const roleId = ROLE_USER;
+    const token = jwt.sign({ email: email }, process.env.SECRET_KEY, {
+      expiresIn: "24h",
+    });
+    const role = ROLE_USER;
     const reset_password = 0;
 
     const result = await dbService.query(
-      "INSERT INTO user (email, password, reset_password, first_name, last_name, role_id) VALUES (?, ?, ?, ?, ?, ?)",
-      [email, hashedPassword, reset_password, firstName, lastName, roleId]
+      "INSERT INTO user (email, token, password, reset_password, first_name, last_name, role) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      [email, token, hashedPassword, reset_password, firstName, lastName, role]
     );
 
     if (result && result.affectedRows > 0) {

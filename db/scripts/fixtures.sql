@@ -99,7 +99,7 @@ LOCK TABLES `film` WRITE;
 /*!40000 ALTER TABLE `film` DISABLE KEYS */;
 INSERT INTO `film` VALUES
 (1, 'Matrix', 'Matrix, réalisé par les Wachowski et sorti en 1999, est un film de science-fiction révolutionnaire qui explore la nature de la réalité. L\'histoire suit Thomas Anderson, un programmeur informatique qui mène une double vie en tant que hacker sous le nom de "Neo". Troublé par des rêves étranges, il est contacté par Morpheus, un rebelle convaincu que Neo est "l\'Élu", celui qui peut libérer l\'humanité de la Matrice.\n\nLa Matrice est un univers virtuel créé par des intelligences artificielles pour contrôler les esprits humains. Après avoir choisi de prendre la pilule rouge, Neo découvre la vérité sur le monde réel et rejoint Morpheus et Trinity dans leur lutte contre les agents de la Matrice.\n\nLe film aborde des thèmes profonds tels que la liberté et le destin, tout en offrant des séquences d\'action emblématiques et des effets spéciaux novateurs. Matrix reste un classique culte et une référence dans la culture populaire.', '1999-03-31 00:00:00', 13, 0, 'assets/images/matrix.jpg'),
-(2, 'Le Voyage de Chihiro', 'Le Voyage de Chihiro, réalisé par Hayao Miyazaki et sorti en 2001, est un chef-d\'œuvre de l\'animation japonaise qui raconte l\'histoire de Chihiro, une fillette de dix ans. Alors qu\'elle se rend avec ses parents vers leur nouvelle maison, la famille se perd et découvre un tunnel mystérieux qui les mène à un parc d\'attractions abandonné. Intrigués, les parents de Chihiro commencent à manger des mets délicieux laissés à leur disposition, mais ils sont rapidement transformés en cochons.\n\nPaniquée, Chihiro se retrouve seule dans un monde magique peuplé d\'esprits et de créatures fantastiques. Pour sauver ses parents, elle doit travailler pour Yubaba, une sorcière qui contrôle cet univers étrange. Aidée par Haku, un jeune garçon énigmatique, Chihiro doit naviguer à travers des défis et des épreuves pour retrouver son identité et celle de ses parents.\n\nLe film aborde des thèmes profonds tels que la croissance personnelle, la mémoire et la lutte pour préserver son identité face aux forces oppressives. Le Voyage de Chihiro a remporté l\'Oscar du meilleur film d\'animation et est considéré comme l\'un des plus grands films d\'animation de tous les temps.', '2001-07-20 00:00:00', 7, 1, 'assets/images/chihiro.jpg'),
+(2, 'Chihiro', 'Le Voyage de Chihiro, réalisé par Hayao Miyazaki et sorti en 2001, est un chef-d\'œuvre de l\'animation japonaise qui raconte l\'histoire de Chihiro, une fillette de dix ans. Alors qu\'elle se rend avec ses parents vers leur nouvelle maison, la famille se perd et découvre un tunnel mystérieux qui les mène à un parc d\'attractions abandonné. Intrigués, les parents de Chihiro commencent à manger des mets délicieux laissés à leur disposition, mais ils sont rapidement transformés en cochons.\n\nPaniquée, Chihiro se retrouve seule dans un monde magique peuplé d\'esprits et de créatures fantastiques. Pour sauver ses parents, elle doit travailler pour Yubaba, une sorcière qui contrôle cet univers étrange. Aidée par Haku, un jeune garçon énigmatique, Chihiro doit naviguer à travers des défis et des épreuves pour retrouver son identité et celle de ses parents.\n\nLe film aborde des thèmes profonds tels que la croissance personnelle, la mémoire et la lutte pour préserver son identité face aux forces oppressives. Le Voyage de Chihiro a remporté l\'Oscar du meilleur film d\'animation et est considéré comme l\'un des plus grands films d\'animation de tous les temps.', '2001-07-20 00:00:00', 7, 1, 'assets/images/chihiro.jpg'),
 (3, 'Dune', 'Dune, réalisé par Denis Villeneuve et sorti en 2021, est une adaptation du célèbre roman de science-fiction de Frank Herbert. L\'histoire se déroule dans un futur lointain et suit Paul Atreides, un jeune noble dont la famille, la Maison Atreides, est plongée dans une guerre pour le contrôle de la planète Arrakis, également connue sous le nom de Dune. Arrakis est la seule source de l\'épice, une substance précieuse qui confère des capacités extraordinaires à ses utilisateurs.\n\nAlors que Paul et sa famille s\'installent sur cette planète hostile, ils doivent faire face à des complots machiavéliques orchestrés par leurs ennemis, notamment la Maison Harkonnen. Avec l\'aide de ses alliés, Paul doit naviguer à travers des dangers mortels et découvrir son destin potentiel en tant que leader et messie des Fremen, les habitants natifs d\'Arrakis.\n\nLe film aborde des thèmes profonds tels que le pouvoir, la survie et le sacrifice. Avec des visuels époustouflants et une bande sonore immersive composée par Hans Zimmer, Dune a été acclamé par la critique et a remporté plusieurs prix. Il est considéré comme un jalon dans le cinéma de science-fiction.', '2021-09-15 00:00:00', 12, 1, 'assets/images/dune.jpg'),
 (4, 'Notting Hill', 'Notting Hill, réalisé par Roger Michell et sorti en 1999, est une comédie romantique emblématique qui raconte l\'histoire de William Thacker, un propriétaire de librairie à Londres. Sa vie prend un tournant inattendu lorsqu\'il rencontre Anna Scott, une célèbre actrice d\'Hollywood. Après une série de rencontres fortuites, William et Anna commencent à développer une relation amoureuse malgré les défis qui se dressent entre eux.\n\nLe film explore les thèmes de l\'amour et de la célébrité, mettant en lumière les difficultés d\'une romance entre un homme ordinaire et une star mondiale. Alors que William essaie de naviguer dans le monde glamour d\'Anna, il doit également faire face aux paparazzis et aux attentes de la société.\n\nAvec des performances charmantes de Hugh Grant et Julia Roberts, Notting Hill est devenu un classique du genre romantique. Le film est apprécié pour son humour tendre et ses dialogues mémorables, ainsi que pour sa représentation pittoresque du quartier de Notting Hill à Londres.', '1999-05-28 00:00:00', 10, 1, 'assets/images/notting_hill.jpg'),
 (5, 'Pulp Fiction', 'Pulp Fiction, réalisé par Quentin Tarantino et sorti en 1994, est un film de gangsters emblématique qui raconte plusieurs histoires entrelacées se déroulant dans le monde interlope de Los Angeles. Les personnages principaux incluent Vincent Vega et Jules Winnfield, deux tueurs à gages travaillant pour le gangster Marcellus Wallace. Le film explore diverses situations impliquant ces personnages, allant d’une overdose accidentelle à un combat de boxe truqué, en passant par des conversations philosophiques sur les hamburgers et les passages bibliques.\n\nLe film s’ouvre sur un couple de petits criminels, Pumpkin et Honey Bunny, qui décident de braquer un restaurant. La scène coupe brusquement pour suivre Vincent et Jules alors qu’ils discutent de sujets quotidiens avant d’exécuter une mission. À mesure que ces histoires se déroulent, elles se croisent et s’entremêlent de manières inattendues.\n\nL’art de Tarantino dans Pulp Fiction réside dans sa capacité à mêler humour noir, tension dramatique et moments d’action pure pour créer une œuvre qui ne cesse d’étonner et d’engager l’audience.', '1994-10-14 00:00:00', 16, 1, 'assets/images/pulp_fiction.jpg');
@@ -230,20 +230,6 @@ INSERT INTO `quality` VALUES
 (3,'IMAX',14.00),
 (4,'4DX',9.50);
 /*!40000 ALTER TABLE `quality` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Dumping data for table `role`
---
-
-LOCK TABLES `role` WRITE;
-/*!40000 ALTER TABLE `role` DISABLE KEYS */;
-INSERT INTO `role` VALUES
-(1,'admin'),
-(2,'employee'),
-(3,'user'),
-(4,'guest');
-/*!40000 ALTER TABLE `role` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -2923,18 +2909,18 @@ UNLOCK TABLES;
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
 INSERT INTO `user` VALUES
-(1,'admin1@cine.com','password123',0,'Jean','Dupont',1,'2024-12-28 17:43:41'),
-(2,'admin2@cine.com','password123',0,'Marie','Martin',1,'2024-12-28 17:43:41'),
-(3,'admin3@cine.com','password123',0,'Pierre','Bernard',1,'2024-12-28 17:43:41'),
-(4,'admin4@cine.com','password123',0,'Sophie','Petit',1,'2024-12-28 17:43:41'),
-(5,'emp1@cine.com','password123',0,'Luc','Leroy',2,'2024-12-28 17:43:41'),
-(6,'emp2@cine.com','password123',0,'Emma','Roux',2,'2024-12-28 17:43:41'),
-(7,'emp3@cine.com','password123',0,'Hugo','Vincent',2,'2024-12-28 17:43:41'),
-(8,'emp4@cine.com','password123',0,'Camille','Fournier',2,'2024-12-28 17:43:41'),
-(9,'user1@example.com','password123',0,'Alice','Dubois',3,'2024-12-28 17:45:37'),
-(10,'user2@example.com','password123',0,'Baptiste','Lefevre',3,'2024-12-28 17:45:37'),
-(11,'user3@example.com','password123',0,'Camille','Moreau',3,'2024-12-28 17:45:37'),
-(12,'user4@example.com','password123',0,'Daniel','Rousseau',3,'2024-12-28 17:45:37');
+(1,'admin1@cine.com',null,'password123',0,'Jean','Dupont','admin','2024-12-28 17:43:41'),
+(2,'admin2@cine.com',null,'password123',0,'Marie','Martin','admin','2024-12-28 17:43:41'),
+(3,'admin3@cine.com',null,'password123',0,'Pierre','Bernard','admin','2024-12-28 17:43:41'),
+(4,'admin4@cine.com',null,'password123',0,'Sophie','Petit','admin','2024-12-28 17:43:41'),
+(5,'emp1@cine.com',null,'password123',0,'Luc','Leroy','employe','2024-12-28 17:43:41'),
+(6,'emp2@cine.com',null,'password123',0,'Emma','Roux','employe','2024-12-28 17:43:41'),
+(7,'emp3@cine.com',null,'password123',0,'Hugo','Vincent','employe','2024-12-28 17:43:41'),
+(8,'emp4@cine.com',null,'password123',0,'Camille','Fournier','employe','2024-12-28 17:43:41'),
+(9,'user1@example.com',null,'password123',0,'Alice','Dubois','employe','2024-12-28 17:45:37'),
+(10,'user2@example.com',null,'password123',0,'Baptiste','Lefevre','user','2024-12-28 17:45:37'),
+(11,'user3@example.com',null,'password123',0,'Camille','Moreau','user','2024-12-28 17:45:37'),
+(12,'user4@example.com',null,'password123',0,'Daniel','Rousseau','user','2024-12-28 17:45:37');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
