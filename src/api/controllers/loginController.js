@@ -6,7 +6,7 @@ const getLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
     const [user] = await dbService.query(
-      "SELECT u.*, r.name as role FROM user u JOIN role r ON u.role_id = r.id WHERE u.email = ?",
+      "SELECT * FROM user WHERE user.email = ?",
       [email]
     );
 
@@ -17,7 +17,7 @@ const getLogin = async (req, res) => {
         const token = jwt.sign(
           { id: user.id.toString(), email: user.email },
           process.env.SECRET_KEY,
-          { expiresIn: "1h" }
+          { expiresIn: "24h" }
         );
 
         res.json({ user: { ...user, password: undefined }, token });
