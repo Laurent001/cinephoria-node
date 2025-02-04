@@ -42,6 +42,22 @@ const getRolesUserById = async (req, res) => {
   }
 };
 
+const verifyToken = (req, res, next) => {
+  const token = req.params.token;
+
+  if (!token) {
+    return res.status(403).json({ message: "Token manquant" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+    req.user = { id: decoded.id, email: decoded.email };
+    next();
+  } catch (error) {
+    res.status(401).json({ message: "Token invalide", error: error.message });
+  }
+};
+
 module.exports = {
   getUsers,
   getRolesUserById,
