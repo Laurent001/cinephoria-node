@@ -1,5 +1,40 @@
 const dbService = require("../../services/database.service");
 
+const getScreeningById = async (req, res) => {
+  try {
+    const screeningId = req.params.id;
+
+    const [rows] = await dbService.query(
+      `SELECT 
+        sc.id,
+        sc.start_time,
+        sc.end_time,
+        a.name AS auditorium_name,
+        a.seat AS auditorium_seat,
+        a.handi_seat AS auditorium_handi_seat,
+        a.cinema_id AS auditorium_cinema_id,
+        q.name AS auditorium_quality,
+        q.price AS auditorium_price      
+      FROM screening sc 
+      INNER JOIN auditorium a ON a.id = sc.auditorium_id 
+      INNER JOIN quality q ON q.id = a.quality_id 
+      WHERE sc.id = ?`,
+      [screeningId]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ message: "Aucun screening trouvé" });
+    }
+
+    res.json(rows);
+  } catch (error) {
+    res.status(500).json({
+      message: "Erreur lors de la récupération du screening",
+      error: error.message,
+    });
+  }
+};
+
 const getSeatsByScreeningId = async (req, res) => {
   const screeningId = req.params.id;
 
@@ -71,5 +106,6 @@ const getSeatsByScreeningId = async (req, res) => {
 };
 
 module.exports = {
+  getScreeningById,
   getSeatsByScreeningId,
 };
