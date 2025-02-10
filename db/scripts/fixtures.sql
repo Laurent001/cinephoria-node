@@ -2912,18 +2912,18 @@ UNLOCK TABLES;
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
 INSERT INTO `user` VALUES
-(1,'admin1@cine.com',null,'password123',0,'Jean','Dupont','admin','2024-12-28 17:43:41'),
-(2,'admin2@cine.com',null,'password123',0,'Marie','Martin','admin','2024-12-28 17:43:41'),
-(3,'admin3@cine.com',null,'password123',0,'Pierre','Bernard','admin','2024-12-28 17:43:41'),
-(4,'admin4@cine.com',null,'password123',0,'Sophie','Petit','admin','2024-12-28 17:43:41'),
-(5,'emp1@cine.com',null,'password123',0,'Luc','Leroy','employe','2024-12-28 17:43:41'),
-(6,'emp2@cine.com',null,'password123',0,'Emma','Roux','employe','2024-12-28 17:43:41'),
-(7,'emp3@cine.com',null,'password123',0,'Hugo','Vincent','employe','2024-12-28 17:43:41'),
-(8,'emp4@cine.com',null,'password123',0,'Camille','Fournier','employe','2024-12-28 17:43:41'),
-(9,'user1@example.com',null,'password123',0,'Alice','Dubois','employe','2024-12-28 17:45:37'),
-(10,'user2@example.com',null,'password123',0,'Baptiste','Lefevre','user','2024-12-28 17:45:37'),
-(11,'user3@example.com',null,'password123',0,'Camille','Moreau','user','2024-12-28 17:45:37'),
-(12,'user4@example.com',null,'password123',0,'Daniel','Rousseau','user','2024-12-28 17:45:37');
+(1,'admin1@cine.com',null,'$2b$10$2su2Hpi2WI5Jnu00DdkEBeh3f40p622qpxkC0oEgISq0.rMtTvl76',0,'Jean','Dupont','admin','2024-12-28 17:43:41'),
+(2,'admin2@cine.com',null,'$2b$10$2su2Hpi2WI5Jnu00DdkEBeh3f40p622qpxkC0oEgISq0.rMtTvl76',0,'Marie','Martin','admin','2024-12-28 17:43:41'),
+(3,'admin3@cine.com',null,'$2b$10$2su2Hpi2WI5Jnu00DdkEBeh3f40p622qpxkC0oEgISq0.rMtTvl76',0,'Pierre','Bernard','admin','2024-12-28 17:43:41'),
+(4,'admin4@cine.com',null,'$2b$10$2su2Hpi2WI5Jnu00DdkEBeh3f40p622qpxkC0oEgISq0.rMtTvl76',0,'Sophie','Petit','admin','2024-12-28 17:43:41'),
+(5,'emp1@cine.com',null,'$2b$10$2su2Hpi2WI5Jnu00DdkEBeh3f40p622qpxkC0oEgISq0.rMtTvl76',0,'Luc','Leroy','employe','2024-12-28 17:43:41'),
+(6,'emp2@cine.com',null,'$2b$10$2su2Hpi2WI5Jnu00DdkEBeh3f40p622qpxkC0oEgISq0.rMtTvl76',0,'Emma','Roux','employe','2024-12-28 17:43:41'),
+(7,'emp3@cine.com',null,'$2b$10$2su2Hpi2WI5Jnu00DdkEBeh3f40p622qpxkC0oEgISq0.rMtTvl76',0,'Hugo','Vincent','employe','2024-12-28 17:43:41'),
+(8,'emp4@cine.com',null,'$2b$10$2su2Hpi2WI5Jnu00DdkEBeh3f40p622qpxkC0oEgISq0.rMtTvl76',0,'Camille','Fournier','employe','2024-12-28 17:43:41'),
+(9,'user1@example.com',null,'$2b$10$2su2Hpi2WI5Jnu00DdkEBeh3f40p622qpxkC0oEgISq0.rMtTvl76',0,'Alice','Dubois','employe','2024-12-28 17:45:37'),
+(10,'user2@example.com',null,'$2b$10$2su2Hpi2WI5Jnu00DdkEBeh3f40p622qpxkC0oEgISq0.rMtTvl76',0,'Baptiste','Lefevre','user','2024-12-28 17:45:37'),
+(11,'user3@example.com',null,'$2b$10$2su2Hpi2WI5Jnu00DdkEBeh3f40p622qpxkC0oEgISq0.rMtTvl76',0,'Camille','Moreau','user','2024-12-28 17:45:37'),
+(12,'user4@example.com',null,'$2b$10$2su2Hpi2WI5Jnu00DdkEBeh3f40p622qpxkC0oEgISq0.rMtTvl76',0,'Daniel','Rousseau','user','2024-12-28 17:45:37');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

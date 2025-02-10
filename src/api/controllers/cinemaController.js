@@ -3,6 +3,7 @@ const dbService = require("../../services/database.service");
 const getCinemas = async (req, res) => {
   try {
     const rows = await dbService.query(`SELECT * FROM cinema`);
+
     res.json(rows);
   } catch (error) {
     res.status(500).json({
@@ -32,8 +33,6 @@ const getCinemaByScreeningId = async (req, res) => {
         s.id = ?`,
       [screeningId]
     );
-
-    log;
 
     if (rows.length === 0) {
       return res
