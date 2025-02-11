@@ -24,7 +24,7 @@ const registerUser = async (req, res) => {
     const token = jwt.sign({ email: email }, process.env.SECRET_KEY, {
       expiresIn: "24h",
     });
-    const role = ROLE_USER;
+    const role = ROLE_EMPLOYE;
     const reset_password = 0;
 
     const result = await dbService.query(
