@@ -1,4 +1,6 @@
 const dbService = require("../../services/database.service");
+const auditoriumController = require("../controllers/auditoriumController");
+const materialController = require("../controllers/materialController");
 
 const getIncidents = async (req, res) => {
   try {
@@ -62,7 +64,12 @@ const getIncidents = async (req, res) => {
       },
     }));
 
-    res.json(incidents);
+    const [auditoriums, materials] = await Promise.all([
+      auditoriumController.fetchAuditoriums(),
+      materialController.fetchMaterials(),
+    ]);
+
+    res.json({ incidents, auditoriums, materials });
   } catch (error) {
     res.status(500).json({
       message: "Erreur lors de la récupération des incidents",
@@ -77,8 +84,8 @@ const setIncident = async (req, res) => {
     description,
     added_date,
     is_solved,
-    material: { id: material_id, name: material_name },
-    auditorium: { id: auditorium_id, name: auditorium_name },
+    material: { id: material_id },
+    auditorium: { id: auditorium_id },
   } = req.body;
 
   const formattedDate = new Date(added_date)
@@ -87,37 +94,26 @@ const setIncident = async (req, res) => {
     .replace("T", " ");
 
   try {
-    const result = await dbService.executeTransaction(async (connection) => {
-      await connection.query(
-        `UPDATE incident
+    const rows = await dbService.query(
+      `UPDATE incident
         SET
           description = ?,
           added_date = ?,
-          is_solved = ?
+          is_solved = ?,
+          auditorium_id = ?,
+          material_id = ?
         WHERE id = ?`,
-        [description, formattedDate, is_solved, incident_id]
-      );
+      [
+        description,
+        formattedDate,
+        is_solved,
+        auditorium_id,
+        material_id,
+        incident_id,
+      ]
+    );
 
-      await connection.query(
-        `UPDATE material
-        SET
-          name = ?
-        WHERE id = ?`,
-        [material_name, material_id]
-      );
-
-      await connection.query(
-        `UPDATE auditorium
-        SET
-          name = ?
-        WHERE id = ?`,
-        [auditorium_name, auditorium_id]
-      );
-
-      return { success: true, message: "Mise à jour réussie" };
-    });
-
-    res.json(result);
+    res.json({ success: true, message: "Mise à jour réussie" });
   } catch (error) {
     console.error("Erreur lors de la mise à jour :", error);
     res
