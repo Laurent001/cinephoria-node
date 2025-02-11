@@ -138,6 +138,7 @@ const getScreeningsByFilmId = async (req, res) => {
         a.seat AS auditorium_seat, 
         a.handi_seat AS auditorium_handi_seat, 
         a.cinema_id AS auditorium_cinema_id, 
+        q.name AS auditorium_quality_id, 
         q.name AS auditorium_quality, 
         q.price AS auditorium_price 
       FROM 
@@ -194,6 +195,7 @@ const getScreeningsByFilmId = async (req, res) => {
         seat: row.auditorium_seat,
         handi_seat: row.auditorium_handi_seat,
         quality: row.auditorium_quality,
+        quality_id: row.auditorium_quality_id,
         price: row.auditorium_price,
         cinema: {
           id: row.cinema_id,
