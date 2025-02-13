@@ -4,6 +4,7 @@ const incidentController = require("../controllers/incidentController");
 
 router.get("/", incidentController.getIncidents);
 router.post("/update", incidentController.setIncident);
+router.post("/add", incidentController.addIncident);
 router.delete("/delete/:id", incidentController.deleteIncidentById);
 
 module.exports = router;

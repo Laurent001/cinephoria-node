@@ -44,18 +44,18 @@ const createBooking = async (req, res) => {
   const { user, screening, totalPrice, seats } = req.body;
 
   try {
-    const result = await dbService.executeTransaction(async (conn) => {
-      const bookingResult = await conn.query(
+    const result = await dbService.executeTransaction(async () => {
+      const bookingResult = await dbService.query(
         "INSERT INTO booking (user_id, total_price) VALUES (?, ?)",
         [user.id, totalPrice]
       );
 
-      const bookingId = bookingResult.insertId.toString(); // toString() nécessaire pour sérialisation json
+      const bookingId = bookingResult.insertId.toString();
       const seatValues = seats
         .map((seat) => `(${bookingId}, ${seat.id}, ${screening.id})`)
         .join(", ");
 
-      await conn.query(
+      await dbService.query(
         `INSERT INTO booking_screening_seat (booking_id, seat_id, screening_id) VALUES ${seatValues}`
       );
 
