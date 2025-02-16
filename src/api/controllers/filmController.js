@@ -105,16 +105,22 @@ const getFilmsByGenreId = async (req, res) => {
 
 const getFilmsByDate = async (req, res) => {
   const date = req.params.date;
+  const start = date + " 00:00:00";
+  const end = date + " 23:59:59";
+
+  console.log("start", start);
+  console.log("end", end);
+
   try {
     const rows = await dbService.query(
-      `SELECT DISTINCT f.id, f.title, f.description, f.release_date, f.age_minimum, f.favorite, f.poster, s.id AS screening_id, s.auditorium_id, s.remaining_seat, s.remaining_handi_seat, s.start_time, s.end_time
+      `SELECT f.id, f.title, f.description, f.release_date, f.age_minimum, f.favorite, f.poster
       FROM 
         film f
       INNER JOIN 
         screening s ON f.id = s.film_id
       WHERE 
-        DATE(s.start_time) = ?`,
-      [date]
+        s.start_time > ? AND s.start_time < ?`,
+      [start, end]
     );
     res.json(rows);
   } catch (error) {
