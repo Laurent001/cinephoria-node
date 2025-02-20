@@ -151,11 +151,10 @@ const getScreeningsByFilmId = async (req, res) => {
         f.id = ? 
       ORDER BY
         s.start_time ASC`,
-      //AND s.start_time > NOW()`,
       [filmId]
     );
 
-    if (getScreeningsByFilmId.length === 0) {
+    if (screeningsByFilm.length === 0) {
       return res
         .status(404)
         .json({ message: "Film ou séances non trouvé(es)" });
@@ -185,33 +184,52 @@ const getScreeningsByFilmId = async (req, res) => {
       poster: screeningsByFilm[0].poster,
     };
 
-    const screenings = screeningsByFilm.map((row) => ({
-      id: row.screening_id,
-      film_id: row.screening_film_id,
-      start_time: row.start_time,
-      end_time: row.end_time,
-      auditorium: {
-        name: row.auditorium_name,
-        seat: row.auditorium_seat,
-        handi_seat: row.auditorium_handi_seat,
-        quality: row.auditorium_quality,
-        quality_id: row.auditorium_quality_id,
-        price: row.auditorium_price,
-        cinema: {
-          id: row.cinema_id,
-          name: row.cinema_name,
-          address: row.cinema_address,
-          city: row.cinema_city,
-          postcode: row.cinema_postcode,
-          phone: row.cinema_phone,
-          opening_hours: row.cinema_opening_hours,
+    const screeningsByDay = {};
+    screeningsByFilm.forEach((row) => {
+      const date = new Date(row.start_time).toLocaleDateString("fr-FR", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      });
+
+      if (!screeningsByDay[date]) {
+        screeningsByDay[date] = [];
+      }
+
+      screeningsByDay[date].push({
+        id: row.screening_id,
+        film_id: row.screening_film_id,
+        start_time: row.start_time,
+        end_time: row.end_time,
+        auditorium: {
+          name: row.auditorium_name,
+          seat: row.auditorium_seat,
+          handi_seat: row.auditorium_handi_seat,
+          quality: row.auditorium_quality,
+          quality_id: row.auditorium_quality_id,
+          price: row.auditorium_price,
+          cinema: {
+            id: row.cinema_id,
+            name: row.cinema_name,
+            address: row.cinema_address,
+            city: row.cinema_city,
+            postcode: row.cinema_postcode,
+            phone: row.cinema_phone,
+            opening_hours: row.cinema_opening_hours,
+          },
         },
-      },
+      });
+    });
+
+    const screeningsByDayArray = Object.keys(screeningsByDay).map((date) => ({
+      day: date,
+      screeningsByDay: screeningsByDay[date],
     }));
 
     res.json({
       film,
-      screenings,
+      screenings: screeningsByDayArray,
     });
   } catch (error) {
     res.status(500).json({
@@ -266,7 +284,6 @@ const getFilmScreeningsByCinemaId = async (req, res) => {
         AND c.id = ?
       ORDER BY
         s.start_time ASC`,
-      //AND s.start_time > NOW()`,
       [filmId, cinemaId]
     );
 
@@ -300,32 +317,51 @@ const getFilmScreeningsByCinemaId = async (req, res) => {
       poster: filmScreeningsByCinema[0].poster,
     };
 
-    const screenings = filmScreeningsByCinema.map((row) => ({
-      id: row.screening_id,
-      film_id: row.screening_film_id,
-      start_time: row.start_time,
-      end_time: row.end_time,
-      auditorium: {
-        name: row.auditorium_name,
-        seat: row.auditorium_seat,
-        handi_seat: row.auditorium_handi_seat,
-        quality: row.auditorium_quality,
-        price: row.auditorium_price,
-        cinema: {
-          id: filmScreeningsByCinema[0].cinema_id,
-          name: filmScreeningsByCinema[0].cinema_name,
-          address: filmScreeningsByCinema[0].cinema_address,
-          city: filmScreeningsByCinema[0].cinema_city,
-          postcode: filmScreeningsByCinema[0].cinema_postcode,
-          phone: filmScreeningsByCinema[0].cinema_phone,
-          opening_hours: filmScreeningsByCinema[0].cinema_opening_hours,
+    const screeningsByDay = {};
+    filmScreeningsByCinema.forEach((row) => {
+      const date = new Date(row.start_time).toLocaleDateString("fr-FR", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      });
+
+      if (!screeningsByDay[date]) {
+        screeningsByDay[date] = [];
+      }
+
+      screeningsByDay[date].push({
+        id: row.screening_id,
+        film_id: row.screening_film_id,
+        start_time: row.start_time,
+        end_time: row.end_time,
+        auditorium: {
+          name: row.auditorium_name,
+          seat: row.auditorium_seat,
+          handi_seat: row.auditorium_handi_seat,
+          quality: row.auditorium_quality,
+          price: row.auditorium_price,
+          cinema: {
+            id: filmScreeningsByCinema[0].cinema_id,
+            name: filmScreeningsByCinema[0].cinema_name,
+            address: filmScreeningsByCinema[0].cinema_address,
+            city: filmScreeningsByCinema[0].cinema_city,
+            postcode: filmScreeningsByCinema[0].cinema_postcode,
+            phone: filmScreeningsByCinema[0].cinema_phone,
+            opening_hours: filmScreeningsByCinema[0].cinema_opening_hours,
+          },
         },
-      },
+      });
+    });
+
+    const screeningsByDayArray = Object.keys(screeningsByDay).map((date) => ({
+      day: date,
+      screeningsByDay: screeningsByDay[date],
     }));
 
     res.json({
       film,
-      screenings,
+      screenings: screeningsByDayArray,
     });
   } catch (error) {
     res.status(500).json({
