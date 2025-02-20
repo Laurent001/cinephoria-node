@@ -6,6 +6,5 @@ router.get("/", filmController.getFilms);
 router.get("/cinema/:id", filmController.getFilmsByCinemaId);
 router.get("/genre/:id", filmController.getFilmsByGenreId);
 router.get("/date/:date", filmController.getFilmsByDate);
-router.get("/:id/screenings", filmController.getScreeningsByFilmId);
 
 module.exports = router;
