@@ -108,9 +108,6 @@ const getFilmsByDate = async (req, res) => {
   const start = date + " 00:00:00";
   const end = date + " 23:59:59";
 
-  console.log("start", start);
-  console.log("end", end);
-
   try {
     const rows = await dbService.query(
       `SELECT f.id, f.title, f.description, f.release_date, f.age_minimum, f.favorite, f.poster
