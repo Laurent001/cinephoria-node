@@ -10,7 +10,11 @@ const ROLE_USER = "user";
 
 const registerUser = async (req, res) => {
   try {
-    const { email, password, firstName, lastName } = req.body;
+    const { email, password, firstName, lastName, role } = req.body;
+
+    if (![ROLE_ADMIN, ROLE_EMPLOYE, ROLE_USER].includes(role)) {
+      return res.status(400).json({ message: "role incorrect" });
+    }
 
     const [existingUsers] = await dbService.query(
       "SELECT * FROM user WHERE email = ?",
@@ -24,7 +28,6 @@ const registerUser = async (req, res) => {
     const token = jwt.sign({ email: email }, process.env.SECRET_KEY, {
       expiresIn: "24h",
     });
-    const role = ROLE_EMPLOYE;
     const reset_password = 0;
 
     const result = await dbService.query(
