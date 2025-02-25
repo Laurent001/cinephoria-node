@@ -30,34 +30,6 @@ const getUserById = async (req, res) => {
   }
 };
 
-const getRolesByUserId = async (req, res) => {
-  try {
-    const userId = req.params.id;
-
-    const [rows] = await dbService.query(
-      "SELECT r.name FROM role r JOIN user u ON r.id = u.role_id WHERE u.id = ?",
-      [userId]
-    );
-
-    if (rows.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "Rôles de l'utilisateur non trouvés" });
-    }
-
-    const roles = Array.isArray(rows)
-      ? rows.map((row) => row.name)
-      : [rows.name];
-
-    res.json(roles);
-  } catch (error) {
-    res.status(500).json({
-      message: "Erreur lors de la récupération des rôles de l'utilisateur",
-      error: error.message,
-    });
-  }
-};
-
 const verifyToken = (req, res, next) => {
   const token = req.params.token;
 
@@ -77,7 +49,6 @@ const verifyToken = (req, res, next) => {
 
 module.exports = {
   getUsers,
-  getRolesByUserId,
   verifyToken,
   getUserById,
 };

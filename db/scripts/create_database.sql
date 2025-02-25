@@ -294,9 +294,8 @@ DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `email` varchar(255) NOT NULL,
-  `token` varchar(255) NULL,
   `password` varchar(255) NOT NULL,
-  `reset_password` tinyint(1) DEFAULT 0,
+  `reset_token` varchar(255) NULL,
   `first_name` varchar(255) NOT NULL,
   `last_name` varchar(255) NOT NULL,
   `role` varchar(20) NOT NULL,
