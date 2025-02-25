@@ -1,8 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const { sendWelcome, sendContact } = require("../controllers/emailController");
+const {
+  sendEmailWelcome,
+  sendEmailContact,
+} = require("../controllers/emailController");
 
-router.post("/send-welcome", sendWelcome);
-router.post("/contact", sendContact);
+router.post("/send-welcome", sendEmailWelcome);
+router.post("/contact", sendEmailContact);
 
 module.exports = router;

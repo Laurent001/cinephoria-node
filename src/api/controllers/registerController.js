@@ -2,7 +2,7 @@ const dbService = require("../../services/database.service");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const saltRounds = 10;
-const { sendWelcome } = require("./emailController");
+const { sendEmailWelcome } = require("./emailController");
 
 const ROLE_ADMIN = "admin";
 const ROLE_EMPLOYE = "employe";
@@ -28,15 +28,14 @@ const registerUser = async (req, res) => {
     const token = jwt.sign({ email: email }, process.env.SECRET_KEY, {
       expiresIn: "24h",
     });
-    const reset_password = 0;
 
     const result = await dbService.query(
-      "INSERT INTO user (email, token, password, reset_password, first_name, last_name, role) VALUES (?, ?, ?, ?, ?, ?, ?)",
-      [email, token, hashedPassword, reset_password, firstName, lastName, role]
+      "INSERT INTO user (email, token, password, reset_token, first_name, last_name, role) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      [email, token, hashedPassword, null, firstName, lastName, role]
     );
 
     if (result && result.affectedRows > 0) {
-      sendWelcome(email, firstName);
+      sendEmailWelcome(email, firstName);
       res.status(201).json({ message: "utilisateur créé avec succès" });
     } else {
       res
