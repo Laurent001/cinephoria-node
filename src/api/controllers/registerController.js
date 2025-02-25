@@ -1,6 +1,5 @@
 const dbService = require("../../services/database.service");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 const saltRounds = 10;
 const { sendEmailWelcome } = require("./emailController");
 
@@ -16,6 +15,10 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ message: "role incorrect" });
     }
 
+    if (firstName === "" || lastName === "") {
+      return res.status(400).json({ message: "nom et prénom incorrect" });
+    }
+
     const [existingUsers] = await dbService.query(
       "SELECT * FROM user WHERE email = ?",
       [email]
@@ -25,13 +28,10 @@ const registerUser = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, saltRounds);
-    const token = jwt.sign({ email: email }, process.env.SECRET_KEY, {
-      expiresIn: "24h",
-    });
 
     const result = await dbService.query(
-      "INSERT INTO user (email, token, password, reset_token, first_name, last_name, role) VALUES (?, ?, ?, ?, ?, ?, ?)",
-      [email, token, hashedPassword, null, firstName, lastName, role]
+      "INSERT INTO user (email, reset_token, password, first_name, last_name, role) VALUES (?, ?, ?, ?, ?, ?)",
+      [email, null, hashedPassword, firstName, lastName, role]
     );
 
     if (result && result.affectedRows > 0) {
