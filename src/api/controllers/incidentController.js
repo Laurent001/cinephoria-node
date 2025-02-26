@@ -155,17 +155,10 @@ const fetchIncidents = async () => {
   }
 };
 
-const setIncident = async (req, res) => {
+const updateIncident = async (req, res) => {
   const {
     locale,
-    incident: {
-      id: incident_id,
-      description,
-      added_date,
-      is_solved,
-      material: { id: material_id },
-      auditorium: { id: auditorium_id },
-    },
+    incident: { id, description, added_date, is_solved, material, auditorium },
   } = req.body;
 
   const formattedDate = moment(added_date)
@@ -183,14 +176,7 @@ const setIncident = async (req, res) => {
           auditorium_id = ?,
           material_id = ?
         WHERE id = ?`,
-        [
-          description,
-          formattedDate,
-          is_solved,
-          auditorium_id,
-          material_id,
-          incident_id,
-        ]
+        [description, formattedDate, is_solved, auditorium.id, material.id, id]
       );
 
       return await fetchIncidents();
@@ -246,7 +232,7 @@ const deleteIncidentById = async (req, res) => {
 
 module.exports = {
   getIncidents,
-  setIncident,
+  updateIncident,
   addIncident,
   deleteIncidentById,
 };
