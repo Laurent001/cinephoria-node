@@ -3,7 +3,7 @@ const router = express.Router();
 const incidentController = require("../controllers/incidentController");
 
 router.get("/", incidentController.getIncidents);
-router.post("/update", incidentController.setIncident);
+router.post("/update", incidentController.updateIncident);
 router.post("/add", incidentController.addIncident);
 router.delete("/delete/:id", incidentController.deleteIncidentById);
 
