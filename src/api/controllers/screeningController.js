@@ -1,4 +1,6 @@
 const dbService = require("../../services/database.service");
+const auditoriumController = require("../controllers/auditoriumController");
+const moment = require("moment-timezone");
 
 const getScreeningById = async (req, res) => {
   try {
@@ -36,6 +38,7 @@ const getScreeningById = async (req, res) => {
 };
 
 const getSeatsByScreeningId = async (req, res) => {
+  console.log("test");
   const screeningId = req.params.id;
 
   try {
@@ -199,7 +202,7 @@ const getScreeningsByFilmId = async (req, res) => {
 
       screeningsByDay[date].push({
         id: row.screening_id,
-        film_id: row.screening_film_id,
+        film: film,
         start_time: row.start_time,
         end_time: row.end_time,
         auditorium: {
@@ -332,7 +335,7 @@ const getFilmScreeningsByCinemaId = async (req, res) => {
 
       screeningsByDay[date].push({
         id: row.screening_id,
-        film_id: row.screening_film_id,
+        film: film,
         start_time: row.start_time,
         end_time: row.end_time,
         auditorium: {
@@ -371,9 +374,172 @@ const getFilmScreeningsByCinemaId = async (req, res) => {
   }
 };
 
+const fetchScreenings = async () => {
+  return await dbService.executeTransaction(async () => {
+    const rows = await dbService.query(
+      `SELECT 
+        f.id AS film_id, 
+        f.title, 
+        f.description, 
+        f.release_date, 
+        f.age_minimum, 
+        f.favorite, 
+        f.poster,
+        s.id AS screening_id, 
+        s.film_id AS screening_film_id, 
+        s.auditorium_id AS screening_auditorium_id, 
+        s.remaining_seat, 
+        s.remaining_handi_seat, 
+        s.start_time, 
+        s.end_time, 
+        a.id AS auditorium_id, 
+        a.name AS auditorium_name, 
+        a.seat AS auditorium_seat, 
+        a.handi_seat AS auditorium_handi_seat, 
+        a.cinema_id AS auditorium_cinema_id,
+        c.id AS cinema_id, 
+        c.name AS cinema_name, 
+        c.address AS cinema_address, 
+        c.city AS cinema_city, 
+        c.postcode AS cinema_postcode, 
+        c.phone AS cinema_phone, 
+        c.opening_hours AS cinema_opening_hours, 
+        q.name AS auditorium_quality, 
+        q.price AS auditorium_price 
+      FROM 
+        screening s 
+        INNER JOIN film f ON s.film_id = f.id 
+        INNER JOIN auditorium a ON s.auditorium_id = a.id
+        INNER JOIN cinema c ON a.cinema_id = c.id 
+        INNER JOIN quality q ON q.id = a.quality_id`
+    );
+
+    if (rows.length === 0) {
+      return { screenings: [] };
+    }
+
+    const screenings = rows.map((row) => ({
+      id: row.screening_id,
+      start_time: new Date(row.start_time),
+      end_time: new Date(row.end_time),
+      remaining_seat: row.remaining_seat,
+      remaining_handi_seat: row.remaining_handi_seat,
+      film: {
+        id: row.film_id,
+        title: row.title,
+        description: row.description,
+        release_date: row.release_date,
+        age_minimum: row.age_minimum,
+        favorite: row.favorite,
+        poster: row.poster,
+      },
+      auditorium: {
+        id: row.auditorium_id,
+        name: row.auditorium_name,
+        seat: row.auditorium_seat,
+        handi_seat: row.auditorium_handi_seat,
+        quality: row.auditorium_quality,
+        price: row.auditorium_price,
+        cinema: {
+          id: row.cinema_id,
+          name: row.cinema_name,
+          address: row.cinema_address,
+          city: row.cinema_city,
+          postcode: row.cinema_postcode,
+          phone: row.cinema_phone,
+          opening_hours: row.cinema_opening_hours,
+        },
+      },
+    }));
+
+    const films = await dbService.query(`SELECT * FROM film`);
+    const auditoriums = await auditoriumController.fetchAuditoriums();
+
+    return { screenings, films, auditoriums };
+  });
+};
+
+const getScreenings = async (req, res) => {
+  try {
+    const result = await fetchScreenings();
+
+    if (result.screenings.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "Film ou séances non trouvé(es)" });
+    }
+
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({
+      message: "Erreur lors de la récupération des screenings",
+      error: error.message,
+    });
+  }
+};
+
+const updateScreening = async (req, res) => {
+  console.log("req.body : ", req.body);
+  const {
+    locale,
+    screening: {
+      id,
+      start_time,
+      end_time,
+      remaining_seat,
+      remaining_handi_seat,
+      film,
+      auditorium,
+    },
+  } = req.body;
+
+  const formatted_start_time = moment(start_time)
+    .tz(locale)
+    .format("YYYY-MM-DD HH:mm:ss");
+
+  const formatted_end_time = moment(end_time)
+    .tz(locale)
+    .format("YYYY-MM-DD HH:mm:ss");
+
+  try {
+    const result = await dbService.executeTransaction(async () => {
+      await dbService.query(
+        `UPDATE screening
+        SET
+          start_time = ?,
+          end_time = ?,
+          remaining_seat = ?,
+          remaining_handi_seat = ?,
+          film_id = ?,
+          auditorium_id = ?
+        WHERE id = ?`,
+        [
+          formatted_start_time,
+          formatted_end_time,
+          remaining_seat,
+          remaining_handi_seat,
+          film.id,
+          auditorium.id,
+          id,
+        ]
+      );
+
+      return await fetchScreenings();
+    });
+    res.json(result);
+  } catch (error) {
+    console.error("Erreur lors de la mise à jour :", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Erreur lors de la mise à jour" });
+  }
+};
+
 module.exports = {
+  getScreenings,
   getScreeningById,
   getSeatsByScreeningId,
   getScreeningsByFilmId,
   getFilmScreeningsByCinemaId,
+  updateScreening,
 };
