@@ -4,6 +4,7 @@ const screeningController = require("../controllers/screeningController");
 
 router.get("/", screeningController.getScreenings);
 router.post("/update", screeningController.updateScreening);
+router.post("/add", screeningController.addScreening);
 router.get("/:id/seats", screeningController.getSeatsByScreeningId);
 router.get("/:id", screeningController.getScreeningById);
 router.get("/film/:filmId", screeningController.getScreeningsByFilmId);

@@ -479,18 +479,9 @@ const getScreenings = async (req, res) => {
 };
 
 const updateScreening = async (req, res) => {
-  console.log("req.body : ", req.body);
   const {
     locale,
-    screening: {
-      id,
-      start_time,
-      end_time,
-      remaining_seat,
-      remaining_handi_seat,
-      film,
-      auditorium,
-    },
+    screening: { id, start_time, end_time, film, auditorium },
   } = req.body;
 
   const formatted_start_time = moment(start_time)
@@ -508,11 +499,48 @@ const updateScreening = async (req, res) => {
         SET
           start_time = ?,
           end_time = ?,
-          remaining_seat = ?,
-          remaining_handi_seat = ?,
           film_id = ?,
           auditorium_id = ?
         WHERE id = ?`,
+        [formatted_start_time, formatted_end_time, film.id, auditorium.id, id]
+      );
+
+      return await fetchScreenings();
+    });
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({
+      message: "Erreur lors de l'ajout' de la séance",
+      error: error.message,
+    });
+  }
+};
+
+const addScreening = async (req, res) => {
+  const { id, start_time, end_time, film, auditorium } = req.body;
+  const formatted_start_time = new Date(start_time)
+    .toISOString()
+    .slice(0, 19)
+    .replace("T", " ");
+  const formatted_end_time = new Date(end_time)
+    .toISOString()
+    .slice(0, 19)
+    .replace("T", " ");
+
+  if (id !== undefined) return res.status(500).json({ message: "id defined" });
+
+  try {
+    const result = await dbService.executeTransaction(async () => {
+      const row = await dbService.query(
+        `SELECT seat, handi_seat from auditorium WHERE id = ?`,
+        [auditorium.id]
+      );
+
+      const remaining_seat = row[0].seat;
+      const remaining_handi_seat = row[0].handi_seat;
+
+      await dbService.query(
+        `INSERT INTO screening (start_time, end_time, remaining_seat, remaining_handi_seat, film_id, auditorium_id) VALUES (?,?,?,?,?,?)`,
         [
           formatted_start_time,
           formatted_end_time,
@@ -520,18 +548,16 @@ const updateScreening = async (req, res) => {
           remaining_handi_seat,
           film.id,
           auditorium.id,
-          id,
         ]
       );
-
       return await fetchScreenings();
     });
     res.json(result);
   } catch (error) {
-    console.error("Erreur lors de la mise à jour :", error);
-    res
-      .status(500)
-      .json({ success: false, message: "Erreur lors de la mise à jour" });
+    res.status(500).json({
+      message: "Erreur lors de l'ajout' de la séance",
+      error: error.message,
+    });
   }
 };
 
@@ -542,4 +568,5 @@ module.exports = {
   getScreeningsByFilmId,
   getFilmScreeningsByCinemaId,
   updateScreening,
+  addScreening,
 };
