@@ -78,7 +78,7 @@ CREATE TABLE `booking_screening_seat` (
   KEY `screening_id` (`screening_id`),
   CONSTRAINT `booking_seat_screening_ibfk_1` FOREIGN KEY (`booking_id`) REFERENCES `booking` (`id`),
   CONSTRAINT `booking_seat_screening_ibfk_2` FOREIGN KEY (`seat_id`) REFERENCES `seat` (`id`),
-  CONSTRAINT `booking_seat_screening_ibfk_3` FOREIGN KEY (`screening_id`) REFERENCES `screening` (`id`)
+  CONSTRAINT `booking_seat_screening_ibfk_3` FOREIGN KEY (`screening_id`) REFERENCES `screening` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

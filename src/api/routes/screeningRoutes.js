@@ -12,5 +12,6 @@ router.get(
   "/film/:filmId/cinema/:cinemaId",
   screeningController.getFilmScreeningsByCinemaId
 );
+router.delete("/delete/:id", screeningController.deleteScreeningById);
 
 module.exports = router;

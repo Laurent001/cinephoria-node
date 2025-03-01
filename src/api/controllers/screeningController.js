@@ -38,7 +38,6 @@ const getScreeningById = async (req, res) => {
 };
 
 const getSeatsByScreeningId = async (req, res) => {
-  console.log("test");
   const screeningId = req.params.id;
 
   try {
@@ -561,6 +560,25 @@ const addScreening = async (req, res) => {
   }
 };
 
+const deleteScreeningById = async (req, res) => {
+  const screeningId = req.params.id;
+
+  try {
+    const result = await dbService.executeTransaction(async () => {
+      await dbService.query(`DELETE FROM screening WHERE id = ?`, [
+        screeningId,
+      ]);
+      return await fetchScreenings();
+    });
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({
+      message: "Erreur lors de la suppression de la séance",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   getScreenings,
   getScreeningById,
@@ -569,4 +587,5 @@ module.exports = {
   getFilmScreeningsByCinemaId,
   updateScreening,
   addScreening,
+  deleteScreeningById,
 };
