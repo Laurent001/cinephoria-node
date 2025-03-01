@@ -55,7 +55,7 @@ CREATE TABLE `booking` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `total_price` decimal(10,2) NOT NULL,
-  `added_date` timestamp NOT NULL DEFAULT current_timestamp(),
+  `added_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `booking_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
@@ -78,7 +78,7 @@ CREATE TABLE `booking_screening_seat` (
   KEY `screening_id` (`screening_id`),
   CONSTRAINT `booking_seat_screening_ibfk_1` FOREIGN KEY (`booking_id`) REFERENCES `booking` (`id`),
   CONSTRAINT `booking_seat_screening_ibfk_2` FOREIGN KEY (`seat_id`) REFERENCES `seat` (`id`),
-  CONSTRAINT `booking_seat_screening_ibfk_3` FOREIGN KEY (`screening_id`) REFERENCES `screening` (`id`)
+  CONSTRAINT `booking_seat_screening_ibfk_3` FOREIGN KEY (`screening_id`) REFERENCES `screening` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -129,7 +129,7 @@ CREATE TABLE `film` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(255) NOT NULL,
   `description` text DEFAULT NULL,
-  `release_date` timestamp NOT NULL DEFAULT current_timestamp(),
+  `release_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `age_minimum` int(11) DEFAULT NULL CHECK (`age_minimum` between 3 and 18),
   `favorite` tinyint(1) DEFAULT 0,
   `poster` TEXT DEFAULT NULL,
@@ -180,7 +180,7 @@ CREATE TABLE `incident` (
   `auditorium_id` int(11) NOT NULL,
   `material_id` int(11) NOT NULL,
   `description` text DEFAULT NULL,
-  `added_date` date NOT NULL,
+  `added_date` datetime NOT NULL,
   `is_solved` tinyint(1) DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `auditorium_id` (`auditorium_id`),
@@ -218,7 +218,7 @@ CREATE TABLE `opinion` (
   `film_id` int(11) NOT NULL,
   `rating` int(11) DEFAULT NULL CHECK (`rating` between 1 and 5),
   `description` text DEFAULT NULL,
-  `added_date` date NOT NULL,
+  `added_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `status` varchar(50) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
