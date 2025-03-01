@@ -94,8 +94,7 @@ const getSeatsByScreeningId = async (req, res) => {
         q.name AS auditorium_quality,
         q.price AS auditorium_price,
         CASE 
-          WHEN bsc.seat_id IS NULL THEN TRUE 
-
+          WHEN bsc.seat_id IS NULL THEN TRUE
           ELSE FALSE 
         END AS is_available 
       FROM 
