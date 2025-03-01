@@ -141,7 +141,7 @@ const addIncident = async (req, res) => {
   const { id, description, is_solved, material, auditorium } = req.body;
   added_date = new Date().toISOString().slice(0, 19).replace("T", " ");
 
-  if (id !== 0) return res.status(500).json({ message: "id defined" });
+  if (id !== undefined) return res.status(500).json({ message: "id defined" });
 
   try {
     const result = await dbService.executeTransaction(async () => {
