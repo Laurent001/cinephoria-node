@@ -21,7 +21,13 @@ const getFilms = async (req, res) => {
       GROUP BY 
         f.id`
     );
-    res.json(rows);
+
+    const films = rows.map((film) => ({
+      ...film,
+      release_date: new Date(film.release_date),
+    }));
+
+    res.json(films);
   } catch (error) {
     res.status(500).json({
       message: "Erreur lors de la récupération des films",
