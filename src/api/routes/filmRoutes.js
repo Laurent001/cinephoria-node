@@ -8,10 +8,11 @@ const upload = multer({
 const filmController = require("../controllers/filmController");
 
 router.get("/", filmController.getFilms);
-router.put("/update", upload.single("poster_file"), filmController.updateFilm);
-router.post("/add", upload.single("poster_file"), filmController.addFilm);
 router.get("/cinema/:id", filmController.getFilmsByCinemaId);
 router.get("/genre/:id", filmController.getFilmsByGenreId);
 router.get("/date/:date", filmController.getFilmsByDate);
+router.post("/add", upload.single("poster_file"), filmController.addFilm);
+router.put("/update", upload.single("poster_file"), filmController.updateFilm);
+router.delete("/delete/:id", filmController.deleteFilm);
 
 module.exports = router;

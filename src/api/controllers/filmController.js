@@ -190,21 +190,7 @@ const updateFilm = async (req, res) => {
       return await fetchFilms();
     });
 
-    if (oldPosterFilename && oldPosterFilename !== poster_final) {
-      const absolutePath = path.resolve(
-        __dirname,
-        "../../../public/images",
-        oldPosterFilename
-      );
-      fs.unlink(absolutePath, (err) => {
-        if (err) {
-          console.error(
-            "Erreur lors de la suppression de l'ancien fichier:",
-            err
-          );
-        }
-      });
-    }
+    deletePoster(oldPosterFilename);
 
     res.json(result);
   } catch (error) {
@@ -249,6 +235,33 @@ const addFilm = async (req, res) => {
   }
 };
 
+const deleteFilm = async (req, res) => {
+  const filmId = req.params.id;
+
+  try {
+    const result = await dbService.executeTransaction(async () => {
+      const [rows] = await dbService.query(
+        `SELECT poster FROM film WHERE id = ?`,
+        [filmId]
+      );
+
+      if (rows && rows.poster) {
+        posterFilename = path.basename(rows.poster);
+        deletePoster(posterFilename);
+      }
+
+      await dbService.query(`DELETE FROM film WHERE id = ?`, [filmId]);
+      return await fetchFilms();
+    });
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({
+      message: "Erreur lors de la suppression du film",
+      error: error.message,
+    });
+  }
+};
+
 function getNextWednesday() {
   const today = new Date();
   let nextWednesday = new Date();
@@ -269,6 +282,27 @@ function getNextWednesday() {
   return release_date;
 }
 
+const deletePoster = (posterFilename) => {
+  if (!posterFilename) {
+    console.error("Nom de fichier non fourni.");
+    return;
+  }
+
+  const absolutePath = path.resolve(
+    __dirname,
+    "../../../public/images",
+    posterFilename
+  );
+
+  fs.unlink(absolutePath, (error) => {
+    if (error) {
+      console.error("Erreur lors de la suppression du fichier:", error);
+    } else {
+      console.log("Fichier supprimé avec succès:", posterFilename);
+    }
+  });
+};
+
 module.exports = {
   getFilms,
   getFilmsByCinemaId,
@@ -276,4 +310,5 @@ module.exports = {
   getFilmsByDate,
   updateFilm,
   addFilm,
+  deleteFilm,
 };
