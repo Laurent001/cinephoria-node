@@ -9,7 +9,7 @@ const filmController = require("../controllers/filmController");
 
 router.get("/", filmController.getFilms);
 router.put("/update", upload.single("poster_file"), filmController.updateFilm);
-// router.post("/add", filmController.addFilm);
+router.post("/add", upload.single("poster_file"), filmController.addFilm);
 router.get("/cinema/:id", filmController.getFilmsByCinemaId);
 router.get("/genre/:id", filmController.getFilmsByGenreId);
 router.get("/date/:date", filmController.getFilmsByDate);

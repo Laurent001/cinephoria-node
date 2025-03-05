@@ -171,7 +171,7 @@ const updateFilm = async (req, res) => {
   }
 
   const poster_file = req.file;
-  const poster_url_final = poster_file ? poster_file.filename : poster;
+  const poster_final = poster_file ? poster_file.filename : poster;
 
   try {
     const result = await dbService.executeTransaction(async () => {
@@ -184,13 +184,13 @@ const updateFilm = async (req, res) => {
           description = ?,
           poster = ?
         WHERE id = ?`,
-        [title, favorite, age_minimum, description, poster_url_final, id]
+        [title, favorite, age_minimum, description, poster_final, id]
       );
 
       return await fetchFilms();
     });
 
-    if (oldPosterFilename && oldPosterFilename !== poster_url_final) {
+    if (oldPosterFilename && oldPosterFilename !== poster_final) {
       const absolutePath = path.resolve(
         __dirname,
         "../../../public/images",
@@ -215,10 +215,65 @@ const updateFilm = async (req, res) => {
   }
 };
 
+const addFilm = async (req, res) => {
+  const { id, title, description, age_minimum, favorite, poster } = req.body;
+  const release_date = getNextWednesday();
+
+  if (id !== "") return res.status(500).json({ message: "id defined" });
+
+  const favoriteBool = favorite === "true" || favorite === true;
+  const poster_file = req.file;
+  const poster_final = poster_file ? poster_file.filename : poster;
+
+  try {
+    const result = await dbService.executeTransaction(async () => {
+      await dbService.query(
+        `INSERT INTO film (title, description, release_date, age_minimum, favorite, poster) VALUES (?,?,?,?,?, ?)`,
+        [
+          title,
+          description,
+          release_date,
+          age_minimum,
+          favoriteBool,
+          poster_final,
+        ]
+      );
+      return await fetchFilms();
+    });
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({
+      message: "Erreur lors de l'ajout du film",
+      error: error.message,
+    });
+  }
+};
+
+function getNextWednesday() {
+  const today = new Date();
+  let nextWednesday = new Date();
+
+  const currentDay = today.getDay();
+
+  let daysUntilWednesday = 3 - currentDay;
+  if (daysUntilWednesday <= 0) {
+    daysUntilWednesday += 7;
+  }
+
+  nextWednesday.setDate(today.getDate() + daysUntilWednesday);
+
+  const release_date = nextWednesday
+    .toISOString()
+    .slice(0, 19)
+    .replace("T", " ");
+  return release_date;
+}
+
 module.exports = {
   getFilms,
   getFilmsByCinemaId,
   getFilmsByGenreId,
   getFilmsByDate,
   updateFilm,
+  addFilm,
 };
