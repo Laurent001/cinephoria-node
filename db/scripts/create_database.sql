@@ -114,7 +114,7 @@ CREATE TABLE `cinema_film` (
   PRIMARY KEY (`cinema_id`,`film_id`),
   KEY `film_id` (`film_id`),
   CONSTRAINT `cinema_film_ibfk_1` FOREIGN KEY (`cinema_id`) REFERENCES `cinema` (`id`),
-  CONSTRAINT `cinema_film_ibfk_2` FOREIGN KEY (`film_id`) REFERENCES `film` (`id`)
+  CONSTRAINT `cinema_film_ibfk_2` FOREIGN KEY (`film_id`) REFERENCES `film` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -149,7 +149,7 @@ CREATE TABLE `film_genre` (
   `genre_id` int(11) NOT NULL,
   PRIMARY KEY (`film_id`,`genre_id`),
   KEY `genre_id` (`genre_id`),
-  CONSTRAINT `film_genre_ibfk_1` FOREIGN KEY (`film_id`) REFERENCES `film` (`id`),
+  CONSTRAINT `film_genre_ibfk_1` FOREIGN KEY (`film_id`) REFERENCES `film` (`id`) ON DELETE CASCADE,
   CONSTRAINT `film_genre_ibfk_2` FOREIGN KEY (`genre_id`) REFERENCES `genre` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -224,7 +224,7 @@ CREATE TABLE `opinion` (
   KEY `user_id` (`user_id`),
   KEY `film_id` (`film_id`),
   CONSTRAINT `opinion_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
-  CONSTRAINT `opinion_ibfk_2` FOREIGN KEY (`film_id`) REFERENCES `film` (`id`)
+  CONSTRAINT `opinion_ibfk_2` FOREIGN KEY (`film_id`) REFERENCES `film` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -261,7 +261,7 @@ CREATE TABLE `screening` (
   PRIMARY KEY (`id`),
   KEY `film_id` (`film_id`),
   KEY `auditorium_id` (`auditorium_id`),
-  CONSTRAINT `screening_ibfk_1` FOREIGN KEY (`film_id`) REFERENCES `film` (`id`),
+  CONSTRAINT `screening_ibfk_1` FOREIGN KEY (`film_id`) REFERENCES `film` (`id`) ON DELETE CASCADE,
   CONSTRAINT `screening_ibfk_3` FOREIGN KEY (`auditorium_id`) REFERENCES `auditorium` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;

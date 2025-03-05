@@ -1,6 +1,25 @@
+const path = require("path");
+const fs = require("fs");
 const dbService = require("../../services/database.service");
 
 const getFilms = async (req, res) => {
+  try {
+    const films = await fetchFilms();
+
+    if (films.length === 0) {
+      return res.status(404).json({ message: "Film(s) non trouvé(s)" });
+    }
+
+    res.json(films);
+  } catch (error) {
+    res.status(500).json({
+      message: "Erreur lors de la récupération des films",
+      error: error.message,
+    });
+  }
+};
+
+const fetchFilms = async () => {
   try {
     const rows = await dbService.query(
       `SELECT 
@@ -21,12 +40,15 @@ const getFilms = async (req, res) => {
       GROUP BY 
         f.id`
     );
-    res.json(rows);
+
+    const films = rows.map((film) => ({
+      ...film,
+      release_date: new Date(film.release_date),
+    }));
+
+    return films;
   } catch (error) {
-    res.status(500).json({
-      message: "Erreur lors de la récupération des films",
-      error: error.message,
-    });
+    return [];
   }
 };
 
@@ -128,9 +150,165 @@ const getFilmsByDate = async (req, res) => {
   }
 };
 
+const updateFilm = async (req, res) => {
+  const { id, title, favorite, age_minimum, description, poster } = req.body;
+  let oldPosterFilename = "";
+
+  try {
+    const [rows] = await dbService.query(
+      `SELECT poster FROM film WHERE id = ?`,
+      [id]
+    );
+
+    if (rows && rows.poster) {
+      oldPosterFilename = path.basename(rows.poster);
+    }
+  } catch (error) {
+    return res.status(500).json({
+      message: "Erreur lors de la récupération de l'ancien nom de fichier",
+      error: error.message,
+    });
+  }
+
+  const poster_file = req.file;
+  const poster_final = poster_file ? poster_file.filename : poster;
+
+  try {
+    const result = await dbService.executeTransaction(async () => {
+      await dbService.query(
+        `UPDATE film
+        SET
+          title = ?,
+          favorite = ?,
+          age_minimum = ?,
+          description = ?,
+          poster = ?
+        WHERE id = ?`,
+        [title, favorite, age_minimum, description, poster_final, id]
+      );
+
+      return await fetchFilms();
+    });
+
+    deletePoster(oldPosterFilename);
+
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({
+      message: "Erreur lors de la mise à jour du film",
+      error: error.message,
+    });
+  }
+};
+
+const addFilm = async (req, res) => {
+  const { id, title, description, age_minimum, favorite, poster } = req.body;
+  const release_date = getNextWednesday();
+
+  if (id !== "") return res.status(500).json({ message: "id defined" });
+
+  const favoriteBool = favorite === "true" || favorite === true;
+  const poster_file = req.file;
+  const poster_final = poster_file ? poster_file.filename : poster;
+
+  try {
+    const result = await dbService.executeTransaction(async () => {
+      await dbService.query(
+        `INSERT INTO film (title, description, release_date, age_minimum, favorite, poster) VALUES (?,?,?,?,?, ?)`,
+        [
+          title,
+          description,
+          release_date,
+          age_minimum,
+          favoriteBool,
+          poster_final,
+        ]
+      );
+      return await fetchFilms();
+    });
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({
+      message: "Erreur lors de l'ajout du film",
+      error: error.message,
+    });
+  }
+};
+
+const deleteFilm = async (req, res) => {
+  const filmId = req.params.id;
+
+  try {
+    const result = await dbService.executeTransaction(async () => {
+      const [rows] = await dbService.query(
+        `SELECT poster FROM film WHERE id = ?`,
+        [filmId]
+      );
+
+      if (rows && rows.poster) {
+        posterFilename = path.basename(rows.poster);
+        deletePoster(posterFilename);
+      }
+
+      await dbService.query(`DELETE FROM film WHERE id = ?`, [filmId]);
+      return await fetchFilms();
+    });
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({
+      message: "Erreur lors de la suppression du film",
+      error: error.message,
+    });
+  }
+};
+
+function getNextWednesday() {
+  const today = new Date();
+  let nextWednesday = new Date();
+
+  const currentDay = today.getDay();
+
+  let daysUntilWednesday = 3 - currentDay;
+  if (daysUntilWednesday <= 0) {
+    daysUntilWednesday += 7;
+  }
+
+  nextWednesday.setDate(today.getDate() + daysUntilWednesday);
+
+  const release_date = nextWednesday
+    .toISOString()
+    .slice(0, 19)
+    .replace("T", " ");
+  return release_date;
+}
+
+const deletePoster = (posterFilename) => {
+  if (!posterFilename) {
+    console.error("Nom de fichier non fourni.");
+    return;
+  }
+
+  const absolutePath = path.resolve(
+    __dirname,
+    "../../../public/images",
+    posterFilename
+  );
+
+  fs.unlink(absolutePath, (error) => {
+    if (error) {
+      console.error("Erreur lors de la suppression du fichier:", error);
+    } else {
+      console.log("Fichier supprimé avec succès:", posterFilename);
+    }
+  });
+};
+
 module.exports = {
   getFilms,
   getFilmsByCinemaId,
   getFilmsByGenreId,
   getFilmsByDate,
+  updateFilm,
+  addFilm,
+  deleteFilm,
 };

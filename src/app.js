@@ -1,6 +1,8 @@
 const express = require("express");
 const app = express();
+const path = require("path");
 const cors = require("cors");
+
 const loginRoutes = require("./api/routes/loginRoutes");
 const logoutRoutes = require("./api/routes/logoutRoutes");
 const registerRoutes = require("./api/routes/registerRoutes");
@@ -21,6 +23,8 @@ const authMiddleware = require("./middleware/authMiddleware");
 
 app.use(cors());
 app.use(express.json());
+
+app.use(express.static(path.join(__dirname, "../public")));
 app.use("/api/login", loginRoutes);
 app.use("/api/register", registerRoutes);
 app.use("/api/film", filmRoutes);
