@@ -24,7 +24,7 @@ const authMiddleware = require("./middleware/authMiddleware");
 app.use(cors());
 app.use(express.json());
 
-app.use(express.static(path.join(__dirname, "../public")));
+app.use("/images", express.static("public/images"));
 app.use("/api/login", loginRoutes);
 app.use("/api/register", registerRoutes);
 app.use("/api/film", filmRoutes);
