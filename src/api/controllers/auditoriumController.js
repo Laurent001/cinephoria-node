@@ -74,43 +74,40 @@ const fetchAuditoriums = async () => {
   });
 };
 
-// const updateScreening = async (req, res) => {
-//   const {
-//     locale,
-//     screening: { id, start_time, end_time, film, auditorium },
-//   } = req.body;
+const updateAuditorium = async (req, res) => {
+  const {
+    id,
+    name,
+    seat,
+    seat_handi,
+    quality: { id: qualityId },
+    cinema: { id: cinemaId },
+  } = req.body;
 
-//   const formatted_start_time = moment(start_time)
-//     .tz(locale)
-//     .format("YYYY-MM-DD HH:mm:ss");
+  try {
+    const result = await dbService.executeTransaction(async () => {
+      await dbService.query(
+        `UPDATE auditorium
+        SET
+          name = ?,
+          seat = ?,
+          seat_handi = ?,
+          quality_id = ?,
+          cinema_id = ?
+        WHERE id = ?`,
+        [name, seat, seat_handi, qualityId, cinemaId, id]
+      );
 
-//   const formatted_end_time = moment(end_time)
-//     .tz(locale)
-//     .format("YYYY-MM-DD HH:mm:ss");
-
-//   try {
-//     const result = await dbService.executeTransaction(async () => {
-//       await dbService.query(
-//         `UPDATE screening
-//         SET
-//           start_time = ?,
-//           end_time = ?,
-//           film_id = ?,
-//           auditorium_id = ?
-//         WHERE id = ?`,
-//         [formatted_start_time, formatted_end_time, film.id, auditorium.id, id]
-//       );
-
-//       return await fetchScreenings();
-//     });
-//     res.json(result);
-//   } catch (error) {
-//     res.status(500).json({
-//       message: "Erreur lors de l'ajout' de la séance",
-//       error: error.message,
-//     });
-//   }
-// };
+      return await fetchAuditoriums();
+    });
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({
+      message: "Erreur lors de l'ajout' de la séance",
+      error: error.message,
+    });
+  }
+};
 
 // const addScreening = async (req, res) => {
 //   const { id, start_time, end_time, film, auditorium } = req.body;
@@ -179,4 +176,5 @@ const fetchAuditoriums = async () => {
 module.exports = {
   getAuditoriums,
   fetchAuditoriums,
+  updateAuditorium,
 };
