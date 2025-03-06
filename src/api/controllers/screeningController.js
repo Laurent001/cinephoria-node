@@ -13,7 +13,7 @@ const getScreeningById = async (req, res) => {
         sc.end_time,
         a.name AS auditorium_name,
         a.seat AS auditorium_seat,
-        a.handi_seat AS auditorium_handi_seat,
+        a.seat_handi AS auditorium_seat_handi,
         a.cinema_id AS auditorium_cinema_id,
         q.name AS auditorium_quality,
         q.price AS auditorium_price      
@@ -51,7 +51,7 @@ const getSeatsByScreeningId = async (req, res) => {
         se.is_handi, 
         a.name AS auditorium_name, 
         a.cinema_id AS auditorium_cinema_id, 
-        a.handi_seat AS auditorium_handi_seat,
+        a.seat_handi AS auditorium_seat_handi,
         a.seat AS auditorium_seat,
         q.name AS auditorium_quality,
         q.price AS auditorium_price,
@@ -83,7 +83,7 @@ const getSeatsByScreeningId = async (req, res) => {
       auditorium: {
         name: rows[0].auditorium_name,
         seat: rows[0].auditorium_seat,
-        handi_seat: rows[0].auditorium_handi_seat,
+        seat_handi: rows[0].auditorium_seat_handi,
         quality: rows[0].auditorium_quality,
         price: rows[0].auditorium_price,
         cinema_id: rows[0].cinema_id,
@@ -133,12 +133,12 @@ const getScreeningsByFilmId = async (req, res) => {
         s.film_id AS screening_film_id, 
         s.auditorium_id AS screening_auditorium_id, 
         s.remaining_seat, 
-        s.remaining_handi_seat, 
+        s.remaining_seat_handi, 
         s.start_time, 
         s.end_time, 
         a.name AS auditorium_name, 
         a.seat AS auditorium_seat, 
-        a.handi_seat AS auditorium_handi_seat, 
+        a.seat_handi AS auditorium_seat_handi, 
         a.cinema_id AS auditorium_cinema_id, 
         q.name AS auditorium_quality_id, 
         q.name AS auditorium_quality, 
@@ -207,7 +207,7 @@ const getScreeningsByFilmId = async (req, res) => {
         auditorium: {
           name: row.auditorium_name,
           seat: row.auditorium_seat,
-          handi_seat: row.auditorium_handi_seat,
+          seat_handi: row.auditorium_seat_handi,
           quality: row.auditorium_quality,
           quality_id: row.auditorium_quality_id,
           price: row.auditorium_price,
@@ -266,12 +266,12 @@ const getFilmScreeningsByCinemaId = async (req, res) => {
         s.film_id AS screening_film_id, 
         s.auditorium_id AS screening_auditorium_id, 
         s.remaining_seat, 
-        s.remaining_handi_seat, 
+        s.remaining_seat_handi, 
         s.start_time, 
         s.end_time, 
         a.name AS auditorium_name, 
         a.seat AS auditorium_seat, 
-        a.handi_seat AS auditorium_handi_seat, 
+        a.seat_handi AS auditorium_seat_handi, 
         a.cinema_id AS auditorium_cinema_id, 
         q.name AS auditorium_quality, 
         q.price AS auditorium_price 
@@ -340,7 +340,7 @@ const getFilmScreeningsByCinemaId = async (req, res) => {
         auditorium: {
           name: row.auditorium_name,
           seat: row.auditorium_seat,
-          handi_seat: row.auditorium_handi_seat,
+          seat_handi: row.auditorium_seat_handi,
           quality: row.auditorium_quality,
           price: row.auditorium_price,
           cinema: {
@@ -388,13 +388,13 @@ const fetchScreenings = async () => {
         s.film_id AS screening_film_id, 
         s.auditorium_id AS screening_auditorium_id, 
         s.remaining_seat, 
-        s.remaining_handi_seat, 
+        s.remaining_seat_handi, 
         s.start_time, 
         s.end_time, 
         a.id AS auditorium_id, 
         a.name AS auditorium_name, 
         a.seat AS auditorium_seat, 
-        a.handi_seat AS auditorium_handi_seat, 
+        a.seat_handi AS auditorium_seat_handi, 
         a.cinema_id AS auditorium_cinema_id,
         c.id AS cinema_id, 
         c.name AS cinema_name, 
@@ -422,7 +422,7 @@ const fetchScreenings = async () => {
       start_time: new Date(row.start_time),
       end_time: new Date(row.end_time),
       remaining_seat: row.remaining_seat,
-      remaining_handi_seat: row.remaining_handi_seat,
+      remaining_seat_handi: row.remaining_seat_handi,
       film: {
         id: row.film_id,
         title: row.title,
@@ -436,7 +436,7 @@ const fetchScreenings = async () => {
         id: row.auditorium_id,
         name: row.auditorium_name,
         seat: row.auditorium_seat,
-        handi_seat: row.auditorium_handi_seat,
+        seat_handi: row.auditorium_seat_handi,
         quality: row.auditorium_quality,
         price: row.auditorium_price,
         cinema: {
@@ -531,20 +531,20 @@ const addScreening = async (req, res) => {
   try {
     const result = await dbService.executeTransaction(async () => {
       const row = await dbService.query(
-        `SELECT seat, handi_seat from auditorium WHERE id = ?`,
+        `SELECT seat, seat_handi from auditorium WHERE id = ?`,
         [auditorium.id]
       );
 
       const remaining_seat = row[0].seat;
-      const remaining_handi_seat = row[0].handi_seat;
+      const remaining_seat_handi = row[0].seat_handi;
 
       await dbService.query(
-        `INSERT INTO screening (start_time, end_time, remaining_seat, remaining_handi_seat, film_id, auditorium_id) VALUES (?,?,?,?,?,?)`,
+        `INSERT INTO screening (start_time, end_time, remaining_seat, remaining_seat_handi, film_id, auditorium_id) VALUES (?,?,?,?,?,?)`,
         [
           formatted_start_time,
           formatted_end_time,
           remaining_seat,
-          remaining_handi_seat,
+          remaining_seat_handi,
           film.id,
           auditorium.id,
         ]

@@ -297,8 +297,6 @@ const deletePoster = (posterFilename) => {
   fs.unlink(absolutePath, (error) => {
     if (error) {
       console.error("Erreur lors de la suppression du fichier:", error);
-    } else {
-      console.log("Fichier supprimé avec succès:", posterFilename);
     }
   });
 };
