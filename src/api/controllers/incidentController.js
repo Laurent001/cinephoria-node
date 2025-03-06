@@ -65,10 +65,8 @@ const fetchIncidents = async () => {
       },
     }));
 
-    const [auditoriums, materials] = await Promise.all([
-      auditoriumController.fetchAuditoriums(),
-      materialController.fetchMaterials(),
-    ]);
+    const materials = await materialController.fetchMaterials();
+    const auditoriums = await dbService.query(`SELECT * FROM auditorium`);
 
     return { incidents, auditoriums, materials };
   } catch (error) {

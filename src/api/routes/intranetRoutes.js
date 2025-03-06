@@ -26,10 +26,10 @@ router.delete("/film/delete/:id", filmController.deleteFilm);
 
 router.get("/auditorium", auditoriumController.getAuditoriums);
 router.put("/auditorium/update", auditoriumController.updateAuditorium);
-// router.post("/auditorium/add", auditoriumController.addAuditorium);
-// router.delete(
-//   "/auditorium/delete/:id",
-//   auditoriumController.deleteAuditoriumById
-// );
+router.post("/auditorium/add", auditoriumController.addAuditorium);
+router.delete(
+  "/auditorium/delete/:id",
+  auditoriumController.deleteAuditoriumById
+);
 
 module.exports = router;

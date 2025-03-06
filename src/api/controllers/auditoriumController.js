@@ -109,72 +109,58 @@ const updateAuditorium = async (req, res) => {
   }
 };
 
-// const addScreening = async (req, res) => {
-//   const { id, start_time, end_time, film, auditorium } = req.body;
-//   const formatted_start_time = new Date(start_time)
-//     .toISOString()
-//     .slice(0, 19)
-//     .replace("T", " ");
-//   const formatted_end_time = new Date(end_time)
-//     .toISOString()
-//     .slice(0, 19)
-//     .replace("T", " ");
+const addAuditorium = async (req, res) => {
+  const {
+    id,
+    name,
+    seat,
+    seat_handi,
+    quality: { id: qualityId },
+    cinema: { id: cinemaId },
+  } = req.body;
 
-//   if (id !== undefined) return res.status(500).json({ message: "id defined" });
+  if (id !== undefined) return res.status(500).json({ message: "id defined" });
 
-//   try {
-//     const result = await dbService.executeTransaction(async () => {
-//       const row = await dbService.query(
-//         `SELECT seat, seat_handi from auditorium WHERE id = ?`,
-//         [auditorium.id]
-//       );
+  try {
+    const result = await dbService.executeTransaction(async () => {
+      await dbService.query(
+        `INSERT INTO auditorium (name, seat, seat_handi, quality_id, cinema_id) VALUES (?,?,?,?,?)`,
+        [name, seat, seat_handi, qualityId, cinemaId]
+      );
+      return await fetchAuditoriums();
+    });
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({
+      message: "Erreur lors de l'ajout' de la salle",
+      error: error.message,
+    });
+  }
+};
 
-//       const remaining_seat = row[0].seat;
-//       const remaining_seat_handi = row[0].seat_handi;
+const deleteAuditoriumById = async (req, res) => {
+  const auditoriumId = req.params.id;
 
-//       await dbService.query(
-//         `INSERT INTO screening (start_time, end_time, remaining_seat, remaining_seat_handi, film_id, auditorium_id) VALUES (?,?,?,?,?,?)`,
-//         [
-//           formatted_start_time,
-//           formatted_end_time,
-//           remaining_seat,
-//           remaining_seat_handi,
-//           film.id,
-//           auditorium.id,
-//         ]
-//       );
-//       return await fetchScreenings();
-//     });
-//     res.json(result);
-//   } catch (error) {
-//     res.status(500).json({
-//       message: "Erreur lors de l'ajout' de la séance",
-//       error: error.message,
-//     });
-//   }
-// };
-
-// const deleteScreeningById = async (req, res) => {
-//   const screeningId = req.params.id;
-
-//   try {
-//     const result = await dbService.executeTransaction(async () => {
-//       await dbService.query(`DELETE FROM screening WHERE id = ?`, [
-//         screeningId,
-//       ]);
-//       return await fetchScreenings();
-//     });
-//     res.json(result);
-//   } catch (error) {
-//     res.status(500).json({
-//       message: "Erreur lors de la suppression de la séance",
-//       error: error.message,
-//     });
-//   }
-// };
+  try {
+    const result = await dbService.executeTransaction(async () => {
+      await dbService.query(`DELETE FROM auditorium WHERE id = ?`, [
+        auditoriumId,
+      ]);
+      return await fetchAuditoriums();
+    });
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({
+      message: "Erreur lors de la suppression de la séance",
+      error: error.message,
+    });
+  }
+};
 
 module.exports = {
   getAuditoriums,
   fetchAuditoriums,
   updateAuditorium,
+  addAuditorium,
+  deleteAuditoriumById,
 };

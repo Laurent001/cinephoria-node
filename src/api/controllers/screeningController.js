@@ -452,7 +452,7 @@ const fetchScreenings = async () => {
     }));
 
     const films = await dbService.query(`SELECT * FROM film`);
-    const auditoriums = await auditoriumController.fetchAuditoriums();
+    const auditoriums = await dbService.query(`SELECT * FROM auditorium`);
 
     return { screenings, films, auditoriums };
   });

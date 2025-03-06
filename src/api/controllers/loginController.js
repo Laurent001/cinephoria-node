@@ -48,7 +48,7 @@ const sendEmailReset = async (req, res) => {
       email,
     ]);
 
-    if (user.length === 0) {
+    if (!user) {
       res.status(400).json({ message: "Utilisateur non trouvé" });
     }
 
