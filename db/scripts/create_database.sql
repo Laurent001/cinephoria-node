@@ -35,7 +35,7 @@ CREATE TABLE `auditorium` (
   `quality_id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
   `seat` int(11) NOT NULL,
-  `handi_seat` int(11) NOT NULL,
+  `seat_handi` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `cinema_id` (`cinema_id`),
   KEY `quality_id` (`quality_id`),
@@ -185,7 +185,7 @@ CREATE TABLE `incident` (
   PRIMARY KEY (`id`),
   KEY `auditorium_id` (`auditorium_id`),
   KEY `material_id` (`material_id`),
-  CONSTRAINT `incident_ibfk_1` FOREIGN KEY (`auditorium_id`) REFERENCES `auditorium` (`id`),
+  CONSTRAINT `incident_ibfk_1` FOREIGN KEY (`auditorium_id`) REFERENCES `auditorium` (`id`) ON DELETE CASCADE,
   CONSTRAINT `incident_ibfk_2` FOREIGN KEY (`material_id`) REFERENCES `material` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -255,14 +255,14 @@ CREATE TABLE `screening` (
   `film_id` int(11) NOT NULL,
   `auditorium_id` int(11) NOT NULL,
   `remaining_seat` int(11) NOT NULL,
-  `remaining_handi_seat` int(11) NOT NULL,
+  `remaining_seat_handi` int(11) NOT NULL,
   `start_time` datetime NOT NULL,
   `end_time` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `film_id` (`film_id`),
   KEY `auditorium_id` (`auditorium_id`),
   CONSTRAINT `screening_ibfk_1` FOREIGN KEY (`film_id`) REFERENCES `film` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `screening_ibfk_3` FOREIGN KEY (`auditorium_id`) REFERENCES `auditorium` (`id`)
+  CONSTRAINT `screening_ibfk_3` FOREIGN KEY (`auditorium_id`) REFERENCES `auditorium` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -280,7 +280,7 @@ CREATE TABLE `seat` (
   `is_handi` tinyint(1) DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `auditorium_id` (`auditorium_id`),
-  CONSTRAINT `seat_ibfk_1` FOREIGN KEY (`auditorium_id`) REFERENCES `auditorium` (`id`)
+  CONSTRAINT `seat_ibfk_1` FOREIGN KEY (`auditorium_id`) REFERENCES `auditorium` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=2574 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

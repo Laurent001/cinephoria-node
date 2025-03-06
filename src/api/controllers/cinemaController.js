@@ -2,7 +2,11 @@ const dbService = require("../../services/database.service");
 
 const getCinemas = async (req, res) => {
   try {
-    const rows = await dbService.query(`SELECT * FROM cinema`);
+    const rows = await fetchCinemas();
+
+    if (rows.length === 0) {
+      res.json({ message: "Aucun cinéma trouvé" });
+    }
 
     res.json(rows);
   } catch (error) {
@@ -10,6 +14,22 @@ const getCinemas = async (req, res) => {
       message: "Erreur lors de la récupération des cinemas",
       error: error.message,
     });
+  }
+};
+
+const fetchCinemas = async () => {
+  try {
+    const rows = await dbService.query(`SELECT * FROM cinema`);
+
+    if (rows.length === 0) {
+      return [];
+    }
+
+    return rows;
+  } catch (error) {
+    return {
+      error: `Erreur lors de la récupération des cinemas: ${error.message}`,
+    };
   }
 };
 
@@ -61,5 +81,6 @@ const getCinemaByScreeningId = async (req, res) => {
 
 module.exports = {
   getCinemas,
+  fetchCinemas,
   getCinemaByScreeningId,
 };
