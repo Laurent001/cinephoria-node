@@ -17,7 +17,7 @@ const fetchIncidents = async () => {
         a.id AS auditorium_id, 
         a.name AS auditorium_name, 
         a.seat AS auditorium_seat, 
-        a.handi_seat AS auditorium_handi_seat, 
+        a.seat_handi AS auditorium_seat_handi, 
         a.quality_id AS auditorium_quality_id, 
         c.id AS cinema_id, 
         c.name AS cinema_name, 
@@ -51,7 +51,7 @@ const fetchIncidents = async () => {
         id: row.auditorium_id,
         name: row.auditorium_name,
         seat: row.auditorium_seat,
-        handi_seat: row.auditorium_handi_seat,
+        seat_handi: row.auditorium_seat_handi,
         quality_id: row.auditorium_quality_id,
         cinema: {
           id: row.cinema_id,
@@ -65,10 +65,8 @@ const fetchIncidents = async () => {
       },
     }));
 
-    const [auditoriums, materials] = await Promise.all([
-      auditoriumController.fetchAuditoriums(),
-      materialController.fetchMaterials(),
-    ]);
+    const materials = await materialController.fetchMaterials();
+    const auditoriums = await dbService.query(`SELECT * FROM auditorium`);
 
     return { incidents, auditoriums, materials };
   } catch (error) {

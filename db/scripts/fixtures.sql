@@ -238,7 +238,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `screening` WRITE;
 /*!40000 ALTER TABLE `screening` DISABLE KEYS */;
-INSERT INTO screening (film_id, auditorium_id, remaining_seat, remaining_handi_seat, start_time, end_time) VALUES
+INSERT INTO screening (film_id, auditorium_id, remaining_seat, remaining_seat_handi, start_time, end_time) VALUES
 (1, 1, 95, 5,  '2025-03-01 10:00:00', '2025-03-01 11:45:00'),
 (1, 1, 95, 5,  '2025-03-01 16:00:00', '2025-03-01 17:45:00'),
 (1, 2, 95, 5,  '2025-03-02 11:00:00', '2025-03-02 12:45:00'),
