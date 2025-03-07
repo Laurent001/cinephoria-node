@@ -4,11 +4,7 @@ const intranetController = require("../controllers/intranetController");
 const screeningController = require("../controllers/screeningController");
 const filmController = require("../controllers/filmController");
 const auditoriumController = require("../controllers/auditoriumController");
-const multer = require("multer");
-const upload = multer({
-  dest: "public/images",
-  limits: { fileSize: 5 * 1024 * 1024 },
-});
+const { upload } = require("../../services/cloudinary.service");
 
 router.get("/", intranetController.getIntranet);
 
