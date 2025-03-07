@@ -1,6 +1,7 @@
 const path = require("path");
 const fs = require("fs");
 const dbService = require("../../services/database.service");
+const cloudinaryService = require("../../services/cloudinary.service");
 
 const getFilms = async (req, res) => {
   try {
@@ -152,7 +153,7 @@ const getFilmsByDate = async (req, res) => {
 
 const updateFilm = async (req, res) => {
   const { id, title, favorite, age_minimum, description, poster } = req.body;
-  let oldPosterFilename = "";
+  const poster_file = req.file;
 
   try {
     const [rows] = await dbService.query(
@@ -160,37 +161,34 @@ const updateFilm = async (req, res) => {
       [id]
     );
 
-    if (rows && rows.poster) {
-      oldPosterFilename = path.basename(rows.poster);
+    const poster_final = poster_file
+      ? process.env.NODE_ENV === "production"
+        ? poster_file.filename
+        : poster_file.filename
+      : poster;
+
+    let oldPosterFilename =
+      rows && rows.poster
+        ? process.env.NODE_ENV === "production"
+          ? path.basename(rows.poster)
+          : rows.poster
+        : null;
+
+    if (poster_file && oldPosterFilename) {
+      if (process.env.NODE_ENV === "production") {
+        await cloudinaryService.deleteFromCloudinary(oldPosterFilename);
+      } else {
+        deletePoster(oldPosterFilename);
+      }
     }
-  } catch (error) {
-    return res.status(500).json({
-      message: "Erreur lors de la récupération de l'ancien nom de fichier",
-      error: error.message,
-    });
-  }
 
-  const poster_file = req.file;
-  const poster_final = poster_file ? poster_file.filename : poster;
-
-  try {
     const result = await dbService.executeTransaction(async () => {
       await dbService.query(
-        `UPDATE film
-        SET
-          title = ?,
-          favorite = ?,
-          age_minimum = ?,
-          description = ?,
-          poster = ?
-        WHERE id = ?`,
+        `UPDATE film SET title = ?, favorite = ?, age_minimum = ?, description = ?, poster = ? WHERE id = ?`,
         [title, favorite, age_minimum, description, poster_final, id]
       );
-
       return await fetchFilms();
     });
-
-    deletePoster(oldPosterFilename);
 
     res.json(result);
   } catch (error) {
@@ -204,12 +202,13 @@ const updateFilm = async (req, res) => {
 const addFilm = async (req, res) => {
   const { id, title, description, age_minimum, favorite, poster } = req.body;
   const release_date = getNextWednesday();
-
-  if (id !== "") return res.status(500).json({ message: "id defined" });
-
   const favoriteBool = favorite === "true" || favorite === true;
   const poster_file = req.file;
   const poster_final = poster_file ? poster_file.filename : poster;
+
+  if (id !== "") return res.status(500).json({ message: "id defined" });
+
+  if (poster_file) poster_final = poster_file.filename;
 
   try {
     const result = await dbService.executeTransaction(async () => {
@@ -246,8 +245,13 @@ const deleteFilm = async (req, res) => {
       );
 
       if (rows && rows.poster) {
-        posterFilename = path.basename(rows.poster);
-        deletePoster(posterFilename);
+        if (process.env.NODE_ENV === "production") {
+          const posterFilename = path.basename(rows.poster);
+          await cloudinaryService.deleteFromCloudinary(posterFilename);
+        } else {
+          const posterFilename = path.basename(rows.poster);
+          deletePoster(posterFilename);
+        }
       }
 
       await dbService.query(`DELETE FROM film WHERE id = ?`, [filmId]);
