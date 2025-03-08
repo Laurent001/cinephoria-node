@@ -20,14 +20,29 @@ const cinemaRoutes = require("./api/routes/cinemaRoutes");
 const screeningRoutes = require("./api/routes/screeningRoutes");
 const emailRoutes = require("./api/routes/emailRoutes");
 const authMiddleware = require("./middleware/authMiddleware");
+const { uploadToCloudinary } = require("./services/cloudinary.service");
 
 app.use(cors());
 app.use(express.json());
 
-app.use(
-  "/images",
-  express.static(path.join(__dirname, "..", "public", "images"))
-);
+app.use("/images", async (req, res, next) => {
+  if (process.env.NODE_ENV === "production") {
+    console.log("process.env.NODE_ENV : ", process.env.NODE_ENV);
+    try {
+      const result = await uploadToCloudinary(req.file);
+      res.redirect(result.secure_url);
+    } catch (error) {
+      next(error);
+    }
+  } else {
+    console.log("process.env.NODE_ENV : ", process.env.NODE_ENV);
+    express.static(path.join(__dirname, "..", "public", "images"))(
+      req,
+      res,
+      next
+    );
+  }
+});
 app.use("/api/login", loginRoutes);
 app.use("/api/register", registerRoutes);
 app.use("/api/film", filmRoutes);
