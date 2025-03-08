@@ -14,7 +14,7 @@ const storage =
     ? multer.memoryStorage()
     : multer.diskStorage({
         destination: (req, file, cb) => {
-          cb(null, path.join(__dirname, "../../DIR_PUBLIC_IMAGES"));
+          cb(null, path.join(__dirname, "../../" + DIR_PUBLIC_IMAGES));
         },
         filename: (req, file, cb) => {
           cb(null, file.originalname);
