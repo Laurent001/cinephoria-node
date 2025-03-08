@@ -22,8 +22,6 @@ const emailRoutes = require("./api/routes/emailRoutes");
 const authMiddleware = require("./middleware/authMiddleware");
 const { uploadToCloudinary } = require("./services/cloudinary.service");
 
-const { uploadToCloudinary } = require("./services/cloudinary.service");
-
 app.use(cors());
 app.use(express.json());
 
