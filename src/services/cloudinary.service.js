@@ -70,3 +70,4 @@ const deleteFromCloudinary = async (filename) => {
 };
 
 module.exports = { upload, uploadToCloudinary, deleteFromCloudinary };
+

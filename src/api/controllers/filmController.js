@@ -6,6 +6,7 @@ const {
   deleteFromCloudinary,
 } = require("../../services/cloudinary.service");
 
+
 const getFilms = async (req, res) => {
   try {
     const films = await fetchFilms();
@@ -157,7 +158,6 @@ const getFilmsByDate = async (req, res) => {
 const updateFilm = async (req, res) => {
   const { id, title, favorite, age_minimum, description, poster } = req.body;
   const favoriteBoolean = favorite === "true";
-  const poster_file = req.file;
 
   try {
     const [rows] = await dbService.query(
