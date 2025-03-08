@@ -1,7 +1,11 @@
 const path = require("path");
 const fs = require("fs");
 const dbService = require("../../services/database.service");
-const cloudinaryService = require("../../services/cloudinary.service");
+const {
+  uploadToCloudinary,
+  deleteFromCloudinary,
+} = require("../../services/cloudinary.service");
+
 
 const getFilms = async (req, res) => {
   try {
@@ -153,7 +157,7 @@ const getFilmsByDate = async (req, res) => {
 
 const updateFilm = async (req, res) => {
   const { id, title, favorite, age_minimum, description, poster } = req.body;
-  const poster_file = req.file;
+  const favoriteBoolean = favorite === "true";
 
   try {
     const [rows] = await dbService.query(
@@ -161,31 +165,28 @@ const updateFilm = async (req, res) => {
       [id]
     );
 
-    const poster_final = poster_file
-      ? process.env.NODE_ENV === "production"
-        ? poster_file.filename
-        : poster_file.filename
-      : poster;
+    let poster_final = poster;
+    let oldPosterFilename = rows ? rows.poster : null;
 
-    let oldPosterFilename =
-      rows && rows.poster
-        ? process.env.NODE_ENV === "production"
-          ? path.basename(rows.poster)
-          : rows.poster
-        : null;
-
-    if (poster_file && oldPosterFilename) {
+    if (poster_file) {
       if (process.env.NODE_ENV === "production") {
-        await cloudinaryService.deleteFromCloudinary(oldPosterFilename);
-      } else {
-        deletePoster(oldPosterFilename);
+        const cloudinaryResult = await uploadToCloudinary(poster_file);
+        poster_final = cloudinaryResult.public_id.split("/").pop();
+      }
+
+      if (oldPosterFilename) {
+        if (process.env.NODE_ENV === "production") {
+          await deleteFromCloudinary(oldPosterFilename);
+        } else {
+          deletePoster(oldPosterFilename);
+        }
       }
     }
 
     const result = await dbService.executeTransaction(async () => {
       await dbService.query(
         `UPDATE film SET title = ?, favorite = ?, age_minimum = ?, description = ?, poster = ? WHERE id = ?`,
-        [title, favorite, age_minimum, description, poster_final, id]
+        [title, favoriteBoolean, age_minimum, description, poster_final, id]
       );
       return await fetchFilms();
     });
