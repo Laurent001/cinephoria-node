@@ -169,13 +169,13 @@ const updateFilm = async (req, res) => {
     let oldPosterFilename = rows ? rows.poster : null;
 
     if (poster_file) {
-      if (process.env.NODE_ENV === "production") {
+      if (process.env.NODE_ENV !== "development") {
         const cloudinaryResult = await uploadToCloudinary(poster_file);
         poster_final = cloudinaryResult.secure_url.split("/").pop();
       }
 
       if (oldPosterFilename) {
-        if (process.env.NODE_ENV === "production") {
+        if (process.env.NODE_ENV !== "development") {
           await deleteFromCloudinary(oldPosterFilename);
         } else {
           deletePoster(oldPosterFilename);
@@ -246,7 +246,7 @@ const deleteFilm = async (req, res) => {
       );
 
       if (rows && rows.poster) {
-        if (process.env.NODE_ENV === "production") {
+        if (process.env.NODE_ENV !== "development") {
           const posterFilename = path.basename(rows.poster);
           await cloudinaryService.deleteFromCloudinary(posterFilename);
         } else {
