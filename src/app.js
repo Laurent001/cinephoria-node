@@ -45,18 +45,17 @@ app.use("/images", async (req, res, next) => {
     //   next
     // );
 
-    console.log("Current NODE_ENV:", process.env.NODE_ENV);
-    if (process.env.NODE_ENV !== "development") {
-      try {
-        const imageName = req.path.substring(1);
-        console.log("Image Name:", imageName);
-        const cloudinaryUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/${process.env.CLOUDINARY_DIR_IMAGES}/${imageName}`;
-        console.log("Cloudinary URL:", cloudinaryUrl);
-        res.redirect(cloudinaryUrl);
-      } catch (error) {
-        console.error("Error:", error);
-        next(error);
-      }
+    console.log("Current NODE_ENV 2:", process.env.NODE_ENV);
+
+    try {
+      const imageName = req.path.substring(1);
+      console.log("Image Name:", imageName);
+      const cloudinaryUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/${process.env.CLOUDINARY_DIR_IMAGES}/${imageName}`;
+      console.log("Cloudinary URL:", cloudinaryUrl);
+      res.redirect(cloudinaryUrl);
+    } catch (error) {
+      console.error("Error:", error);
+      next(error);
     }
   }
 });
