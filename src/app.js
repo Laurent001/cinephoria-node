@@ -28,7 +28,7 @@ app.use("/images", async (req, res, next) => {
   if (process.env.NODE_ENV === "production") {
     try {
       const imageName = req.path.substring(1);
-      const cloudinaryUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/${process.env.CLOUDINARY_ACCOUNT}/${process.env.CLOUDINARY_DIR_IMAGES}/${imageName}`;
+      const cloudinaryUrl = `${process.env.CLOUDINARY_URL}/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/${process.env.CLOUDINARY_DIR_IMAGES}/${imageName}`;
       res.redirect(cloudinaryUrl);
     } catch (error) {
       next(error);
