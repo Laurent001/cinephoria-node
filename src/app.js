@@ -25,17 +25,20 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/images", async (req, res, next) => {
-  if (process.env.NODE_ENV === "production") {
+  console.log("Current VERCEL_ENV:", process.env.VERCEL_ENV); // Ajouté pour le débogage
+  if (process.env.VERCEL_ENV === "production") {
     try {
       const imageName = req.path.substring(1);
+      console.log("Image Name:", imageName); // Ajouté pour le débogage
       const cloudinaryUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/${process.env.CLOUDINARY_DIR_IMAGES}/${imageName}`;
-      console.log("cloudinaryUrl : ", cloudinaryUrl);
+      console.log("Cloudinary URL:", cloudinaryUrl);
       res.redirect(cloudinaryUrl);
     } catch (error) {
+      console.error("Error:", error); // Ajouté pour le débogage
       next(error);
     }
   } else {
-    console.log("process.env.NODE_ENV : ", process.env.NODE_ENV);
+    console.log("Serving from local directory"); // Ajouté pour le débogage
     express.static(path.join(__dirname, "..", "public", "images"))(
       req,
       res,
@@ -43,6 +46,7 @@ app.use("/images", async (req, res, next) => {
     );
   }
 });
+
 app.use("/api/login", loginRoutes);
 app.use("/api/register", registerRoutes);
 app.use("/api/film", filmRoutes);

@@ -59,8 +59,12 @@ const uploadToCloudinary = async (file) => {
 
 const deleteFromCloudinary = async (filename) => {
   if (!filename) return;
+
   try {
-    await cloudinary.uploader.destroy(DIR_PUBLIC_IMAGES + "/" + filename);
+    const filenameWithoutExtension = filename.split(".").slice(0, -1).join(".");
+    await cloudinary.uploader.destroy(
+      DIR_PUBLIC_IMAGES + "/" + filenameWithoutExtension
+    );
   } catch (error) {
     console.error(
       "Erreur lors de la suppression de l'image cloudinary :",
