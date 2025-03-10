@@ -10,7 +10,7 @@ cloudinary.config({
 });
 
 const storage =
-  process.env.NODE_ENV === "production"
+  process.env.NODE_ENV !== "development"
     ? multer.memoryStorage()
     : multer.diskStorage({
         destination: (req, file, cb) => {
