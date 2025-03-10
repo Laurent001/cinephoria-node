@@ -48,7 +48,7 @@ const uploadToCloudinary = async (file) => {
     const result = await cloudinary.uploader.upload(fileBase64, {
       folder: DIR_PUBLIC_IMAGES,
       allowed_formats: ["jpg", "jpeg", "png", "gif"],
-      public_id: file.originalname,
+      public_id: file.filename,
     });
     return result;
   } catch (error) {
@@ -70,4 +70,3 @@ const deleteFromCloudinary = async (filename) => {
 };
 
 module.exports = { upload, uploadToCloudinary, deleteFromCloudinary };
-

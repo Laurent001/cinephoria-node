@@ -171,7 +171,7 @@ const updateFilm = async (req, res) => {
     if (poster_file) {
       if (process.env.NODE_ENV === "production") {
         const cloudinaryResult = await uploadToCloudinary(poster_file);
-        poster_final = cloudinaryResult.public_id.split("/").pop();
+        poster_final = cloudinaryResult.secure_url.split("/").pop();
       }
 
       if (oldPosterFilename) {
