@@ -48,6 +48,7 @@ const fetchFilms = async () => {
     const films = rows.map((film) => ({
       ...film,
       release_date: new Date(film.release_date),
+      process: process.env,
     }));
 
     return films;

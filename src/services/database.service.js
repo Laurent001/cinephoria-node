@@ -1,7 +1,5 @@
-const { log } = require("console");
 const mariadb = require("mariadb");
 const fs = require("fs").promises;
-require("dotenv").config();
 
 class DatabaseService {
   constructor() {
