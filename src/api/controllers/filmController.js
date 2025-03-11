@@ -205,7 +205,7 @@ const addFilm = async (req, res) => {
   const release_date = getNextWednesday();
   const favoriteBool = favorite === "true" || favorite === true;
   const poster_file = req.file;
-  const poster_final = poster_file ? poster_file.filename : poster;
+  let poster_final = poster_file ? poster_file.filename : poster;
 
   if (id !== "") return res.status(500).json({ message: "id defined" });
 
