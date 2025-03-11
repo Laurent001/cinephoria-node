@@ -30,11 +30,6 @@ const sendEmailResetSuccess = (email, name) => {
     .then(() => console.log("Email reset success envoyé pour : ", email))
     .catch((error) => console.error("Error sending reset email:", error));
 };
-// to: 'contact@cinephoria.com',
-// name: '',
-// email: '',
-// subject: '',
-// message: '',
 
 const sendEmailContact = async (req, res) => {
   const { contact } = req.body;
