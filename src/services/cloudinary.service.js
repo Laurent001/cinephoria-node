@@ -1,7 +1,6 @@
 const multer = require("multer");
 const cloudinary = require("cloudinary").v2;
 const path = require("path");
-const DIR_PUBLIC_IMAGES = "public/images";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -14,7 +13,10 @@ const storage =
     ? multer.memoryStorage()
     : multer.diskStorage({
         destination: (req, file, cb) => {
-          cb(null, path.join(__dirname, "../../" + DIR_PUBLIC_IMAGES));
+          cb(
+            null,
+            path.join(__dirname, "../../" + process.env.CLOUDINARY_DIR_IMAGES)
+          );
         },
         filename: (req, file, cb) => {
           cb(null, file.originalname);
@@ -46,7 +48,7 @@ const uploadToCloudinary = async (file) => {
     )}`;
 
     const result = await cloudinary.uploader.upload(fileBase64, {
-      folder: DIR_PUBLIC_IMAGES,
+      folder: process.env.CLOUDINARY_DIR_IMAGES,
       allowed_formats: ["jpg", "jpeg", "png", "gif"],
       public_id: file.filename,
     });
@@ -63,7 +65,7 @@ const deleteFromCloudinary = async (filename) => {
   try {
     const filenameWithoutExtension = filename.split(".").slice(0, -1).join(".");
     await cloudinary.uploader.destroy(
-      DIR_PUBLIC_IMAGES + "/" + filenameWithoutExtension
+      process.env.CLOUDINARY_DIR_IMAGES + "/" + filenameWithoutExtension
     );
   } catch (error) {
     console.error(
