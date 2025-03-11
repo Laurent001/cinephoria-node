@@ -15,7 +15,7 @@ const storage =
         destination: (req, file, cb) => {
           cb(
             null,
-            path.join(__dirname, "../../" + process.env.CLOUDINARY_DIR_IMAGES)
+            path.join(__dirname, "../../" + process.env.DIR_IMAGES)
           );
         },
         filename: (req, file, cb) => {
