@@ -248,7 +248,7 @@ const deleteFilm = async (req, res) => {
       if (rows && rows.poster) {
         if (process.env.NODE_ENV === "production") {
           const posterFilename = path.basename(rows.poster);
-          await cloudinaryService.deleteFromCloudinary(posterFilename);
+          await deleteFromCloudinary(posterFilename);
         } else {
           const posterFilename = path.basename(rows.poster);
           deletePoster(posterFilename);
