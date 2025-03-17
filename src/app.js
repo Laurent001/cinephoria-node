@@ -25,20 +25,20 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/images", async (req, res, next) => {
-  console.log("Current NODE_ENV:", process.env.NODE_ENV);
+  // console.log("Current NODE_ENV:", process.env.NODE_ENV);
   if (process.env.NODE_ENV === "production") {
     try {
       const imageName = req.path.substring(1);
-      console.log("Image Name:", imageName);
+      // console.log("Image Name:", imageName);
       const cloudinaryUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/${process.env.CLOUDINARY_DIR_IMAGES}/${imageName}`;
-      console.log("Cloudinary URL:", cloudinaryUrl);
+      // console.log("Cloudinary URL:", cloudinaryUrl);
       res.redirect(cloudinaryUrl);
     } catch (error) {
       console.error("Error:", error);
       next(error);
     }
   } else {
-    console.log("Serving from local directory");
+    // console.log("Serving from local directory");
     express.static(path.join(__dirname, "..", "public", "images"))(
       req,
       res,

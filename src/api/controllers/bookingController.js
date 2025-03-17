@@ -1,43 +1,50 @@
 const dbService = require("../../services/database.service");
 
-//todo: à tester
 const getBookingsByUserId = async (req, res) => {
   const userId = req.params.id;
   try {
-    const rows = await dbService.query(
-      `SELECT 
-        b.added_date, 
-        b.user_id, 
-        s.number AS seat_number, 
-        s.is_handicap, 
-        s.id, 
-        s.auditorium_id, 
-        a.name, 
-        a.cinema_id, 
-        a.quality_id, 
-        c.address, 
-        c.city, 
-        c.name, 
-        c.opening_hours, 
-        c.phone, 
-        c.postcode 
-      FROM 
-        booking b 
-        INNER JOIN booking_screening_seat bsc ON bsc.booking_id = b.id 
-        INNER JOIN seat s ON s.id = bsc.seat_id 
-        INNER JOIN auditorium a ON a.id = s.auditorium_id 
-        INNER JOIN cinema c ON c.id = a.cinema_id 
-      WHERE 
-        b.user_id = ?`,
-      [userId]
-    );
-    res.json(rows);
+    const bookings = await fetchBookingsByUserId(userId);
+    res.json(bookings);
   } catch (error) {
     res.status(500).json({
       message: "Erreur lors de la récupération des films",
       error: error.message,
     });
   }
+};
+
+const fetchBookingsByUserId = async (userId) => {
+  return await dbService.query(
+    `SELECT 
+      b.id AS booking_id, 
+      b.user_id AS booking_user_id, 
+      b.added_date AS booking_added_date, 
+      b.total_price AS booking_total_price, 
+      s.number AS seat_number, 
+      s.is_handi AS seat_is_handi, 
+      s.id AS seat_id, 
+      s.auditorium_id AS seat_auditorium_id, 
+      sc.id AS screening_id, 
+      a.name AS auditorium_name, 
+      a.cinema_id AS auditorium_cinema_id, 
+      a.quality_id AS auditorium_quality_id, 
+      c.address AS cinema_address,
+      c.city AS cinema_city,
+      c.name AS cinema_name,
+      c.opening_hours AS cinema_opening_hours,
+      c.phone AS cinema_phone,
+      c.postcode AS cinema_postcode
+    FROM 
+      booking b 
+      INNER JOIN booking_screening_seat bsc ON bsc.booking_id = b.id 
+      INNER JOIN seat s ON s.id = bsc.seat_id 
+      INNER JOIN screening sc ON sc.id = bsc.screening_id 
+      INNER JOIN auditorium a ON a.id = s.auditorium_id          
+      INNER JOIN cinema c ON c.id = a.cinema_id 
+    WHERE 
+      b.user_id = ?`,
+    [userId]
+  );
 };
 
 const createBooking = async (req, res) => {
@@ -92,7 +99,7 @@ const getSeatsByScreeningId = async (req, res) => {
         a.seat_handi AS auditorium_seat_handi,
         a.seat AS auditorium_seat,
         q.name AS auditorium_quality,
-        q.price AS auditorium_price,
+        q.price AS auditorium_price
         CASE 
           WHEN bsc.seat_id IS NULL THEN TRUE
           ELSE FALSE 
@@ -145,8 +152,29 @@ const getSeatsByScreeningId = async (req, res) => {
   }
 };
 
+const deleteBookingById = async (req, res) => {
+  const bookingId = req.params.id;
+
+  try {
+    const result = await dbService.query(`DELETE FROM booking WHERE id = ?`, [
+      bookingId,
+    ]);
+
+    if (result.affectedRows > 0) {
+      res.status(200).json(true);
+    } else {
+      res.status(404).json(false);
+    }
+  } catch (error) {
+    console.error("Erreur lors de la suppression de la réservation:", error);
+    res.status(500).json(false);
+  }
+};
+
 module.exports = {
   getBookingsByUserId,
+  fetchBookingsByUserId,
   getSeatsByScreeningId,
   createBooking,
+  deleteBookingById,
 };
