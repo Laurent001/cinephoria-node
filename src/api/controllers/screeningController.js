@@ -23,7 +23,6 @@ const getScreeningById = async (req, res) => {
 };
 
 const fetchScreeningById = async (screeningId) => {
-  console.log("screeningId : ", screeningId);
   try {
     const rows = await dbService.query(
       `SELECT

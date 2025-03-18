@@ -365,6 +365,47 @@ const deletePoster = (posterFilename) => {
   });
 };
 
+const scoreFilmById = async (req, res) => {
+  const filmId = req.params.id;
+  const { rating, userId, description } = req.body;
+  const added_date = new Date().toISOString().slice(0, 19).replace("T", " ");
+  const status = "waiting approval";
+
+  try {
+    const checkResult = await dbService.query(
+      `SELECT * FROM opinion WHERE film_id = ? AND user_id = ?`,
+      [filmId, userId]
+    );
+
+    if (checkResult.length > 0) {
+      const updateResult = await dbService.query(
+        `UPDATE opinion SET rating = ?, description = ?, added_date = ?, status = ? WHERE film_id = ? AND user_id = ?`,
+        [rating, description, added_date, status, filmId, userId]
+      );
+
+      if (updateResult.affectedRows > 0) {
+        res.sendStatus(200);
+      } else {
+        res.sendStatus(404);
+      }
+    } else {
+      const insertResult = await dbService.query(
+        `INSERT INTO opinion (film_id, user_id, rating, description, added_date, status) VALUES (?, ?, ?, ?, ?, ?)`,
+        [filmId, userId, rating, description, added_date, status]
+      );
+
+      if (insertResult.affectedRows > 0) {
+        res.sendStatus(201);
+      } else {
+        res.sendStatus(500);
+      }
+    }
+  } catch (error) {
+    console.error("Erreur lors de la notation de la réservation:", error);
+    res.sendStatus(500);
+  }
+};
+
 module.exports = {
   getFilmById,
   fetchFilmById,
@@ -375,4 +416,5 @@ module.exports = {
   updateFilm,
   addFilm,
   deleteFilm,
+  scoreFilmById,
 };

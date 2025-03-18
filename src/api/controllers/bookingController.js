@@ -33,12 +33,14 @@ const fetchBookingsByUserId = async (userId) => {
       c.name AS cinema_name,
       c.opening_hours AS cinema_opening_hours,
       c.phone AS cinema_phone,
-      c.postcode AS cinema_postcode
+      c.postcode AS cinema_postcode, 
+      f.id AS film_id
     FROM 
       booking b 
       INNER JOIN booking_screening_seat bsc ON bsc.booking_id = b.id 
       INNER JOIN seat s ON s.id = bsc.seat_id 
-      INNER JOIN screening sc ON sc.id = bsc.screening_id 
+      INNER JOIN screening sc ON sc.id = bsc.screening_id
+      INNER JOIN film f ON f.id = sc.film_id
       INNER JOIN auditorium a ON a.id = s.auditorium_id          
       INNER JOIN cinema c ON c.id = a.cinema_id 
     WHERE 
