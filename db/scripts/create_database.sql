@@ -58,7 +58,7 @@ CREATE TABLE `booking` (
   `added_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
-  CONSTRAINT `booking_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
+  CONSTRAINT `booking_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -76,8 +76,8 @@ CREATE TABLE `booking_screening_seat` (
   PRIMARY KEY (`booking_id`,`screening_id`,`seat_id`),
   KEY `seat_id` (`seat_id`),
   KEY `screening_id` (`screening_id`),
-  CONSTRAINT `booking_seat_screening_ibfk_1` FOREIGN KEY (`booking_id`) REFERENCES `booking` (`id`),
-  CONSTRAINT `booking_seat_screening_ibfk_2` FOREIGN KEY (`seat_id`) REFERENCES `seat` (`id`),
+  CONSTRAINT `booking_seat_screening_ibfk_1` FOREIGN KEY (`booking_id`) REFERENCES `booking` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `booking_seat_screening_ibfk_2` FOREIGN KEY (`seat_id`) REFERENCES `seat` (`id`) ON DELETE CASCADE,
   CONSTRAINT `booking_seat_screening_ibfk_3` FOREIGN KEY (`screening_id`) REFERENCES `screening` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
