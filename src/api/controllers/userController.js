@@ -17,16 +17,44 @@ const getUserById = async (req, res) => {
   const userId = req.user.id;
 
   try {
+    const user = await fetchUserById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "Utilisateur non trouvé" });
+    }
+
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({
+      message: "Erreur lors de la récupération de l'utilisateur",
+      error: error.message,
+    });
+  }
+};
+
+const fetchUserById = async (userId) => {
+  try {
     const rows = await dbService.query("SELECT * FROM user WHERE user.id = ?", [
       userId,
     ]);
 
-    res.json(rows[0]);
+    if (rows.length === 0) {
+      return null;
+    }
+
+    const user = {
+      id: rows[0].id,
+      email: rows[0].email,
+      first_name: rows[0].first_name,
+      last_name: rows[0].last_name,
+      role: rows[0].role,
+    };
+
+    return user;
   } catch (error) {
-    res.status(500).json({
-      message: "Erreur lors de la récupération des utilisateurs",
-      error: error.message,
-    });
+    throw new Error(
+      `Erreur lors de la récupération de l'utilisateur: ${error.message}`
+    );
   }
 };
 
@@ -51,4 +79,5 @@ module.exports = {
   getUsers,
   verifyToken,
   getUserById,
+  fetchUserById,
 };

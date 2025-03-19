@@ -1,5 +1,61 @@
 const dbService = require("../../services/database.service");
 const cinemaController = require("../controllers/cinemaController");
+const { fetchCinemaById } = require("./cinemaController");
+const { fetchQualityById } = require("./qualityController");
+
+const getAuditoriumById = async (req, res) => {
+  try {
+    const auditoriumId = req.params.id;
+    const auditorium = await fetchAuditoriumById(auditoriumId);
+
+    if (!auditorium) {
+      return res.status(404).json({ message: "Aucun auditorium trouvé" });
+    }
+
+    res.json(auditorium);
+  } catch (error) {
+    res.status(500).json({
+      message: "Erreur lors de la récupération de l'auditorium",
+      error: error.message,
+    });
+  }
+};
+
+const fetchAuditoriumById = async (auditoriumId) => {
+  try {
+    const rows = await dbService.query(
+      `SELECT
+        a.id,
+        a.cinema_id,
+        a.quality_id,
+        a.name,
+        a.seat,
+        a.seat_handi
+      FROM auditorium a
+      WHERE a.id = ?`,
+      [auditoriumId]
+    );
+
+    if (rows.length === 0) {
+      return null;
+    }
+
+    const auditorium = {
+      id: rows[0].id,
+      name: rows[0].name,
+      seat: rows[0].seat,
+      seat_handi: rows[0].seat_handi,
+      cinema: await fetchCinemaById(rows[0].cinema_id),
+      quality: await fetchQualityById(rows[0].quality_id),
+    };
+
+    return auditorium;
+  } catch (error) {
+    throw new Error(
+      `Erreur lors de la récupération de l'auditorium: ${error.message}`
+    );
+  }
+};
 
 const getAuditoriums = async (req, res) => {
   try {
@@ -158,6 +214,8 @@ const deleteAuditoriumById = async (req, res) => {
 };
 
 module.exports = {
+  getAuditoriumById,
+  fetchAuditoriumById,
   getAuditoriums,
   fetchAuditoriums,
   updateAuditorium,

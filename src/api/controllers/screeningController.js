@@ -1,39 +1,58 @@
 const dbService = require("../../services/database.service");
-const auditoriumController = require("../controllers/auditoriumController");
 const moment = require("moment-timezone");
+const { fetchFilmById } = require("./filmController");
+const { fetchAuditoriumById } = require("./auditoriumController");
+const { fetchQualityById } = require("./qualityController");
 
 const getScreeningById = async (req, res) => {
   try {
     const screeningId = req.params.id;
+    const screening = await fetchScreeningById(screeningId);
 
-    const [rows] = await dbService.query(
-      `SELECT 
-        sc.id,
-        sc.start_time,
-        sc.end_time,
-        a.name AS auditorium_name,
-        a.seat AS auditorium_seat,
-        a.seat_handi AS auditorium_seat_handi,
-        a.cinema_id AS auditorium_cinema_id,
-        q.name AS auditorium_quality,
-        q.price AS auditorium_price      
-      FROM screening sc 
-      INNER JOIN auditorium a ON a.id = sc.auditorium_id 
-      INNER JOIN quality q ON q.id = a.quality_id 
-      WHERE sc.id = ?`,
-      [screeningId]
-    );
-
-    if (rows.length === 0) {
+    if (!screening) {
       return res.status(404).json({ message: "Aucun screening trouvé" });
     }
 
-    res.json(rows);
+    res.json(screening);
   } catch (error) {
     res.status(500).json({
       message: "Erreur lors de la récupération du screening",
       error: error.message,
     });
+  }
+};
+
+const fetchScreeningById = async (screeningId) => {
+  try {
+    const rows = await dbService.query(
+      `SELECT
+        sc.id,
+        sc.film_id,
+        sc.auditorium_id,
+        sc.start_time,
+        sc.end_time
+      FROM screening sc
+      WHERE sc.id = ?`,
+      [screeningId]
+    );
+
+    if (rows.length === 0) {
+      return null;
+    }
+
+    const screening = {
+      id: rows[0].id,
+      film: await fetchFilmById(rows[0].film_id),
+      auditorium: await fetchAuditoriumById(rows[0].auditorium_id),
+      start_time: rows[0].start_time,
+      end_time: rows[0].end_time,
+    };
+
+    return screening;
+  } catch (error) {
+    throw new Error(
+      `Erreur lors de la récupération du screening: ${error.message}`
+    );
   }
 };
 
@@ -53,8 +72,8 @@ const getSeatsByScreeningId = async (req, res) => {
         a.cinema_id AS auditorium_cinema_id, 
         a.seat_handi AS auditorium_seat_handi,
         a.seat AS auditorium_seat,
-        q.name AS auditorium_quality,
-        q.price AS auditorium_price,
+        q.name AS quality_name,
+        q.price AS quality_price,
         CASE 
           WHEN bsc.seat_id IS NULL THEN TRUE 
           ELSE FALSE 
@@ -84,8 +103,7 @@ const getSeatsByScreeningId = async (req, res) => {
         name: rows[0].auditorium_name,
         seat: rows[0].auditorium_seat,
         seat_handi: rows[0].auditorium_seat_handi,
-        quality: rows[0].auditorium_quality,
-        price: rows[0].auditorium_price,
+        quality: await fetchQualityById(rows[0].quality_id),
         cinema_id: rows[0].cinema_id,
       },
     };
@@ -341,8 +359,10 @@ const getFilmScreeningsByCinemaId = async (req, res) => {
           name: row.auditorium_name,
           seat: row.auditorium_seat,
           seat_handi: row.auditorium_seat_handi,
-          quality: row.auditorium_quality,
-          price: row.auditorium_price,
+          quality: {
+            name: row.auditorium_quality,
+            price: row.auditorium_price,
+          },
           cinema: {
             id: filmScreeningsByCinema[0].cinema_id,
             name: filmScreeningsByCinema[0].cinema_name,
@@ -588,4 +608,5 @@ module.exports = {
   updateScreening,
   addScreening,
   deleteScreeningById,
+  fetchScreeningById,
 };
