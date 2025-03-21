@@ -188,35 +188,23 @@ INSERT INTO `material` VALUES
 /*!40000 ALTER TABLE `material` ENABLE KEYS */;
 UNLOCK TABLES;
 
+
+
 --
--- Dumping data for table `opinion`
+-- Dumping data for table `status`
 --
 
-LOCK TABLES `opinion` WRITE;
-/*!40000 ALTER TABLE `opinion` DISABLE KEYS */;
-INSERT INTO `opinion` VALUES
-(1,81,1,2,'Plutôt déçu par ce film.','2024-12-31','published'),
-(2,82,2,5,'Excellent film, je le recommande vivement !','2024-12-31','published'),
-(3,83,3,1,'Je ne recommande pas du tout ce film.','2025-01-03','published'),
-(4,84,4,3,'Film correct, sans plus.','2025-01-05','published'),
-(5,85,5,5,'Excellent film, je le recommande vivement !','2025-01-01','published'),
-(6,86,1,3,'Film correct, sans plus.','2025-01-04','published'),
-(7,87,2,4,'Très bon film, j\'ai beaucoup apprécié.','2025-01-01','published'),
-(8,88,3,3,'Film correct, sans plus.','2024-12-30','published'),
-(9,89,4,3,'Film correct, sans plus.','2025-01-03','published'),
-(10,90,5,1,'Je ne recommande pas du tout ce film.','2025-01-04','published'),
-(11,91,1,1,'Je ne recommande pas du tout ce film.','2025-01-03','published'),
-(12,92,2,1,'Je ne recommande pas du tout ce film.','2025-01-01','published'),
-(13,93,3,3,'Film correct, sans plus.','2025-01-04','published'),
-(14,94,4,4,'Très bon film, j\'ai beaucoup apprécié.','2025-01-04','published'),
-(15,95,5,4,'Très bon film, j\'ai beaucoup apprécié.','2025-01-06','published'),
-(16,96,1,5,'Excellent film, je le recommande vivement !','2025-01-05','published'),
-(17,97,2,1,'Je ne recommande pas du tout ce film.','2024-12-31','published'),
-(18,98,3,3,'Film correct, sans plus.','2025-01-04','published'),
-(19,99,4,1,'Je ne recommande pas du tout ce film.','2024-12-31','published'),
-(20,100,5,5,'Excellent film, je le recommande vivement !','2025-01-02','published');
-/*!40000 ALTER TABLE `opinion` ENABLE KEYS */;
+LOCK TABLES `status` WRITE;
+/*!40000 ALTER TABLE `status` DISABLE KEYS */;
+INSERT INTO `status` VALUES
+(1,'published'),
+(2,'needs approval'),
+(3,'blocked');
+/*!40000 ALTER TABLE `status` ENABLE KEYS */;
 UNLOCK TABLES;
+
+
+
 
 --
 -- Dumping data for table `quality`

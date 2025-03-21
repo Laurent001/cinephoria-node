@@ -6,7 +6,10 @@ router.get(
   "/user/:userId/film/:filmId",
   opinionController.getOpinionByUserIdAndFilmId
 );
+router.get("/", opinionController.getOpinions);
 router.post("/", opinionController.addOpinion);
-router.put("/:id", opinionController.updateOpinion);
+router.put("/update", opinionController.updateOpinion);
+router.put("/update/status", opinionController.updateOpinionStatus);
+router.delete("/delete/:id", opinionController.deleteOpinionById);
 
 module.exports = router;
