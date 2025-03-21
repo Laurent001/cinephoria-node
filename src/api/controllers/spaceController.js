@@ -2,6 +2,7 @@ const { fetchBookingsByUserId } = require("./bookingController");
 const { fetchScreeningById } = require("./screeningController");
 const { fetchUserById } = require("./userController");
 const { fetchOpinionByUserIdAndFilmId } = require("./opinionController");
+const { fetchStatuses } = require("./statusController");
 
 const getSpaceByUserId = async (req, res) => {
   const userId = req.params.id;
@@ -56,7 +57,9 @@ const getSpaceByUserId = async (req, res) => {
       }
     }
 
-    res.json({ openBookings, closedBookings });
+    const statuses = await fetchStatuses();
+
+    res.json({ openBookings, closedBookings, statuses });
   } catch (error) {
     res.status(500).json({
       message: "Erreur lors de la récupération des réservations",
