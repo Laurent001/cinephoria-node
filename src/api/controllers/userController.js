@@ -1,15 +1,74 @@
 const dbService = require("../../services/database.service");
 const jwt = require("jsonwebtoken");
 
+const EMPLOYEE_ROLE = "employee";
+const ADMIN_ROLE = "admin";
+
 const getUsers = async (req, res) => {
   try {
-    const rows = await dbService.query("SELECT * FROM user");
-    res.json(rows);
+    const users = await fetchUsers();
+    res.json(users);
   } catch (error) {
     res.status(500).json({
       message: "Erreur lors de la récupération des utilisateurs",
       error: error.message,
     });
+  }
+};
+
+const fetchUsers = async () => {
+  try {
+    const rows = await dbService.query("SELECT * FROM user");
+
+    const users = rows.map((row) => ({
+      id: row.id,
+      email: row.email,
+      first_name: row.first_name,
+      last_name: row.last_name,
+      role: row.role,
+    }));
+
+    return users;
+  } catch (error) {
+    throw new Error(
+      `Erreur lors de la récupération des utilisateurs avec le role ${role}: ${error.message}`
+    );
+  }
+};
+
+const getUsersByRole = async (req, res) => {
+  const role = req.params.role;
+
+  try {
+    const users = await fetchUsersByRole(role);
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({
+      message: `Erreur lors de la récupération des utilisateurs avec le role ${role}`,
+      error: error.message,
+    });
+  }
+};
+
+const fetchUsersByRole = async (role) => {
+  try {
+    const rows = await dbService.query("SELECT * FROM user WHERE role = ?", [
+      role,
+    ]);
+
+    const users = rows.map((row) => ({
+      id: row.id,
+      email: row.email,
+      first_name: row.first_name,
+      last_name: row.last_name,
+      role: row.role,
+    }));
+
+    return users;
+  } catch (error) {
+    throw new Error(
+      `Erreur lors de la récupération des utilisateurs: ${error.message}`
+    );
   }
 };
 
@@ -80,4 +139,7 @@ module.exports = {
   verifyToken,
   getUserById,
   fetchUserById,
+  fetchUsersByRole,
+  getUsersByRole,
+  fetchUsers,
 };
