@@ -1,21 +1,27 @@
 const dbService = require("../../services/database.service");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
-const { sendEmailWelcome } = require("./emailController");
+const crypto = require("crypto");
+const {
+  sendUserEmailWelcome,
+  sendStaffEmailWelcome,
+  sendAdminEmailWelcome,
+} = require("./emailController");
 
-const ROLE_ADMIN = "admin";
-const ROLE_EMPLOYE = "employe";
-const ROLE_USER = "user";
+const ROLE_ADMIN = 1;
+const ROLE_STAFF = 2;
+const ROLE_USER = 3;
 
 const registerUser = async (req, res) => {
   try {
-    const { email, password, firstName, lastName, role } = req.body;
+    const { email, first_name, last_name, role } = req.body;
+    console.log("req.body : ", req.body);
 
-    if (![ROLE_ADMIN, ROLE_EMPLOYE, ROLE_USER].includes(role)) {
-      return res.status(400).json({ message: "role incorrect" });
+    if (![ROLE_ADMIN, ROLE_STAFF, ROLE_USER].includes(role.id)) {
+      return res.status(400).json({ message: "rôle incorrect" });
     }
 
-    if (firstName === "" || lastName === "") {
+    if (first_name === "" || last_name === "") {
       return res.status(400).json({ message: "nom et prénom incorrect" });
     }
 
@@ -24,18 +30,27 @@ const registerUser = async (req, res) => {
       [email]
     );
     if (existingUsers && existingUsers.length > 0) {
-      return res.status(400).json({ message: "email déjà utilisé" });
+      return res
+        .status(400)
+        .json({ message: "email déjà utilisé pour cet utilisateur" });
     }
 
+    const password = generateRandomPassword();
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     const result = await dbService.query(
-      "INSERT INTO user (email, reset_token, password, first_name, last_name, role) VALUES (?, ?, ?, ?, ?, ?)",
-      [email, null, hashedPassword, firstName, lastName, role]
+      "INSERT INTO user (email, reset_token, password, first_name, last_name, role_id) VALUES (?, ?, ?, ?, ?, ?)",
+      [email, null, hashedPassword, first_name, last_name, role.id]
     );
 
     if (result && result.affectedRows > 0) {
-      sendEmailWelcome(email, firstName);
+      role.id === ROLE_USER
+        ? sendUserEmailWelcome(email, first_name)
+        : role.id === ROLE_STAFF
+        ? sendStaffEmailWelcome(email, first_name, email, password)
+        : role.id === ROLE_ADMIN
+        ? sendAdminEmailWelcome(email, first_name, email, password)
+        : null;
       res.status(201).json({ message: "utilisateur créé avec succès" });
     } else {
       res
@@ -50,6 +65,13 @@ const registerUser = async (req, res) => {
     });
   }
 };
+
+function generateRandomPassword(length = 12) {
+  return crypto
+    .randomBytes(Math.ceil(length / 2))
+    .toString("hex")
+    .slice(0, length);
+}
 
 module.exports = {
   registerUser,

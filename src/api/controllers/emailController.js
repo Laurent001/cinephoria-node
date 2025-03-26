@@ -5,9 +5,33 @@ const {
   sendEmailSupport,
 } = require("../../services/mailer.service");
 
-const sendEmailWelcome = (email, name) => {
-  sendEmail(email, "Bienvenue!", `Hello ${name}, bienvenue chez cinephoria!`)
-    .then(() => console.log("Email envoyé"))
+const sendUserEmailWelcome = (email, name) => {
+  sendEmail(
+    email,
+    "Bienvenue!",
+    `Hello ${name}, bienvenue chez cinephoria!\n\n Vous pouvez désormais vous connecter avec votre adresse email et votre mot de passe entré lorsde votre inscription.\n\nCinéphoria\nL\'émotion sur grand écran`
+  )
+    .then(() => console.log("Email utilisateur envoyé"))
+    .catch((error) => console.error("Error sending email:", error));
+};
+
+const sendStaffEmailWelcome = (email, name, login, password) => {
+  sendEmail(
+    email,
+    "Bienvenue!",
+    `Hello ${name}, nous sommes heureux de vous savoir dans notre équipe cinéphoria!\n\nVoici vos identifiants de connexion :\n\nLogin : ${login}\nMot de passe : ${password}\n\nPour toute question ou problème contactez votre administrateur \n\nCinéphoria\nL\'émotion sur grand écran`
+  )
+    .then(() => console.log("Email employé envoyé"))
+    .catch((error) => console.error("Error sending email:", error));
+};
+
+const sendAdminEmailWelcome = (email, name, login, password) => {
+  sendEmail(
+    email,
+    "Vous êtes désormais administrateur!",
+    `Hello ${name}, nous avez désormais accès à des droits administrateurs, faites-en bon usage!\n\nVoici vos identifiants de connexion :\n\nLogin : ${login}\nMot de passe : ${password}\n\nPour toute question ou problème parlez-en avec vos collègues administrateurs\n\nCinéphoria\nL\'émotion sur grand écran`
+  )
+    .then(() => console.log("Email admin envoyé"))
     .catch((error) => console.error("Error sending email:", error));
 };
 
@@ -48,8 +72,10 @@ const sendEmailContact = async (req, res) => {
 };
 
 module.exports = {
-  sendEmailWelcome,
+  sendUserEmailWelcome,
+  sendStaffEmailWelcome,
   sendEmailContact,
   sendEmailResetRequest,
   sendEmailResetSuccess,
+  sendAdminEmailWelcome,
 };

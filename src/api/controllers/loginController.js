@@ -10,10 +10,39 @@ const {
 const getLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const [user] = await dbService.query(
-      "SELECT * FROM user WHERE user.email = ?",
+
+    const rows = await dbService.query(
+      `SELECT
+        u.id,
+        u.email,
+        u.first_name,
+        u.last_name,
+        u.password,
+        r.id as role_id,
+        r.name as role_name
+        FROM user u
+        INNER JOIN role r ON r.id = u.role_id
+        WHERE u.email = ?`,
       [email]
     );
+
+    if (rows.length === 0) {
+      return null;
+    }
+
+    const user = {
+      id: rows[0].id,
+      email: rows[0].email,
+      first_name: rows[0].first_name,
+      last_name: rows[0].last_name,
+      password: rows[0].password,
+      role: {
+        id: rows[0].role_id,
+        name: rows[0].role_name,
+      },
+    };
+
+    console.log("user : ", user);
 
     if (user) {
       const passwordMatch = await bcrypt.compare(password, user.password);

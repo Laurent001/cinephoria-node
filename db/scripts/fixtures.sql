@@ -184,7 +184,7 @@ INSERT INTO `material` VALUES
 (3,'Système audio','Équipement sonore de la salle'),
 (4,'Sièges','Fauteuils pour les spectateurs'),
 (5,'Climatisation','Système de régulation de la température'),
-(6,'Éclairage','Système d\'illumination de la salle');
+(6,'Éclairage','Système illumination de la salle');
 /*!40000 ALTER TABLE `material` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2901,20 +2901,37 @@ UNLOCK TABLES;
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
 INSERT INTO `user` VALUES
-(1,'admin1@cine.com','$2b$10$2su2Hpi2WI5Jnu00DdkEBeh3f40p622qpxkC0oEgISq0.rMtTvl76',null,'Jean','Dupont','admin','2024-12-28 17:43:41'),
-(2,'admin2@cine.com','$2b$10$2su2Hpi2WI5Jnu00DdkEBeh3f40p622qpxkC0oEgISq0.rMtTvl76',null,'Marie','Martin','admin','2024-12-28 17:43:41'),
-(3,'admin3@cine.com','$2b$10$2su2Hpi2WI5Jnu00DdkEBeh3f40p622qpxkC0oEgISq0.rMtTvl76',null,'Pierre','Bernard','admin','2024-12-28 17:43:41'),
-(4,'admin4@cine.com','$2b$10$2su2Hpi2WI5Jnu00DdkEBeh3f40p622qpxkC0oEgISq0.rMtTvl76',null,'Sophie','Petit','admin','2024-12-28 17:43:41'),
-(5,'emp1@cine.com','$2b$10$2su2Hpi2WI5Jnu00DdkEBeh3f40p622qpxkC0oEgISq0.rMtTvl76',null,'Luc','Leroy','employee','2024-12-28 17:43:41'),
-(6,'emp2@cine.com','$2b$10$2su2Hpi2WI5Jnu00DdkEBeh3f40p622qpxkC0oEgISq0.rMtTvl76',null,'Emma','Roux','employee','2024-12-28 17:43:41'),
-(7,'emp3@cine.com','$2b$10$2su2Hpi2WI5Jnu00DdkEBeh3f40p622qpxkC0oEgISq0.rMtTvl76',null,'Hugo','Vincent','employee','2024-12-28 17:43:41'),
-(8,'emp4@cine.com','$2b$10$2su2Hpi2WI5Jnu00DdkEBeh3f40p622qpxkC0oEgISq0.rMtTvl76',null,'Camille','Fournier','employee','2024-12-28 17:43:41'),
-(9,'user1@example.com','$2b$10$2su2Hpi2WI5Jnu00DdkEBeh3f40p622qpxkC0oEgISq0.rMtTvl76',null,'Alice','Dubois','employee','2024-12-28 17:45:37'),
-(10,'user2@example.com','$2b$10$2su2Hpi2WI5Jnu00DdkEBeh3f40p622qpxkC0oEgISq0.rMtTvl76',null,'Baptiste','Lefevre','user','2024-12-28 17:45:37'),
-(11,'user3@example.com','$2b$10$2su2Hpi2WI5Jnu00DdkEBeh3f40p622qpxkC0oEgISq0.rMtTvl76',null,'Camille','Moreau','user','2024-12-28 17:45:37'),
-(12,'user4@example.com','$2b$10$2su2Hpi2WI5Jnu00DdkEBeh3f40p622qpxkC0oEgISq0.rMtTvl76',null,'Daniel','Rousseau','user','2024-12-28 17:45:37');
+(1,'admin1@cine.com','$2b$10$2su2Hpi2WI5Jnu00DdkEBeh3f40p622qpxkC0oEgISq0.rMtTvl76',null,'Jean','Dupont',1,'2024-12-28 17:43:41'),
+(2,'admin2@cine.com','$2b$10$2su2Hpi2WI5Jnu00DdkEBeh3f40p622qpxkC0oEgISq0.rMtTvl76',null,'Marie','Martin',1,'2024-12-28 17:43:41'),
+(3,'admin3@cine.com','$2b$10$2su2Hpi2WI5Jnu00DdkEBeh3f40p622qpxkC0oEgISq0.rMtTvl76',null,'Pierre','Bernard',1,'2024-12-28 17:43:41'),
+(4,'admin4@cine.com','$2b$10$2su2Hpi2WI5Jnu00DdkEBeh3f40p622qpxkC0oEgISq0.rMtTvl76',null,'Sophie','Petit',1,'2024-12-28 17:43:41'),
+(5,'emp1@cine.com','$2b$10$2su2Hpi2WI5Jnu00DdkEBeh3f40p622qpxkC0oEgISq0.rMtTvl76',null,'Luc','Leroy',2,'2024-12-28 17:43:41'),
+(6,'emp2@cine.com','$2b$10$2su2Hpi2WI5Jnu00DdkEBeh3f40p622qpxkC0oEgISq0.rMtTvl76',null,'Emma','Roux',2,'2024-12-28 17:43:41'),
+(7,'emp3@cine.com','$2b$10$2su2Hpi2WI5Jnu00DdkEBeh3f40p622qpxkC0oEgISq0.rMtTvl76',null,'Hugo','Vincent',2,'2024-12-28 17:43:41'),
+(8,'emp4@cine.com','$2b$10$2su2Hpi2WI5Jnu00DdkEBeh3f40p622qpxkC0oEgISq0.rMtTvl76',null,'Camille','Fournier',2,'2024-12-28 17:43:41'),
+(9,'user1@example.com','$2b$10$2su2Hpi2WI5Jnu00DdkEBeh3f40p622qpxkC0oEgISq0.rMtTvl76',null,'Alice','Dubois',2,'2024-12-28 17:45:37'),
+(10,'user2@example.com','$2b$10$2su2Hpi2WI5Jnu00DdkEBeh3f40p622qpxkC0oEgISq0.rMtTvl76',null,'Baptiste','Lefevre',3,'2024-12-28 17:45:37'),
+(11,'user3@example.com','$2b$10$2su2Hpi2WI5Jnu00DdkEBeh3f40p622qpxkC0oEgISq0.rMtTvl76',null,'Camille','Moreau',3,'2024-12-28 17:45:37'),
+(12,'user4@example.com','$2b$10$2su2Hpi2WI5Jnu00DdkEBeh3f40p622qpxkC0oEgISq0.rMtTvl76',null,'Daniel','Rousseau',3,'2024-12-28 17:45:37');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
+
+
+--
+-- Dumping data for table `role`
+--
+
+LOCK TABLES `role` WRITE;
+/*!40000 ALTER TABLE `role` DISABLE KEYS */;
+INSERT INTO `role` VALUES
+(1,'admin'),
+(2,'staff'),
+(3,'user');
+/*!40000 ALTER TABLE `role` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
