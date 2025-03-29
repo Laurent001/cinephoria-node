@@ -30,16 +30,13 @@ app.use("/images", async (req, res, next) => {
   if (process.env.NODE_ENV === "production") {
     try {
       const imageName = req.path.substring(1);
-      // console.log("Image Name:", imageName);
       const cloudinaryUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/${process.env.CLOUDINARY_DIR_IMAGES}/${imageName}`;
-      // console.log("Cloudinary URL:", cloudinaryUrl);
       res.redirect(cloudinaryUrl);
     } catch (error) {
       console.error("Error:", error);
       next(error);
     }
   } else {
-    // console.log("Serving from local directory");
     express.static(path.join(__dirname, "..", "public", "images"))(
       req,
       res,

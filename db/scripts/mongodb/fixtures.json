@@ -1,0 +1,39 @@
+{
+  "database": "cinephoria",
+  "tables": {
+    "bookings_analytics": [
+      {
+        "_id": "67e51a5eb6210c3ad618a7e5",
+        "booking_id": "1",
+        "user_id": "1",
+        "film_id": "1",
+        "film_title": "Matrix",
+        "timestamp": "2025-04-01T14:30:00Z"
+      },
+      {
+        "_id": "67e51a5fb6210c3ad618a7e6",
+        "booking_id": "2",
+        "user_id": "2",
+        "film_id": "1",
+        "film_title": "Matrix",
+        "timestamp": "2025-04-01T14:30:00Z"
+      },
+      {
+        "_id": "67e51a5fb6210c3ad618a7e7",
+        "booking_id": "3",
+        "user_id": "3",
+        "film_id": "1",
+        "film_title": "Matrix",
+        "timestamp": "2025-04-01T14:30:00Z"
+      },
+      {
+        "_id": "67e51a5fb6210c3ad618a7e8",
+        "booking_id": "4",
+        "user_id": "1",
+        "film_id": "2",
+        "film_title": "Chihiro",
+        "timestamp": "2025-04-01T14:30:00Z"
+      }
+    ]
+  }
+}

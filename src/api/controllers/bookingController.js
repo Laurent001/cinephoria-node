@@ -1,4 +1,5 @@
-const dbService = require("../../services/database.service");
+const mariadbService = require("../../services/mariadb.service");
+const mongodbService = require("../../services/mongodb.service");
 
 const getBookingsByUserId = async (req, res) => {
   const userId = req.params.id;
@@ -14,7 +15,7 @@ const getBookingsByUserId = async (req, res) => {
 };
 
 const fetchBookingsByUserId = async (userId) => {
-  return await dbService.query(
+  return await mariadbService.query(
     `SELECT 
       b.id AS booking_id, 
       b.user_id AS booking_user_id, 
@@ -53,22 +54,30 @@ const createBooking = async (req, res) => {
   const { user, screening, totalPrice, seats } = req.body;
 
   try {
-    const result = await dbService.executeTransaction(async () => {
-      const bookingResult = await dbService.query(
+    const result = await mariadbService.executeTransaction(async () => {
+      const bookingResult = await mariadbService.query(
         "INSERT INTO booking (user_id, total_price) VALUES (?, ?)",
         [user.id, totalPrice]
       );
 
-      const bookingId = bookingResult.insertId.toString();
+      const booking_id = bookingResult.insertId.toString();
+
+      await mongodbService.insertBookingAnalytics({
+        booking_id,
+        user_id: user.id,
+        film_id: screening.film.id,
+        film_title: screening.film.title,
+      });
+
       const seatValues = seats
-        .map((seat) => `(${bookingId}, ${seat.id}, ${screening.id})`)
+        .map((seat) => `(${booking_id}, ${seat.id}, ${screening.id})`)
         .join(", ");
 
-      await dbService.query(
+      await mariadbService.query(
         `INSERT INTO booking_screening_seat (booking_id, seat_id, screening_id) VALUES ${seatValues}`
       );
 
-      return { bookingId };
+      return { booking_id };
     });
 
     res.status(201).json({
@@ -88,7 +97,7 @@ const getSeatsByScreeningId = async (req, res) => {
   const screeningId = req.params.id;
 
   try {
-    const rows = await dbService.query(
+    const rows = await mariadbService.query(
       `SELECT DISTINCT 
         sc.id AS screening_id, 
         sc.start_time, 
@@ -158,9 +167,10 @@ const deleteBookingById = async (req, res) => {
   const bookingId = req.params.id;
 
   try {
-    const result = await dbService.query(`DELETE FROM booking WHERE id = ?`, [
-      bookingId,
-    ]);
+    const result = await mariadbService.query(
+      `DELETE FROM booking WHERE id = ?`,
+      [bookingId]
+    );
 
     if (result.affectedRows > 0) {
       res.status(200).json(true);
@@ -173,10 +183,38 @@ const deleteBookingById = async (req, res) => {
   }
 };
 
+const getLast7DaysBookingsByFilmId = async (req, res) => {
+  const { filmId } = req.params;
+
+  try {
+    await mongodbService.connect();
+    const collection = mongodbService.db.collection("bookings_analytics");
+
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setUTCDate(sevenDaysAgo.getUTCDate() - 7);
+    sevenDaysAgo.setUTCHours(0, 0, 0, 0);
+
+    const query = {
+      film_id: parseInt(filmId, 10),
+      timestamp: { $gte: sevenDaysAgo },
+    };
+
+    const data = await collection.find(query).toArray();
+
+    res.json(data);
+  } catch (error) {
+    console.error("Error fetching booking analytics:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  } finally {
+    await mongodbService.close();
+  }
+};
+
 module.exports = {
   getBookingsByUserId,
   fetchBookingsByUserId,
   getSeatsByScreeningId,
   createBooking,
   deleteBookingById,
+  getLast7DaysBookingsByFilmId,
 };

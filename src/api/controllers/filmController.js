@@ -1,6 +1,6 @@
 const path = require("path");
 const fs = require("fs");
-const dbService = require("../../services/database.service");
+const mariadbService = require("../../services/mariadb.service");
 const {
   uploadToCloudinary,
   deleteFromCloudinary,
@@ -26,7 +26,7 @@ const getFilmById = async (req, res) => {
 
 const fetchFilmById = async (filmId) => {
   try {
-    const rows = await dbService.query(
+    const rows = await mariadbService.query(
       `SELECT
         f.id,
         f.title,
@@ -83,7 +83,7 @@ const getFilms = async (req, res) => {
 
 const fetchFilms = async () => {
   try {
-    const rows = await dbService.query(
+    const rows = await mariadbService.query(
       `SELECT 
         f.id,
         f.title,
@@ -117,7 +117,7 @@ const fetchFilms = async () => {
 const getFilmsByCinemaId = async (req, res) => {
   const cinemaId = req.params.id;
   try {
-    const rows = await dbService.query(
+    const rows = await mariadbService.query(
       `SELECT 
         f.id,
         f.title,
@@ -154,7 +154,7 @@ const getFilmsByCinemaId = async (req, res) => {
 const getFilmsByGenreId = async (req, res) => {
   const genreId = req.params.id;
   try {
-    const rows = await dbService.query(
+    const rows = await mariadbService.query(
       `SELECT 
         f.id,
         f.title,
@@ -193,7 +193,7 @@ const getFilmsByDate = async (req, res) => {
   const end = date + " 23:59:59";
 
   try {
-    const rows = await dbService.query(
+    const rows = await mariadbService.query(
       `SELECT f.id, f.title, f.description, f.release_date, f.age_minimum, f.favorite, f.poster
       FROM 
         film f
@@ -218,7 +218,7 @@ const updateFilm = async (req, res) => {
   const poster_file = req.file;
 
   try {
-    const [rows] = await dbService.query(
+    const [rows] = await mariadbService.query(
       `SELECT poster FROM film WHERE id = ?`,
       [id]
     );
@@ -241,8 +241,8 @@ const updateFilm = async (req, res) => {
       }
     }
 
-    const result = await dbService.executeTransaction(async () => {
-      await dbService.query(
+    const result = await mariadbService.executeTransaction(async () => {
+      await mariadbService.query(
         `UPDATE film SET title = ?, favorite = ?, age_minimum = ?, description = ?, poster = ? WHERE id = ?`,
         [title, favoriteBoolean, age_minimum, description, poster_final, id]
       );
@@ -271,8 +271,8 @@ const addFilm = async (req, res) => {
   if (poster_file) poster_final = poster_file.filename;
 
   try {
-    const result = await dbService.executeTransaction(async () => {
-      await dbService.query(
+    const result = await mariadbService.executeTransaction(async () => {
+      await mariadbService.query(
         `INSERT INTO film (title, description, release_date, age_minimum, favorite, poster) VALUES (?,?,?,?,?, ?)`,
         [
           title,
@@ -298,8 +298,8 @@ const deleteFilm = async (req, res) => {
   const filmId = req.params.id;
 
   try {
-    const result = await dbService.executeTransaction(async () => {
-      const [rows] = await dbService.query(
+    const result = await mariadbService.executeTransaction(async () => {
+      const [rows] = await mariadbService.query(
         `SELECT poster FROM film WHERE id = ?`,
         [filmId]
       );
@@ -314,7 +314,7 @@ const deleteFilm = async (req, res) => {
         }
       }
 
-      await dbService.query(`DELETE FROM film WHERE id = ?`, [filmId]);
+      await mariadbService.query(`DELETE FROM film WHERE id = ?`, [filmId]);
       return await fetchFilms();
     });
     res.json(result);
@@ -372,13 +372,13 @@ const scoreFilmById = async (req, res) => {
   const status = "waiting approval";
 
   try {
-    const checkResult = await dbService.query(
+    const checkResult = await mariadbService.query(
       `SELECT * FROM opinion WHERE film_id = ? AND user_id = ?`,
       [filmId, userId]
     );
 
     if (checkResult.length > 0) {
-      const updateResult = await dbService.query(
+      const updateResult = await mariadbService.query(
         `UPDATE opinion SET rating = ?, description = ?, added_date = ?, status = ? WHERE film_id = ? AND user_id = ?`,
         [rating, description, added_date, status, filmId, userId]
       );
@@ -389,7 +389,7 @@ const scoreFilmById = async (req, res) => {
         res.sendStatus(404);
       }
     } else {
-      const insertResult = await dbService.query(
+      const insertResult = await mariadbService.query(
         `INSERT INTO opinion (film_id, user_id, rating, description, added_date, status) VALUES (?, ?, ?, ?, ?, ?)`,
         [filmId, userId, rating, description, added_date, status]
       );
