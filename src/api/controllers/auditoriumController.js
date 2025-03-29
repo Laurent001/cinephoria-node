@@ -1,4 +1,4 @@
-const dbService = require("../../services/database.service");
+const mariadbService = require("../../services/mariadb.service");
 const cinemaController = require("../controllers/cinemaController");
 const { fetchCinemaById } = require("./cinemaController");
 const { fetchQualityById } = require("./qualityController");
@@ -23,7 +23,7 @@ const getAuditoriumById = async (req, res) => {
 
 const fetchAuditoriumById = async (auditoriumId) => {
   try {
-    const rows = await dbService.query(
+    const rows = await mariadbService.query(
       `SELECT
         a.id,
         a.cinema_id,
@@ -75,8 +75,8 @@ const getAuditoriums = async (req, res) => {
 };
 
 const fetchAuditoriums = async () => {
-  return await dbService.executeTransaction(async () => {
-    const rows = await dbService.query(
+  return await mariadbService.executeTransaction(async () => {
+    const rows = await mariadbService.query(
       `SELECT 
         a.id, 
         a.name, 
@@ -124,7 +124,7 @@ const fetchAuditoriums = async () => {
     }));
 
     const cinemas = await cinemaController.fetchCinemas();
-    const qualities = await dbService.query(`SELECT * FROM quality`);
+    const qualities = await mariadbService.query(`SELECT * FROM quality`);
 
     return { auditoriums, cinemas, qualities };
   });
@@ -141,8 +141,8 @@ const updateAuditorium = async (req, res) => {
   } = req.body;
 
   try {
-    const result = await dbService.executeTransaction(async () => {
-      await dbService.query(
+    const result = await mariadbService.executeTransaction(async () => {
+      await mariadbService.query(
         `UPDATE auditorium
         SET
           name = ?,
@@ -178,8 +178,8 @@ const addAuditorium = async (req, res) => {
   if (id !== undefined) return res.status(500).json({ message: "id defined" });
 
   try {
-    const result = await dbService.executeTransaction(async () => {
-      await dbService.query(
+    const result = await mariadbService.executeTransaction(async () => {
+      await mariadbService.query(
         `INSERT INTO auditorium (name, seat, seat_handi, quality_id, cinema_id) VALUES (?,?,?,?,?)`,
         [name, seat, seat_handi, qualityId, cinemaId]
       );
@@ -198,8 +198,8 @@ const deleteAuditoriumById = async (req, res) => {
   const auditoriumId = req.params.id;
 
   try {
-    const result = await dbService.executeTransaction(async () => {
-      await dbService.query(`DELETE FROM auditorium WHERE id = ?`, [
+    const result = await mariadbService.executeTransaction(async () => {
+      await mariadbService.query(`DELETE FROM auditorium WHERE id = ?`, [
         auditoriumId,
       ]);
       return await fetchAuditoriums();

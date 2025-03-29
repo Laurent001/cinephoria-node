@@ -1,4 +1,4 @@
-const dbService = require("../../services/database.service");
+const mariadbService = require("../../services/mariadb.service");
 const moment = require("moment-timezone");
 const { fetchFilmById } = require("./filmController");
 const { fetchAuditoriumById } = require("./auditoriumController");
@@ -24,7 +24,7 @@ const getScreeningById = async (req, res) => {
 
 const fetchScreeningById = async (screeningId) => {
   try {
-    const rows = await dbService.query(
+    const rows = await mariadbService.query(
       `SELECT
         sc.id,
         sc.film_id,
@@ -60,7 +60,7 @@ const getSeatsByScreeningId = async (req, res) => {
   const screeningId = req.params.id;
 
   try {
-    const rows = await dbService.query(
+    const rows = await mariadbService.query(
       `SELECT DISTINCT 
         sc.id AS screening_id, 
         sc.start_time, 
@@ -131,7 +131,7 @@ const getScreeningsByFilmId = async (req, res) => {
   const filmId = req.params.filmId;
 
   try {
-    const screeningsByFilm = await dbService.query(
+    const screeningsByFilm = await mariadbService.query(
       `SELECT 
         f.id AS film_id, 
         f.title, 
@@ -180,7 +180,7 @@ const getScreeningsByFilmId = async (req, res) => {
         .json({ message: "Film ou séances non trouvé(es)" });
     }
 
-    var genres = await dbService.query(
+    var genres = await mariadbService.query(
       `SELECT GROUP_CONCAT(g.name SEPARATOR ', ') AS genres 
       FROM film f 
       LEFT JOIN film_genre fg ON f.id = fg.film_id 
@@ -264,7 +264,7 @@ const getFilmScreeningsByCinemaId = async (req, res) => {
   const cinemaId = req.params.cinemaId;
 
   try {
-    const filmScreeningsByCinema = await dbService.query(
+    const filmScreeningsByCinema = await mariadbService.query(
       `SELECT 
         f.id AS film_id, 
         f.title, 
@@ -313,7 +313,7 @@ const getFilmScreeningsByCinemaId = async (req, res) => {
         .json({ message: "Film ou séances non trouvé(es)" });
     }
 
-    var genres = await dbService.query(
+    var genres = await mariadbService.query(
       `SELECT GROUP_CONCAT(g.name SEPARATOR ', ') AS genres 
       FROM film f 
       LEFT JOIN film_genre fg ON f.id = fg.film_id 
@@ -394,8 +394,8 @@ const getFilmScreeningsByCinemaId = async (req, res) => {
 };
 
 const fetchScreenings = async () => {
-  return await dbService.executeTransaction(async () => {
-    const rows = await dbService.query(
+  return await mariadbService.executeTransaction(async () => {
+    const rows = await mariadbService.query(
       `SELECT 
         f.id AS film_id, 
         f.title, 
@@ -471,8 +471,8 @@ const fetchScreenings = async () => {
       },
     }));
 
-    const films = await dbService.query(`SELECT * FROM film`);
-    const auditoriums = await dbService.query(`SELECT * FROM auditorium`);
+    const films = await mariadbService.query(`SELECT * FROM film`);
+    const auditoriums = await mariadbService.query(`SELECT * FROM auditorium`);
 
     return { screenings, films, auditoriums };
   });
@@ -512,8 +512,8 @@ const updateScreening = async (req, res) => {
     .format("YYYY-MM-DD HH:mm:ss");
 
   try {
-    const result = await dbService.executeTransaction(async () => {
-      await dbService.query(
+    const result = await mariadbService.executeTransaction(async () => {
+      await mariadbService.query(
         `UPDATE screening
         SET
           start_time = ?,
@@ -549,8 +549,8 @@ const addScreening = async (req, res) => {
   if (id !== undefined) return res.status(500).json({ message: "id defined" });
 
   try {
-    const result = await dbService.executeTransaction(async () => {
-      const row = await dbService.query(
+    const result = await mariadbService.executeTransaction(async () => {
+      const row = await mariadbService.query(
         `SELECT seat, seat_handi from auditorium WHERE id = ?`,
         [auditorium.id]
       );
@@ -558,7 +558,7 @@ const addScreening = async (req, res) => {
       const remaining_seat = row[0].seat;
       const remaining_seat_handi = row[0].seat_handi;
 
-      await dbService.query(
+      await mariadbService.query(
         `INSERT INTO screening (start_time, end_time, remaining_seat, remaining_seat_handi, film_id, auditorium_id) VALUES (?,?,?,?,?,?)`,
         [
           formatted_start_time,
@@ -584,8 +584,8 @@ const deleteScreeningById = async (req, res) => {
   const screeningId = req.params.id;
 
   try {
-    const result = await dbService.executeTransaction(async () => {
-      await dbService.query(`DELETE FROM screening WHERE id = ?`, [
+    const result = await mariadbService.executeTransaction(async () => {
+      await mariadbService.query(`DELETE FROM screening WHERE id = ?`, [
         screeningId,
       ]);
       return await fetchScreenings();

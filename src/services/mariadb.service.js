@@ -2,14 +2,14 @@ const mariadb = require("mariadb");
 const fs = require("fs").promises;
 require("dotenv").config();
 
-class DatabaseService {
+class MariadbService {
   constructor() {
     this.pool = mariadb.createPool({
-      host: process.env.DB_HOST,
-      user: process.env.DB_USER,
-      password: process.env.DB_PASS,
-      port: parseInt(process.env.DB_PORT, 10),
-      connectionLimit: parseInt(process.env.DB_CONNECT_LIMIT, 10),
+      host: process.env.MARIADB_HOST,
+      user: process.env.MARIADB_USER,
+      password: process.env.MARIADB_PASS,
+      port: parseInt(process.env.MARIADB_PORT, 10),
+      connectionLimit: parseInt(process.env.MARIADB_CONNECT_LIMIT, 10),
     });
   }
 
@@ -27,7 +27,7 @@ class DatabaseService {
 
   async query(sql, params) {
     if (!this.connection) {
-      await this.connect(process.env.DB_NAME);
+      await this.connect(process.env.MARIADB_NAME);
     }
     try {
       const result = await this.connection.query(sql, params);
@@ -41,7 +41,7 @@ class DatabaseService {
   async executeTransaction(callback) {
     try {
       if (!this.connection) {
-        await this.connect(process.env.DB_NAME);
+        await this.connect(process.env.MARIADB_NAME);
       }
       await this.connection.beginTransaction();
       const result = await callback(this.connection);
@@ -81,4 +81,4 @@ class DatabaseService {
   }
 }
 
-module.exports = new DatabaseService();
+module.exports = new MariadbService();

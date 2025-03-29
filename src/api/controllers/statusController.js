@@ -1,8 +1,8 @@
-const dbService = require("../../services/database.service");
+const mariadbService = require("../../services/mariadb.service");
 
 const fetchStatuses = async () => {
   try {
-    const rows = await dbService.query(`SELECT * FROM status`);
+    const rows = await mariadbService.query(`SELECT * FROM status`);
     return rows;
   } catch (error) {
     throw new Error(
@@ -43,7 +43,7 @@ const getStatusById = async (req, res) => {
 
 const fetchStatusById = async (statusId) => {
   try {
-    const rows = await dbService.query(
+    const rows = await mariadbService.query(
       `SELECT * FROM status q
       WHERE q.id = ?`,
       [statusId]

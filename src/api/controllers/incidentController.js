@@ -1,11 +1,11 @@
-const dbService = require("../../services/database.service");
+const mariadbService = require("../../services/mariadb.service");
 const auditoriumController = require("../controllers/auditoriumController");
 const materialController = require("../controllers/materialController");
 const moment = require("moment-timezone");
 
 const fetchIncidents = async () => {
   try {
-    const rows = await dbService.query(
+    const rows = await mariadbService.query(
       `SELECT 
         i.id AS incident_id, 
         i.description AS incident_description, 
@@ -66,7 +66,7 @@ const fetchIncidents = async () => {
     }));
 
     const materials = await materialController.fetchMaterials();
-    const auditoriums = await dbService.query(`SELECT * FROM auditorium`);
+    const auditoriums = await mariadbService.query(`SELECT * FROM auditorium`);
 
     return { incidents, auditoriums, materials };
   } catch (error) {
@@ -111,8 +111,8 @@ const updateIncident = async (req, res) => {
     .format("YYYY-MM-DD HH:mm:ss");
 
   try {
-    const result = await dbService.executeTransaction(async () => {
-      await dbService.query(
+    const result = await mariadbService.executeTransaction(async () => {
+      await mariadbService.query(
         `UPDATE incident
         SET
           description = ?,
@@ -142,8 +142,8 @@ const addIncident = async (req, res) => {
   if (id !== undefined) return res.status(500).json({ message: "id defined" });
 
   try {
-    const result = await dbService.executeTransaction(async () => {
-      await dbService.query(
+    const result = await mariadbService.executeTransaction(async () => {
+      await mariadbService.query(
         `INSERT INTO incident (description, is_solved, added_date, material_id, auditorium_id) VALUES (?,?,?,?,?)`,
         [description, is_solved, added_date, material.id, auditorium.id]
       );
@@ -162,8 +162,10 @@ const deleteIncidentById = async (req, res) => {
   const incidentId = req.params.id;
 
   try {
-    const result = await dbService.executeTransaction(async () => {
-      await dbService.query(`DELETE FROM incident WHERE id = ?`, [incidentId]);
+    const result = await mariadbService.executeTransaction(async () => {
+      await mariadbService.query(`DELETE FROM incident WHERE id = ?`, [
+        incidentId,
+      ]);
       return await fetchIncidents();
     });
     res.json(result);

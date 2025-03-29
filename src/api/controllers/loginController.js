@@ -1,4 +1,4 @@
-const dbService = require("../../services/database.service");
+const mariadbService = require("../../services/mariadb.service");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const saltRounds = 10;
@@ -10,10 +10,37 @@ const {
 const getLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const [user] = await dbService.query(
-      "SELECT * FROM user WHERE user.email = ?",
+
+    const rows = await mariadbService.query(
+      `SELECT
+        u.id,
+        u.email,
+        u.first_name,
+        u.last_name,
+        u.password,
+        r.id as role_id,
+        r.name as role_name
+        FROM user u
+        INNER JOIN role r ON r.id = u.role_id
+        WHERE u.email = ?`,
       [email]
     );
+
+    if (rows.length === 0) {
+      return null;
+    }
+
+    const user = {
+      id: rows[0].id,
+      email: rows[0].email,
+      first_name: rows[0].first_name,
+      last_name: rows[0].last_name,
+      password: rows[0].password,
+      role: {
+        id: rows[0].role_id,
+        name: rows[0].role_name,
+      },
+    };
 
     if (user) {
       const passwordMatch = await bcrypt.compare(password, user.password);
@@ -44,9 +71,10 @@ const sendEmailReset = async (req, res) => {
   try {
     const { email } = req.body;
 
-    const [user] = await dbService.query("SELECT * FROM user WHERE email = ?", [
-      email,
-    ]);
+    const [user] = await mariadbService.query(
+      "SELECT * FROM user WHERE email = ?",
+      [email]
+    );
 
     if (!user) {
       res.status(400).json({ message: "Utilisateur non trouvé" });
@@ -59,7 +87,7 @@ const sendEmailReset = async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    const result = await dbService.query(
+    const result = await mariadbService.query(
       "UPDATE user SET reset_token = ? WHERE id = ?",
       [reset_token, userId]
     );
@@ -84,11 +112,12 @@ const sendEmailReset = async (req, res) => {
 const passwordReset = async (req, res) => {
   try {
     const { id, email, newPassword } = req.user;
-    const [user] = await dbService.query("SELECT * FROM user WHERE id = ?", [
-      id,
-    ]);
+    const [user] = await mariadbService.query(
+      "SELECT * FROM user WHERE id = ?",
+      [id]
+    );
     const hashedNewPassword = await bcrypt.hash(newPassword, saltRounds);
-    const result = await dbService.query(
+    const result = await mariadbService.query(
       "UPDATE user SET password = ? WHERE id = ?",
       [hashedNewPassword, id]
     );
@@ -96,10 +125,10 @@ const passwordReset = async (req, res) => {
     if (result && result.affectedRows > 0) {
       sendEmailResetSuccess(email, user.first_name);
 
-      await dbService.query("UPDATE user SET reset_token = ? WHERE id = ?", [
-        null,
-        id,
-      ]);
+      await mariadbService.query(
+        "UPDATE user SET reset_token = ? WHERE id = ?",
+        [null, id]
+      );
       res.status(201).json({ message: "Mot de passe modifié avec succès" });
     } else {
       res
@@ -118,7 +147,7 @@ const passwordReset = async (req, res) => {
 const verifyToken = async (req, res, next) => {
   const { newPassword, reset_token } = req.body;
 
-  const result = await dbService.query(
+  const result = await mariadbService.query(
     "SELECT id FROM user WHERE reset_token = ?",
     [reset_token]
   );

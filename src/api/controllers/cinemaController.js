@@ -1,4 +1,4 @@
-const dbService = require("../../services/database.service");
+const mariadbService = require("../../services/mariadb.service");
 
 const getCinemaById = async (req, res) => {
   const cinemaId = req.cinema.id;
@@ -21,7 +21,7 @@ const getCinemaById = async (req, res) => {
 
 const fetchCinemaById = async (cinemaId) => {
   try {
-    const rows = await dbService.query(
+    const rows = await mariadbService.query(
       "SELECT * FROM cinema WHERE cinema.id = ?",
       [cinemaId]
     );
@@ -67,7 +67,7 @@ const getCinemas = async (req, res) => {
 
 const fetchCinemas = async () => {
   try {
-    const rows = await dbService.query(`SELECT * FROM cinema`);
+    const rows = await mariadbService.query(`SELECT * FROM cinema`);
 
     if (rows.length === 0) {
       return [];
@@ -103,7 +103,7 @@ const getCinemaByScreeningId = async (req, res) => {
 
 const fetchCinemaByScreeningId = async (screeningId) => {
   try {
-    const rows = await dbService.query(
+    const rows = await mariadbService.query(
       `SELECT
         c.id AS cinema_id,
         c.name AS cinema_name,

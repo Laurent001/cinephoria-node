@@ -1,8 +1,8 @@
-const dbService = require("../../services/database.service");
+const mariadbService = require("../../services/mariadb.service");
 
 const getGenres = async (req, res) => {
   try {
-    const rows = await dbService.query(`SELECT * FROM genre`);
+    const rows = await mariadbService.query(`SELECT * FROM genre`);
     res.json(rows);
   } catch (error) {
     res.status(500).json({
