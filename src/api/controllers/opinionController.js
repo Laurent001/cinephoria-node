@@ -1,4 +1,4 @@
-const dbService = require("../../services/database.service");
+const mariadbService = require("../../services/mariadb.service");
 const { fetchUserById } = require("./userController");
 const { fetchFilmById } = require("./filmController");
 const { fetchStatuses, fetchStatusById } = require("./statusController");
@@ -19,7 +19,7 @@ const getOpinionByUserIdAndFilmId = async (req, res) => {
 
 const fetchOpinionByUserIdAndFilmId = async (userId, filmId) => {
   try {
-    const opinionResponse = await dbService.executeTransaction(
+    const opinionResponse = await mariadbService.executeTransaction(
       async (connection) => {
         const opinion = await connection.query(
           "SELECT * FROM opinion WHERE user_id = ? AND film_id = ?",
@@ -71,32 +71,34 @@ const getOpinions = async (req, res) => {
 
 const fetchOpinions = async () => {
   try {
-    const result = await dbService.executeTransaction(async (connection) => {
-      const rows = await connection.query("SELECT * FROM opinion");
+    const result = await mariadbService.executeTransaction(
+      async (connection) => {
+        const rows = await connection.query("SELECT * FROM opinion");
 
-      if (rows.length === 0) {
-        return undefined;
+        if (rows.length === 0) {
+          return undefined;
+        }
+
+        const opinions = await Promise.all(
+          rows.map(async (opinion) => {
+            const user = await fetchUserById(opinion.user_id);
+            const film = await fetchFilmById(opinion.film_id);
+            const status = await fetchStatusById(opinion.status_id);
+            return {
+              id: opinion.id,
+              rating: opinion.rating,
+              description: opinion.description,
+              added_date: opinion.added_date,
+              status: status,
+              user: user,
+              film: film,
+            };
+          })
+        );
+        const statuses = await fetchStatuses();
+        return { opinions, statuses };
       }
-
-      const opinions = await Promise.all(
-        rows.map(async (opinion) => {
-          const user = await fetchUserById(opinion.user_id);
-          const film = await fetchFilmById(opinion.film_id);
-          const status = await fetchStatusById(opinion.status_id);
-          return {
-            id: opinion.id,
-            rating: opinion.rating,
-            description: opinion.description,
-            added_date: opinion.added_date,
-            status: status,
-            user: user,
-            film: film,
-          };
-        })
-      );
-      const statuses = await fetchStatuses();
-      return { opinions, statuses };
-    });
+    );
 
     return result;
   } catch (error) {
@@ -110,15 +112,17 @@ const addOpinion = async (req, res) => {
   const { user, film, rating, description, status } = req.body;
 
   try {
-    const result = await dbService.executeTransaction(async (connection) => {
-      const opinion = await connection.query(
-        "INSERT INTO opinion (user_id, film_id, rating, description, status_id) VALUES (?, ?, ?, ?, ?)",
-        [user.id, film.id, rating, description, status.id]
-      );
+    const result = await mariadbService.executeTransaction(
+      async (connection) => {
+        const opinion = await connection.query(
+          "INSERT INTO opinion (user_id, film_id, rating, description, status_id) VALUES (?, ?, ?, ?, ?)",
+          [user.id, film.id, rating, description, status.id]
+        );
 
-      const insertedId = opinion.insertId;
-      return Number(insertedId);
-    });
+        const insertedId = opinion.insertId;
+        return Number(insertedId);
+      }
+    );
 
     res.status(201).json({ message: "avis ajouté", opinionId: result });
   } catch (error) {
@@ -133,7 +137,7 @@ const updateOpinionStatus = async (req, res) => {
   const { id, status } = req.body;
 
   try {
-    const result = await dbService.query(
+    const result = await mariadbService.query(
       "UPDATE opinion SET status_id = ? WHERE id = ?",
       [status.id, id]
     );
@@ -155,7 +159,7 @@ const updateOpinion = async (req, res) => {
   const { id, status, description, rating } = req.body;
 
   try {
-    const result = await dbService.query(
+    const result = await mariadbService.query(
       "UPDATE opinion SET status_id = ?, description = ?, rating = ? WHERE id = ?",
       [status.id, description, rating, id]
     );
@@ -177,9 +181,10 @@ const deleteOpinionById = async (req, res) => {
   const opinionId = req.params.id;
 
   try {
-    const result = await dbService.query(`DELETE FROM opinion WHERE id = ?`, [
-      opinionId,
-    ]);
+    const result = await mariadbService.query(
+      `DELETE FROM opinion WHERE id = ?`,
+      [opinionId]
+    );
 
     if (result.affectedRows > 0) {
       res.status(200).json(true);

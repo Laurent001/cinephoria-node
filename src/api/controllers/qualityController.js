@@ -1,4 +1,4 @@
-const dbService = require("../../services/database.service");
+const mariadbService = require("../../services/mariadb.service");
 
 const getQualityById = async (req, res) => {
   try {
@@ -20,7 +20,7 @@ const getQualityById = async (req, res) => {
 
 const fetchQualityById = async (qualityId) => {
   try {
-    const rows = await dbService.query(
+    const rows = await mariadbService.query(
       `SELECT * FROM quality q
       WHERE q.id = ?`,
       [qualityId]

@@ -1,4 +1,4 @@
-const dbService = require("../../services/database.service");
+const mariadbService = require("../../services/mariadb.service");
 const jwt = require("jsonwebtoken");
 const ROLE_ADMIN = 1;
 const ROLE_STAFF = 2;
@@ -18,7 +18,7 @@ const getUsers = async (req, res) => {
 
 const fetchUsers = async () => {
   try {
-    const rows = await dbService.query(
+    const rows = await mariadbService.query(
       `SELECT 
         u.id,
         u.email,
@@ -67,7 +67,7 @@ const getUsersByRole = async (req, res) => {
 
 const fetchUsersByRole = async (role_id) => {
   try {
-    const rows = await dbService.query(
+    const rows = await mariadbService.query(
       `SELECT 
         u.id,
         u.email,
@@ -121,7 +121,7 @@ const getUserById = async (req, res) => {
 
 const fetchUserById = async (userId) => {
   try {
-    const rows = await dbService.query(
+    const rows = await mariadbService.query(
       `SELECT 
         u.id,
         u.email,
@@ -199,7 +199,7 @@ const updateUser = async (req, res) => {
       return res.status(404).json({ message: "Utilisateur non trouvé" });
     }
 
-    const result = await dbService.query(
+    const result = await mariadbService.query(
       `UPDATE user 
       SET email = ?, first_name = ?, last_name = ?, role_id = ? 
       WHERE id = ?`,
@@ -231,7 +231,9 @@ const deleteUser = async (req, res) => {
       return res.status(404).json({ message: "Utilisateur non trouvé" });
     }
 
-    const result = await dbService.query(`DELETE FROM user WHERE id = ?`, [id]);
+    const result = await mariadbService.query(`DELETE FROM user WHERE id = ?`, [
+      id,
+    ]);
 
     if (result.affectedRows > 0) {
       res.json({ message: "Utilisateur supprimé avec succès" });

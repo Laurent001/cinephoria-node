@@ -1,4 +1,4 @@
-const dbService = require("../../services/database.service");
+const mariadbService = require("../../services/mariadb.service");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const crypto = require("crypto");
@@ -25,7 +25,7 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ message: "nom et prénom incorrect" });
     }
 
-    const [existingUsers] = await dbService.query(
+    const [existingUsers] = await mariadbService.query(
       "SELECT * FROM user WHERE email = ?",
       [email]
     );
@@ -38,7 +38,7 @@ const registerUser = async (req, res) => {
     const password = generateRandomPassword();
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    const result = await dbService.query(
+    const result = await mariadbService.query(
       "INSERT INTO user (email, reset_token, password, first_name, last_name, role_id) VALUES (?, ?, ?, ?, ?, ?)",
       [email, null, hashedPassword, first_name, last_name, role.id]
     );

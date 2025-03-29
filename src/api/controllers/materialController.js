@@ -1,8 +1,8 @@
-const dbService = require("../../services/database.service");
+const mariadbService = require("../../services/mariadb.service");
 
 const getMaterials = async (req, res) => {
   try {
-    const rows = await dbService.query(`SELECT * FROM material`);
+    const rows = await mariadbService.query(`SELECT * FROM material`);
 
     res.json(rows);
   } catch (error) {
@@ -15,7 +15,7 @@ const getMaterials = async (req, res) => {
 
 const fetchMaterials = async () => {
   try {
-    const rows = await dbService.query(`SELECT * FROM material`);
+    const rows = await mariadbService.query(`SELECT * FROM material`);
     return rows;
   } catch (error) {
     throw new Error("Erreur lors de la récupération des matériels");
