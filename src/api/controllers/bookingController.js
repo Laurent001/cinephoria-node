@@ -32,7 +32,6 @@ const fetchBookingsByUserId = async (userId) => {
       c.address AS cinema_address,
       c.city AS cinema_city,
       c.name AS cinema_name,
-      c.opening_hours AS cinema_opening_hours,
       c.phone AS cinema_phone,
       c.postcode AS cinema_postcode, 
       f.id AS film_id

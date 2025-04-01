@@ -96,10 +96,22 @@ CREATE TABLE `cinema` (
   `city` varchar(50) NOT NULL,
   `postcode` varchar(50) NOT NULL,
   `phone` varchar(20) NOT NULL,
-  `opening_hours` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+
+DROP TABLE IF EXISTS `cinema_opening_hours`;
+CREATE TABLE `cinema_opening_hours` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `cinema_id` INT(11) NOT NULL,
+  `day_of_week` TINYINT NOT NULL,
+  `opening_time` TIME NOT NULL,
+  `closing_time` TIME NOT NULL,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`cinema_id`) REFERENCES `cinema`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 --
 -- Table structure for table `cinema_film`
