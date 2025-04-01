@@ -24,8 +24,7 @@ const fetchIncidents = async () => {
         c.address AS cinema_address, 
         c.city AS cinema_city, 
         c.postcode AS cinema_postcode, 
-        c.phone AS cinema_phone, 
-        c.opening_hours AS cinema_opening_hours 
+        c.phone AS cinema_phone
       FROM 
         incident i 
         INNER JOIN auditorium a ON a.id = i.auditorium_id 
@@ -60,7 +59,6 @@ const fetchIncidents = async () => {
           city: row.cinema_city,
           postcode: row.cinema_postcode,
           phone: row.cinema_phone,
-          opening_hours: row.cinema_opening_hours,
         },
       },
     }));
