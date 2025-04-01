@@ -146,7 +146,6 @@ const getScreeningsByFilmId = async (req, res) => {
         c.city AS cinema_city, 
         c.postcode AS cinema_postcode, 
         c.phone AS cinema_phone, 
-        c.opening_hours AS cinema_opening_hours, 
         s.id AS screening_id, 
         s.film_id AS screening_film_id, 
         s.auditorium_id AS screening_auditorium_id, 
@@ -226,8 +225,11 @@ const getScreeningsByFilmId = async (req, res) => {
           name: row.auditorium_name,
           seat: row.auditorium_seat,
           seat_handi: row.auditorium_seat_handi,
-          quality: row.auditorium_quality,
-          quality_id: row.auditorium_quality_id,
+          quality: {
+            id: row.auditorium_quality_id,
+            name: row.auditorium_quality,
+            price: row.auditorium_price,
+          },
           price: row.auditorium_price,
           cinema: {
             id: row.cinema_id,
@@ -236,7 +238,6 @@ const getScreeningsByFilmId = async (req, res) => {
             city: row.cinema_city,
             postcode: row.cinema_postcode,
             phone: row.cinema_phone,
-            opening_hours: row.cinema_opening_hours,
           },
         },
       });
@@ -279,7 +280,6 @@ const getFilmScreeningsByCinemaId = async (req, res) => {
         c.city AS cinema_city, 
         c.postcode AS cinema_postcode, 
         c.phone AS cinema_phone, 
-        c.opening_hours AS cinema_opening_hours, 
         s.id AS screening_id, 
         s.film_id AS screening_film_id, 
         s.auditorium_id AS screening_auditorium_id, 
@@ -370,7 +370,6 @@ const getFilmScreeningsByCinemaId = async (req, res) => {
             city: filmScreeningsByCinema[0].cinema_city,
             postcode: filmScreeningsByCinema[0].cinema_postcode,
             phone: filmScreeningsByCinema[0].cinema_phone,
-            opening_hours: filmScreeningsByCinema[0].cinema_opening_hours,
           },
         },
       });
@@ -422,7 +421,6 @@ const fetchScreenings = async () => {
         c.city AS cinema_city, 
         c.postcode AS cinema_postcode, 
         c.phone AS cinema_phone, 
-        c.opening_hours AS cinema_opening_hours, 
         q.name AS auditorium_quality, 
         q.price AS auditorium_price 
       FROM 
@@ -466,7 +464,6 @@ const fetchScreenings = async () => {
           city: row.cinema_city,
           postcode: row.cinema_postcode,
           phone: row.cinema_phone,
-          opening_hours: row.cinema_opening_hours,
         },
       },
     }));

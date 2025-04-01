@@ -90,8 +90,7 @@ const fetchAuditoriums = async () => {
         c.address AS cinema_address,
         c.city AS cinema_city,
         c.postcode AS cinema_postcode,
-        c.phone AS cinema_phone,
-        c.opening_hours AS cinema_opening_hours
+        c.phone AS cinema_phone
       FROM
         auditorium a
         INNER JOIN quality q ON a.quality_id = q.id
@@ -119,7 +118,6 @@ const fetchAuditoriums = async () => {
         city: row.cinema_city,
         postcode: row.cinema_postcode,
         phone: row.cinema_phone,
-        opening_hours: row.cinema_opening_hours,
       },
     }));
 

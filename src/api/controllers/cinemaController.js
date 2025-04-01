@@ -37,7 +37,6 @@ const fetchCinemaById = async (cinemaId) => {
       city: rows[0].city,
       postcode: rows[0].postcode,
       phone: rows[0].phone,
-      opening_hours: rows[0].opening_hours,
     };
 
     return cinema;
@@ -110,8 +109,7 @@ const fetchCinemaByScreeningId = async (screeningId) => {
         c.address AS cinema_address,
         c.city AS cinema_city,
         c.postcode AS cinema_postcode,
-        c.phone AS cinema_phone,
-        c.opening_hours AS cinema_opening_hours
+        c.phone AS cinema_phone
       FROM
         screening s
         INNER JOIN auditorium a ON a.id = s.auditorium_id
@@ -132,7 +130,6 @@ const fetchCinemaByScreeningId = async (screeningId) => {
       city: rows[0].cinema_city,
       postcode: rows[0].cinema_postcode,
       phone: rows[0].cinema_phone,
-      opening_hours: rows[0].cinema_opening_hours,
     };
   } catch (error) {
     throw new Error(
