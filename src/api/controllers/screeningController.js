@@ -205,12 +205,7 @@ const getScreeningsByFilmId = async (req, res) => {
 
     const screeningsByDay = {};
     screeningsByFilm.forEach((row) => {
-      const date = new Date(row.start_time).toLocaleDateString("fr-FR", {
-        weekday: "long",
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      });
+      const date = new Date(row.start_time);
 
       if (!screeningsByDay[date]) {
         screeningsByDay[date] = [];
@@ -292,12 +287,12 @@ const getFilmScreeningsByCinemaId = async (req, res) => {
         a.seat_handi AS auditorium_seat_handi, 
         a.cinema_id AS auditorium_cinema_id, 
         q.name AS auditorium_quality, 
-        q.price AS auditorium_price 
+        q.price AS auditorium_price
       FROM 
         screening s 
-        JOIN film f ON s.film_id = f.id 
-        JOIN auditorium a ON s.auditorium_id = a.id 
-        JOIN cinema c ON a.cinema_id = c.id 
+        INNER JOIN film f ON s.film_id = f.id 
+        INNER JOIN auditorium a ON s.auditorium_id = a.id 
+        INNER JOIN cinema c ON a.cinema_id = c.id 
         INNER JOIN quality q ON q.id = a.quality_id 
       WHERE 
         f.id = ? 
@@ -339,12 +334,7 @@ const getFilmScreeningsByCinemaId = async (req, res) => {
 
     const screeningsByDay = {};
     filmScreeningsByCinema.forEach((row) => {
-      const date = new Date(row.start_time).toLocaleDateString("fr-FR", {
-        weekday: "long",
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      });
+      const date = new Date(row.start_time);
 
       if (!screeningsByDay[date]) {
         screeningsByDay[date] = [];
