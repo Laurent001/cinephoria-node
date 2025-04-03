@@ -148,34 +148,30 @@ const updateOpinionStatus = async (req, res) => {
         res.status(500).json({ message: "Avis non trouvé" });
       }
 
-      if (status.id === STATUS_PUBLISHED) {
-        film = await mariadbService.query(
-          `SELECT film_id FROM opinion WHERE id = ?`,
-          [id]
-        );
+      film = await mariadbService.query(
+        `SELECT film_id FROM opinion WHERE id = ?`,
+        [id]
+      );
 
-        if (film.length === 0) {
-          res
-            .status(500)
-            .json({ message: "film non trouvé pour cette opinion" });
-        }
+      if (film.length === 0) {
+        res.status(500).json({ message: "film non trouvé pour cette opinion" });
+      }
 
-        filmId = film[0].film_id;
-        rows = await mariadbService.query(
-          `SELECT AVG(rating) AS average_rating FROM opinion WHERE film_id = ?`,
-          [filmId]
-        );
+      filmId = film[0].film_id;
+      rows = await mariadbService.query(
+        `SELECT AVG(rating) AS average_rating FROM opinion WHERE film_id = ? AND status_id = ?`,
+        [filmId, STATUS_PUBLISHED]
+      );
 
-        const averageRating = rows[0].average_rating;
+      const averageRating = rows[0].average_rating;
 
-        ratingUpdate = await mariadbService.query(
-          `UPDATE film SET rating = ? WHERE id = ?`,
-          [averageRating, filmId]
-        );
+      ratingUpdate = await mariadbService.query(
+        `UPDATE film SET rating = ? WHERE id = ?`,
+        [averageRating, filmId]
+      );
 
-        if (ratingUpdate.affectedRows <= 0) {
-          res.status(500).json({ message: "Note non mise à jour" });
-        }
+      if (ratingUpdate.affectedRows <= 0) {
+        res.status(500).json({ message: "Note non mise à jour" });
       }
     });
     if (status.id === STATUS_PUBLISHED) {
