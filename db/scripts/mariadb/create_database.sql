@@ -145,6 +145,7 @@ CREATE TABLE `film` (
   `age_minimum` int(11) DEFAULT NULL CHECK (`age_minimum` between 3 and 18),
   `favorite` tinyint(1) DEFAULT 0,
   `poster` TEXT DEFAULT NULL,
+  `rating`INT(11) DEFAULT NULL CHECK (`rating` between 1 and 5),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;

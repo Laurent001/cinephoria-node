@@ -35,8 +35,10 @@ const fetchFilmById = async (filmId) => {
         f.age_minimum,
         f.poster,
         f.release_date,
+        f.rating,
         GROUP_CONCAT(g.name SEPARATOR ', ') AS genres
-      FROM film f
+      FROM 
+        film f
         LEFT JOIN film_genre fg ON f.id = fg.film_id 
         LEFT JOIN genre g ON fg.genre_id = g.id 
       WHERE f.id = ?`,
@@ -56,6 +58,7 @@ const fetchFilmById = async (filmId) => {
       age_minimum: rows[0].age_minimum,
       favorite: rows[0].favorite,
       poster: rows[0].poster,
+      rating: rows[0].rating,
     };
 
     return film;
@@ -85,20 +88,19 @@ const fetchFilms = async () => {
   try {
     const rows = await mariadbService.query(
       `SELECT 
-        f.id,
-        f.title,
-        f.description,
-        GROUP_CONCAT(g.name SEPARATOR ', ') AS genres,
-        f.release_date,
-        f.age_minimum,
-        f.favorite,
-        f.poster
+        f.id, 
+        f.title, 
+        f.description, 
+        GROUP_CONCAT(g.name SEPARATOR ', ') AS genres, 
+        f.release_date, 
+        f.age_minimum, 
+        f.favorite, 
+        f.poster, 
+        f.rating
       FROM 
-        film f
-      LEFT JOIN 
-        film_genre fg ON f.id = fg.film_id
-      LEFT JOIN 
-        genre g ON fg.genre_id = g.id
+        film f 
+        LEFT JOIN film_genre fg ON f.id = fg.film_id 
+        LEFT JOIN genre g ON fg.genre_id = g.id 
       GROUP BY 
         f.id`
     );
@@ -126,17 +128,13 @@ const getFilmsByCinemaId = async (req, res) => {
         f.release_date,
         f.age_minimum,
         f.favorite,
-        f.poster
-      FROM 
-        film f
-      LEFT JOIN 
-        cinema_film cf ON f.id = cf.film_id
-      LEFT JOIN 
-        cinema c ON cf.cinema_id = c.id
-      LEFT JOIN 
-        film_genre fg ON f.id = fg.film_id
-      LEFT JOIN 
-        genre g ON fg.genre_id = g.id
+        f.poster,
+        f.rating
+      FROM film f
+      LEFT JOIN cinema_film cf ON f.id = cf.film_id
+      LEFT JOIN cinema c ON cf.cinema_id = c.id
+      LEFT JOIN film_genre fg ON f.id = fg.film_id
+      LEFT JOIN genre g ON fg.genre_id = g.id
       WHERE c.id = ?
       GROUP BY 
         f.id`,
@@ -163,7 +161,8 @@ const getFilmsByGenreId = async (req, res) => {
         f.release_date,
         f.age_minimum,
         f.favorite,
-        f.poster
+        f.poster,
+        f.rating
       FROM 
         film f
       LEFT JOIN 
@@ -194,7 +193,7 @@ const getFilmsByDate = async (req, res) => {
 
   try {
     const rows = await mariadbService.query(
-      `SELECT f.id, f.title, f.description, f.release_date, f.age_minimum, f.favorite, f.poster
+      `SELECT f.id, f.title, f.description, f.release_date, f.age_minimum, f.favorite, f.poster, f.rating
       FROM 
         film f
       INNER JOIN 
@@ -273,7 +272,7 @@ const addFilm = async (req, res) => {
   try {
     const result = await mariadbService.executeTransaction(async () => {
       await mariadbService.query(
-        `INSERT INTO film (title, description, release_date, age_minimum, favorite, poster) VALUES (?,?,?,?,?, ?)`,
+        `INSERT INTO film (title, description, release_date, age_minimum, favorite, poster) VALUES (?,?,?,?,?,?)`,
         [
           title,
           description,
@@ -372,34 +371,40 @@ const scoreFilmById = async (req, res) => {
   const status = "waiting approval";
 
   try {
-    const checkResult = await mariadbService.query(
-      `SELECT * FROM opinion WHERE film_id = ? AND user_id = ?`,
-      [filmId, userId]
-    );
-
-    if (checkResult.length > 0) {
-      const updateResult = await mariadbService.query(
-        `UPDATE opinion SET rating = ?, description = ?, added_date = ?, status = ? WHERE film_id = ? AND user_id = ?`,
-        [rating, description, added_date, status, filmId, userId]
+    const result = await mariadbService.executeTransaction(async () => {
+      const checkResult = await mariadbService.query(
+        `SELECT * FROM opinion WHERE film_id = ? AND user_id = ?`,
+        [filmId, userId]
       );
 
-      if (updateResult.affectedRows > 0) {
-        res.sendStatus(200);
-      } else {
-        res.sendStatus(404);
-      }
-    } else {
-      const insertResult = await mariadbService.query(
-        `INSERT INTO opinion (film_id, user_id, rating, description, added_date, status) VALUES (?, ?, ?, ?, ?, ?)`,
-        [filmId, userId, rating, description, added_date, status]
-      );
+      if (checkResult.length > 0) {
+        const updateResult = await mariadbService.query(
+          `UPDATE opinion SET rating = ?, description = ?, added_date = ?, status = ? WHERE film_id = ? AND user_id = ?`,
+          [rating, description, added_date, status, filmId, userId]
+        );
 
-      if (insertResult.affectedRows > 0) {
-        res.sendStatus(201);
+        if (updateResult.affectedRows <= 0) {
+          res.sendStatus(404);
+        }
       } else {
-        res.sendStatus(500);
+        const insertResult = await mariadbService.query(
+          `INSERT INTO opinion (film_id, user_id, rating, description, added_date, status) VALUES (?, ?, ?, ?, ?, ?)`,
+          [filmId, userId, rating, description, added_date, status]
+        );
+
+        if (updateResult.affectedRows <= 0) {
+          res.sendStatus(404);
+        }
       }
-    }
+    });
+
+    res.json({
+      message: "Film noté avec succès",
+      rating,
+      description,
+      added_date,
+      status,
+    });
   } catch (error) {
     console.error("Erreur lors de la notation de la réservation:", error);
     res.sendStatus(500);
