@@ -2,6 +2,7 @@ const mariadbService = require("../../services/mariadb.service");
 const { fetchUserById } = require("./userController");
 const { fetchFilmById } = require("./filmController");
 const { fetchStatuses, fetchStatusById } = require("./statusController");
+const STATUS_PUBLISHED = 1;
 
 const getOpinionByUserIdAndFilmId = async (req, res) => {
   const userId = req.params.userId;
@@ -137,15 +138,52 @@ const updateOpinionStatus = async (req, res) => {
   const { id, status } = req.body;
 
   try {
-    const result = await mariadbService.query(
-      "UPDATE opinion SET status_id = ? WHERE id = ?",
-      [status.id, id]
-    );
+    const result = await mariadbService.executeTransaction(async () => {
+      const opinionUpdate = await mariadbService.query(
+        "UPDATE opinion SET status_id = ? WHERE id = ?",
+        [status.id, id]
+      );
+      console.log("opinionUpdate : ", opinionUpdate);
+      if (opinionUpdate.affectedRows <= 0) {
+        res.status(500).json({ message: "Avis non trouvé" });
+      }
 
-    if (result.affectedRows > 0) {
-      res.status(201).json({ message: "Avis mis à jour" });
+      if (status.id === STATUS_PUBLISHED) {
+        film = await mariadbService.query(
+          `SELECT film_id FROM opinion WHERE id = ?`,
+          [id]
+        );
+
+        if (film.length === 0) {
+          res
+            .status(500)
+            .json({ message: "film non trouvé pour cette opinion" });
+        }
+
+        filmId = film[0].film_id;
+        rows = await mariadbService.query(
+          `SELECT AVG(rating) AS average_rating FROM opinion WHERE film_id = ?`,
+          [filmId]
+        );
+
+        const averageRating = rows[0].average_rating;
+
+        ratingUpdate = await mariadbService.query(
+          `UPDATE film SET rating = ? WHERE id = ?`,
+          [averageRating, filmId]
+        );
+
+        if (ratingUpdate.affectedRows <= 0) {
+          res.status(500).json({ message: "Note non mise à jour" });
+        }
+      }
+    });
+    if (status.id === STATUS_PUBLISHED) {
+      res.status(201).json({
+        message: "Statut de l'avis et note mis à jour",
+      });
     } else {
-      res.status(500).json({ message: "Avis non trouvé" });
+      res.status(201).json({ message: "Statut de l'avis mis à jour" });
     }
   } catch (error) {
     res.status(500).json({
