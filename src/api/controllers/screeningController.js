@@ -168,6 +168,7 @@ const getScreeningsByFilmId = async (req, res) => {
         INNER JOIN quality q ON q.id = a.quality_id 
       WHERE 
         f.id = ? 
+        AND (s.remaining_seat > 0 OR s.remaining_seat_handi > 0)
       ORDER BY
         s.start_time ASC`,
       [filmId]
@@ -297,6 +298,7 @@ const getFilmScreeningsByCinemaId = async (req, res) => {
       WHERE 
         f.id = ? 
         AND c.id = ?
+        AND (s.remaining_seat > 0 OR s.remaining_seat_handi > 0)
       ORDER BY
         s.start_time ASC`,
       [filmId, cinemaId]
