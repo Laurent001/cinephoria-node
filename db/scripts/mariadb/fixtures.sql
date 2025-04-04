@@ -54,11 +54,11 @@ UNLOCK TABLES;
 LOCK TABLES `cinema` WRITE;
 /*!40000 ALTER TABLE `cinema` DISABLE KEYS */;
 INSERT INTO `cinema` VALUES
-(1,'Ciné Nantes','1 Rue du Cinéma','Nantes','44000','0123456789'),
-(2,'Ciné Bordeaux','2 Avenue des Films','Bordeaux','33000','0234567890'),
-(3,'Ciné Paris','3 Boulevard du 7ème Art','Paris','75001','0345678901'),
-(4,'Ciné Toulouse','4 Place du Grand Écran','Toulouse','31000','0456789012'),
-(5,'Ciné Lille','5 Rue des Projecteurs','Lille','59000','0567890123');
+(1,'Cinéphoria Nantes','1 Rue du Cinéma','Nantes','44000','01.48.65.12.14'),
+(2,'Cinéphoria Bordeaux','2 Avenue des Films','Bordeaux','33000','01.48.65.12.14'),
+(3,'Cinéphoria Paris','3 Boulevard du 7ème Art','Paris','75001','01.48.65.12.14'),
+(4,'Cinéphoria Toulouse','4 Place du Grand Écran','Toulouse','31000','01.48.65.12.14'),
+(5,'Cinéphoria Lille','5 Rue des Projecteurs','Lille','59000','01.48.65.12.14');
 /*!40000 ALTER TABLE `cinema` ENABLE KEYS */;
 UNLOCK TABLES;
 
