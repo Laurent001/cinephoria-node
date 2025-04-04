@@ -51,12 +51,27 @@ const fetchBookingsByUserId = async (userId) => {
 
 const createBooking = async (req, res) => {
   const { user, screening, totalPrice, seats } = req.body;
-
+  const bookedSeats = seats.filter((seat) => seat.is_handi === 0).length;
+  const bookedHandiSeats = seats.filter((seat) => seat.is_handi === 1).length;
+  
   try {
     const result = await mariadbService.executeTransaction(async () => {
       const bookingResult = await mariadbService.query(
         "INSERT INTO booking (user_id, total_price) VALUES (?, ?)",
         [user.id, totalPrice]
+      );
+
+      const [currentScreening] = await mariadbService.query(
+        "SELECT remaining_seat, remaining_seat_handi FROM screening WHERE id = ?",
+        [screening.id]
+      );
+
+      const newRemainingSeat = currentScreening.remaining_seat - bookedSeats;
+      const newRemainingHandiSeat =
+        currentScreening.remaining_seat_handi - bookedHandiSeats;
+      await mariadbService.query(
+        "UPDATE screening SET remaining_seat = ?, remaining_seat_handi = ? WHERE id = ?",
+        [newRemainingSeat, newRemainingHandiSeat, screening.id]
       );
 
       const booking_id = bookingResult.insertId.toString();
@@ -109,7 +124,7 @@ const getSeatsByScreeningId = async (req, res) => {
         a.seat_handi AS auditorium_seat_handi,
         a.seat AS auditorium_seat,
         q.name AS auditorium_quality,
-        q.price AS auditorium_price
+        q.price AS auditorium_price,
         CASE 
           WHEN bsc.seat_id IS NULL THEN TRUE
           ELSE FALSE 
