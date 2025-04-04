@@ -1,7 +1,7 @@
 const mariadbService = require("../../services/mariadb.service");
 
 const getCinemaById = async (req, res) => {
-  const cinemaId = req.cinema.id;
+  const cinemaId = req.params.id;
 
   try {
     const cinema = await fetchCinemaById(cinemaId);
@@ -30,6 +30,8 @@ const fetchCinemaById = async (cinemaId) => {
       return null;
     }
 
+    const openings = await fetchOpeningsByCinemaId(cinemaId);
+
     const cinema = {
       id: rows[0].id,
       name: rows[0].name,
@@ -37,6 +39,11 @@ const fetchCinemaById = async (cinemaId) => {
       city: rows[0].city,
       postcode: rows[0].postcode,
       phone: rows[0].phone,
+      opening_hours: openings.map((opening) => ({
+        day_of_week: opening.day_of_week,
+        opening_time: opening.opening_time,
+        closing_time: opening.closing_time,
+      })),
     };
 
     return cinema;
@@ -135,6 +142,36 @@ const fetchCinemaByScreeningId = async (screeningId) => {
     throw new Error(
       `Erreur lors de la récupération du cinéma: ${error.message}`
     );
+  }
+};
+
+const fetchOpeningsByCinemaId = async (cinema_id) => {
+  if (!cinema_id) {
+    return res.status(400).json({
+      message: "Veuillez renseigner un id de cinéma",
+    });
+  }
+
+  try {
+    const openings = await mariadbService.query(
+      `SELECT 
+        c.name AS cinema_name,
+        oh.day_of_week,
+        oh.opening_time,
+        oh.closing_time
+      FROM 
+        cinema c
+      INNER JOIN 
+        cinema_opening_hours oh ON c.id = oh.cinema_id
+      WHERE cinema_id = ?`,
+      [cinema_id]
+    );
+
+    return openings;
+  } catch (error) {
+    res.status(500).json({
+      message: "Erreur lors de la récupération des horaires d'ouverture",
+    });
   }
 };
 
