@@ -1,6 +1,7 @@
 const mariadbService = require("../src/services/mariadb.service.js");
 const mongodbService = require("../src/services/mongodb.service.js");
 const path = require("path");
+const fs = require("fs");
 const moment = require("moment");
 
 async function setupMariadb() {
@@ -20,6 +21,12 @@ async function setupMariadb() {
       "../db/scripts/mariadb/fixtures.sql"
     );
     await mariadbService.executeSQL(fixturesAbsolutePath);
+
+    const seatsFixturesAbsolutePath = path.resolve(
+      __dirname,
+      "../db/scripts/mariadb/fixtures_seats.sql"
+    );
+    await mariadbService.executeSQL(seatsFixturesAbsolutePath);
     console.log("Fixtures mariadb importées avec succès");
   } catch (error) {
     console.error("Error setting up database:", error);
@@ -101,5 +108,41 @@ async function setupMongoDB() {
   }
 }
 
+async function createFixturesSeats() {
+  const auditoriums = await mariadbService.query(
+    "SELECT id, seat, seat_handi FROM auditorium"
+  );
+
+  let sqlOutput = "LOCK TABLES `seat` WRITE;\n";
+  sqlOutput += "/*!40000 ALTER TABLE `seat` DISABLE KEYS */;\n\n";
+  sqlOutput +=
+    "INSERT INTO `seat` (`id`, `auditorium_id`, `number`, `is_handi`) VALUES\n";
+
+  let seatId = 1;
+  const seats = [];
+
+  auditoriums.forEach((auditorium) => {
+    for (let i = 1; i <= auditorium.seat_handi; i++) {
+      seats.push(`(${seatId}, ${auditorium.id}, ${i}, 1)`);
+      seatId++;
+    }
+
+    for (let i = 1; i <= auditorium.seat; i++) {
+      seats.push(
+        `(${seatId}, ${auditorium.id}, ${auditorium.seat_handi + i}, 0)`
+      );
+      seatId++;
+    }
+  });
+  sqlOutput += seats.join(",\n") + ";\n";
+  sqlOutput += "\n/*!40000 ALTER TABLE `seat` ENABLE KEYS */;\nUNLOCK TABLES;";
+
+  fs.writeFileSync("db/scripts/mariadb/fixtures_seats.sql", sqlOutput);
+  console.log(
+    `Fichier SQL généré : ${seatId - 1} sièges dans seats_insert.sql`
+  );
+}
+
+createFixturesSeats();
 setupMariadb();
 setupMongoDB();
