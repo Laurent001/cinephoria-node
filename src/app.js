@@ -20,7 +20,6 @@ const spaceRoutes = require("./api/routes/spaceRoutes");
 const cinemaRoutes = require("./api/routes/cinemaRoutes");
 const screeningRoutes = require("./api/routes/screeningRoutes");
 const emailRoutes = require("./api/routes/emailRoutes");
-const openingsRoutes = require("./api/routes/openingsRoutes");
 const authMiddleware = require("./middleware/authMiddleware");
 
 app.use(cors());
@@ -47,7 +46,6 @@ app.use("/images", async (req, res, next) => {
 });
 
 app.use("/api/login", loginRoutes);
-app.use("/api/openings", openingsRoutes);
 app.use("/api/register", registerRoutes);
 app.use("/api/film", filmRoutes);
 app.use("/api/genre", genreRoutes);
