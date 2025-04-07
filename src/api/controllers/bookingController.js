@@ -1,5 +1,6 @@
 const mariadbService = require("../../services/mariadb.service");
 const mongodbService = require("../../services/mongodb.service");
+const { fetchQRCodeByBookingId } = require("../controllers/qrcodeController");
 
 const getBookingsByUserId = async (req, res) => {
   const userId = req.params.id;
@@ -53,13 +54,21 @@ const createBooking = async (req, res) => {
   const { user, screening, totalPrice, seats } = req.body;
   const bookedSeats = seats.filter((seat) => seat.is_handi === 0).length;
   const bookedHandiSeats = seats.filter((seat) => seat.is_handi === 1).length;
-  
+
   try {
     const result = await mariadbService.executeTransaction(async () => {
       const bookingResult = await mariadbService.query(
         "INSERT INTO booking (user_id, total_price) VALUES (?, ?)",
         [user.id, totalPrice]
       );
+
+      const booking_id = bookingResult.insertId.toString();
+      const qrcode = await fetchQRCodeByBookingId(booking_id);
+
+      const result = await updateBookingQRCode(booking_id, qrcode.token);
+      if (!result) {
+        throw new Error("Erreur lors de la mise à jour du QR code");
+      }
 
       const [currentScreening] = await mariadbService.query(
         "SELECT remaining_seat, remaining_seat_handi FROM screening WHERE id = ?",
@@ -73,8 +82,6 @@ const createBooking = async (req, res) => {
         "UPDATE screening SET remaining_seat = ?, remaining_seat_handi = ? WHERE id = ?",
         [newRemainingSeat, newRemainingHandiSeat, screening.id]
       );
-
-      const booking_id = bookingResult.insertId.toString();
 
       await mongodbService.insertBookingAnalytics({
         booking_id,
@@ -104,6 +111,23 @@ const createBooking = async (req, res) => {
       message: "Erreur lors de la création de la réservation",
       error: error.message,
     });
+  }
+};
+
+const updateBookingQRCode = async (bookingId, qrcode) => {
+  try {
+    const result = await mariadbService.query(
+      `UPDATE booking SET qrcode = ? WHERE id = ?`,
+      [qrcode, bookingId]
+    );
+    if (result.affectedRows > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.error("Erreur lors de la mise à jour du QR code :", error);
+    throw new Error("Erreur lors de la mise à jour du QR code");
   }
 };
 
@@ -231,4 +255,5 @@ module.exports = {
   createBooking,
   deleteBookingById,
   getLast7DaysBookingsByFilmId,
+  updateBookingQRCode,
 };

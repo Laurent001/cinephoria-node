@@ -20,6 +20,7 @@ const spaceRoutes = require("./api/routes/spaceRoutes");
 const cinemaRoutes = require("./api/routes/cinemaRoutes");
 const screeningRoutes = require("./api/routes/screeningRoutes");
 const emailRoutes = require("./api/routes/emailRoutes");
+const qrcodeRoutes = require("./api/routes/qrcodeRoutes");
 const authMiddleware = require("./middleware/authMiddleware");
 
 app.use(cors());
@@ -65,5 +66,6 @@ app.use("/api/incident", incidentRoutes);
 app.use("/api/intranet", intranetRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/space", spaceRoutes);
+app.use("/api/qrcode", qrcodeRoutes);
 
 module.exports = app;
