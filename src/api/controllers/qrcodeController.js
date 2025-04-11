@@ -13,7 +13,6 @@ const getQRCode = async (req, res) => {
         .status(400)
         .json({ error: "Informations de réservation manquantes" });
     }
-    console.log("bookingId : ", bookingId);
     const result = await fetchQRCodeByBookingId(bookingId);
 
     res.json(result);
@@ -64,7 +63,7 @@ const fetchQRCodeInfo = async (bookingId) => {
       u.last_name AS user_last_name, 
       b.added_date AS booking_added_date, 
       b.total_price AS booking_total_price, 
-      GROUP_CONCAT(s.number) AS seat_numbers, 
+      GROUP_CONCAT(s.number SEPARATOR ', ') AS seat_numbers,
       sc.start_time AS screening_start_time, 
       sc.end_time AS screening_end_time, 
       a.name AS auditorium_name, 
@@ -89,13 +88,13 @@ const fetchQRCodeInfo = async (bookingId) => {
 
 const verifyQRCode = async (req, res) => {
   try {
-    const { token } = req.body;
+    const { qrcode } = req.params;
 
-    if (!token) {
-      return res.status(400).json({ error: "Token manquant" });
+    if (!qrcode) {
+      return res.status(400).json({ error: "qrcode manquant" });
     }
 
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(qrcode, JWT_SECRET);
 
     // TODO : remplacer true par plus de vérifications: si existe tjrs en base par ex
     const isValid = true;
