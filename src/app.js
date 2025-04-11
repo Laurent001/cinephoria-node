@@ -1,3 +1,5 @@
+const https = require("https");
+const fs = require("fs");
 const express = require("express");
 const app = express();
 const path = require("path");
@@ -47,6 +49,7 @@ app.use("/images", async (req, res, next) => {
 });
 
 app.use("/api/login", loginRoutes);
+app.use("/api/qrcode", qrcodeRoutes);
 app.use("/api/register", registerRoutes);
 app.use("/api/film", filmRoutes);
 app.use("/api/genre", genreRoutes);
@@ -66,6 +69,12 @@ app.use("/api/incident", incidentRoutes);
 app.use("/api/intranet", intranetRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/space", spaceRoutes);
-app.use("/api/qrcode", qrcodeRoutes);
 
-module.exports = app;
+const server = https.createServer(
+  {
+    key: fs.readFileSync(__dirname + "/../localhost+2-key.pem"),
+    cert: fs.readFileSync(__dirname + "/../localhost+2.pem"),
+  },
+  app
+);
+module.exports = server;

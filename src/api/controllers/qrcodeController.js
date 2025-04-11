@@ -13,7 +13,6 @@ const getQRCode = async (req, res) => {
         .status(400)
         .json({ error: "Informations de réservation manquantes" });
     }
-    console.log("bookingId : ", bookingId);
     const result = await fetchQRCodeByBookingId(bookingId);
 
     res.json(result);
@@ -89,13 +88,13 @@ const fetchQRCodeInfo = async (bookingId) => {
 
 const verifyQRCode = async (req, res) => {
   try {
-    const { token } = req.body;
-
-    if (!token) {
-      return res.status(400).json({ error: "Token manquant" });
+    const { qrcode } = req.params;
+    console.log("qrcode : ", qrcode);
+    if (!qrcode) {
+      return res.status(400).json({ error: "qrcode manquant" });
     }
 
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(qrcode, JWT_SECRET);
 
     // TODO : remplacer true par plus de vérifications: si existe tjrs en base par ex
     const isValid = true;
