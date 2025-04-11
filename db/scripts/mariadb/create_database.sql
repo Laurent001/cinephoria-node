@@ -55,6 +55,7 @@ CREATE TABLE `booking` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `total_price` decimal(10,2) NOT NULL,
+  `qrcode` TEXT DEFAULT NULL,
   `added_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
