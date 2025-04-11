@@ -1,6 +1,6 @@
-const app = require("./app");
+const server = require("./app");
 const port = process.env.PORT || 3000;
 
-app.listen(port, () => {
-  console.log("Server app listening on port " + port);
+server.listen(port, () => {
+  console.log("HTTPS server running on port " + port);
 });
