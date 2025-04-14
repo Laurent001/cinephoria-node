@@ -70,18 +70,4 @@ app.use("/api/intranet", intranetRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/space", spaceRoutes);
 
-let server;
-
-if (process.env.NODE_ENV === "production") {
-  server = app;
-} else {
-  server = https.createServer(
-    {
-      key: fs.readFileSync(__dirname + "/../localhost+2-key.pem"),
-      cert: fs.readFileSync(__dirname + "/../localhost+2.pem"),
-    },
-    app
-  );
-}
-
-module.exports = server;
+module.exports = app;
