@@ -63,7 +63,7 @@ const fetchQRCodeInfo = async (bookingId) => {
       u.last_name AS user_last_name, 
       b.added_date AS booking_added_date, 
       b.total_price AS booking_total_price, 
-      GROUP_CONCAT(s.number) AS seat_numbers, 
+      GROUP_CONCAT(s.number SEPARATOR ', ') AS seat_numbers,
       sc.start_time AS screening_start_time, 
       sc.end_time AS screening_end_time, 
       a.name AS auditorium_name, 
