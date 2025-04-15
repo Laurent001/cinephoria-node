@@ -70,4 +70,11 @@ app.use("/api/intranet", intranetRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/space", spaceRoutes);
 
-module.exports = app;
+const server = https.createServer(
+  {
+    key: fs.readFileSync(__dirname + "/../localhost+2-key.pem"),
+    cert: fs.readFileSync(__dirname + "/../localhost+2.pem"),
+  },
+  app
+);
+module.exports = server;
