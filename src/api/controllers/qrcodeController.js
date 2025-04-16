@@ -26,9 +26,7 @@ const fetchQRCodeByBookingId = async (bookingId) => {
   try {
     const bookingInfo = await fetchQRCodeInfo(bookingId);
     if (!bookingInfo) {
-      return res
-        .status(404)
-        .json({ error: "Aucune réservation trouvée avec cet ID" });
+      throw new Error("Aucune réservation trouvée avec cet ID");
     }
 
     const token = jwt.sign(
