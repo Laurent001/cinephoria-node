@@ -26,7 +26,6 @@ class MongodbService {
         await this.client.db("admin").command({ ping: 1 });
         this.db = this.client.db(this.dbName);
         this.isConnected = true;
-        console.log("Connecté à MongoDB");
       } catch (error) {
         console.error("Échec de connexion MongoDB:", error);
         throw error;
