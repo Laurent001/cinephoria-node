@@ -18,6 +18,6 @@
     "esm": true,
     "experimentalSpecifierResolution": "node"
   },
-  "include": ["src", "db"],
+  "include": ["src"],
   "exclude": ["node_modules", "dist"]
 }
