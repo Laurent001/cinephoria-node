@@ -4,7 +4,7 @@ import {
   passwordReset,
   sendEmailReset,
   verifyToken,
-} from "../controllers/loginController.ts";
+} from "../controllers/loginController";
 
 const router = express.Router();
 

@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import mariadbService from "../../services/mariadb.service.ts";
-import { getErrorMessage } from "../../utils/error.ts";
+import mariadbService from "../../services/mariadb.service";
+import { getErrorMessage } from "../../utils/error";
 
 const ROLE_ADMIN = 1;
 const ROLE_STAFF = 2;

@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
-import { fetchBookingsByUserId } from "./bookingController.ts";
-import { fetchOpinionByUserIdAndFilmId } from "./opinionController.ts";
-import { fetchScreeningById } from "./screeningController.ts";
-import { fetchStatuses } from "./statusController.ts";
-import { fetchUserById } from "./userController.ts";
+import { fetchBookingsByUserId } from "./bookingController";
+import { fetchOpinionByUserIdAndFilmId } from "./opinionController";
+import { fetchScreeningById } from "./screeningController";
+import { fetchStatuses } from "./statusController";
+import { fetchUserById } from "./userController";
 
 export const getSpaceByUserId = async (req: Request, res: Response) => {
   const userId = parseInt(req.params.id, 10);

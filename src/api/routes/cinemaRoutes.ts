@@ -3,7 +3,7 @@ import {
   getCinemaById,
   getCinemaByScreeningId,
   getCinemas,
-} from "../controllers/cinemaController.ts";
+} from "../controllers/cinemaController";
 
 const router = express.Router();
 

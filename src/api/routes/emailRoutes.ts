@@ -2,7 +2,7 @@ import express from "express";
 import {
   sendUserEmailWelcome,
   sendEmailContact,
-} from "../controllers/emailController.ts";
+} from "../controllers/emailController";
 
 const router = express.Router();
 

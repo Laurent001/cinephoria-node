@@ -1,5 +1,5 @@
 import express from "express";
-import * as screeningController from "../controllers/screeningController.ts";
+import * as screeningController from "../controllers/screeningController";
 
 const router = express.Router();
 
