@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import mariadbService from "../../services/mariadb.service.ts";
-import { getErrorMessage } from "../../utils/error.ts";
+import mariadbService from "../../services/mariadb.service";
+import { getErrorMessage } from "../../utils/error";
 
 const getMaterials = async (req: Request, res: Response) => {
   try {

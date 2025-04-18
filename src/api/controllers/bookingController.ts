@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import mariadbService from "../../services/mariadb.service.ts";
-import mongodbService from "../../services/mongodb.service.ts";
-import { getErrorMessage } from "../../utils/error.ts";
-import { fetchQRCodeByBookingId } from "../controllers/qrcodeController.ts";
+import mariadbService from "../../services/mariadb.service";
+import mongodbService from "../../services/mongodb.service";
+import { getErrorMessage } from "../../utils/error";
+import { fetchQRCodeByBookingId } from "../controllers/qrcodeController";
 
 const getBookingsByUserId = async (req: Request, res: Response) => {
   const userId = parseInt(req.params.id, 10);

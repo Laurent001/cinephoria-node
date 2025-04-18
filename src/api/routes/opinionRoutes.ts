@@ -6,7 +6,7 @@ import {
   updateOpinion,
   updateOpinionStatus,
   deleteOpinionById,
-} from "../controllers/opinionController.ts";
+} from "../controllers/opinionController";
 
 const router = express.Router();
 

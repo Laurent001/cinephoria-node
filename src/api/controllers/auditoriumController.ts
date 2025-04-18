@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
-import mariadbService from "../../services/mariadb.service.ts";
-import { getErrorMessage } from "../../utils/error.ts";
-import * as cinemaController from "../controllers/cinemaController.ts";
-import { fetchCinemaById } from "./cinemaController.ts";
-import { fetchQualityById } from "./qualityController.ts";
+import mariadbService from "../../services/mariadb.service";
+import { getErrorMessage } from "../../utils/error";
+import * as cinemaController from "../controllers/cinemaController";
+import { fetchCinemaById } from "./cinemaController";
+import { fetchQualityById } from "./qualityController";
 
 const getAuditoriumById = async (req: Request, res: Response) => {
   try {

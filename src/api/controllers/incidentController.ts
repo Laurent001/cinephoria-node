@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import moment from "moment-timezone";
-import * as incidentService from "../../services/incident.service.ts";
-import mariadbService from "../../services/mariadb.service.ts";
-import { getErrorMessage } from "../../utils/error.ts";
+import * as incidentService from "../../services/incident.service";
+import mariadbService from "../../services/mariadb.service";
+import { getErrorMessage } from "../../utils/error";
 
 const getIncidents = async (req: Request, res: Response) => {
   try {
@@ -81,7 +81,7 @@ const addIncident = async (req: Request, res: Response) => {
   const added_date = new Date().toISOString().slice(0, 19).replace("T", " ");
 
   if (req.body.id) {
-    return res.status(500).json({ message: "id defined" });
+    res.status(500).json({ message: "id defined" });
   }
 
   try {

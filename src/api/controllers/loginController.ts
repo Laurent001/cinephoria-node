@@ -1,13 +1,13 @@
 import bcrypt from "bcrypt";
 import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { ResetBody, UserWithNewPassword } from "../../interfaces/auth.ts";
-import mariadbService from "../../services/mariadb.service.ts";
-import { getErrorMessage } from "../../utils/error.ts";
+import { ResetBody, UserWithNewPassword } from "../../interfaces/auth";
+import mariadbService from "../../services/mariadb.service";
+import { getErrorMessage } from "../../utils/error";
 import {
   sendEmailResetRequest,
   sendEmailResetSuccess,
-} from "./emailController.ts";
+} from "./emailController";
 
 const saltRounds = 10;
 
