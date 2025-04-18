@@ -1,6 +1,6 @@
-import { fetchMaterials } from "../api/controllers/materialController.ts";
-import mariadbService from "../services/mariadb.service.ts";
-import { getErrorMessage } from "../utils/error.ts";
+import { fetchMaterials } from "../api/controllers/materialController";
+import mariadbService from "../services/mariadb.service";
+import { getErrorMessage } from "../utils/error";
 
 const fetchIncidents = async () => {
   try {

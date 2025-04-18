@@ -5,7 +5,7 @@ import {
   getFilmsByDate,
   getFilmsByGenreId,
   scoreFilmById,
-} from "../controllers/filmController.ts";
+} from "../controllers/filmController";
 
 const router = express.Router();
 

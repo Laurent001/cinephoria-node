@@ -2,8 +2,10 @@ import fs from "fs";
 import moment from "moment";
 import path from "path";
 import { fileURLToPath } from "url";
-import mariadbService from "../src/services/mariadb.service.ts";
-import mongodbService from "../src/services/mongodb.service.ts";
+import { Auditorium } from "../src/interfaces/auditorium";
+import { Seat } from "../src/interfaces/seat";
+import mariadbService from "../src/services/mariadb.service";
+import mongodbService from "../src/services/mongodb.service";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -122,18 +124,26 @@ async function createFixturesSeats() {
     "INSERT INTO `seat` (`id`, `auditorium_id`, `number`, `is_handi`) VALUES\n";
 
   let seatId = 1;
-  const seats = [];
+  const seats: Seat[] = [];
 
-  auditoriums.forEach((auditorium) => {
+  auditoriums.forEach((auditorium: Auditorium) => {
     for (let i = 1; i <= auditorium.seat_handi; i++) {
-      seats.push(`(${seatId}, ${auditorium.id}, ${i}, 1)`);
+      seats.push({
+        id: seatId,
+        auditorium_id: auditorium.id,
+        number: i,
+        is_handi: true,
+      });
       seatId++;
     }
 
     for (let i = 1; i <= auditorium.seat; i++) {
-      seats.push(
-        `(${seatId}, ${auditorium.id}, ${auditorium.seat_handi + i}, 0)`
-      );
+      seats.push({
+        id: seatId,
+        auditorium_id: auditorium.id,
+        number: auditorium.seat_handi + i,
+        is_handi: false,
+      });
       seatId++;
     }
   });

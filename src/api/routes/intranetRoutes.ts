@@ -1,22 +1,22 @@
 import express from "express";
-import { upload } from "../../services/cloudinary.service.ts";
+import { upload } from "../../services/cloudinary.service";
 import {
   addAuditorium,
   deleteAuditoriumById,
   getAuditoriums,
   updateAuditorium,
-} from "../controllers/auditoriumController.ts";
+} from "../controllers/auditoriumController";
 import {
   addFilm,
   deleteFilm,
   updateFilm,
-} from "../controllers/filmController.ts";
-import { getIntranet } from "../controllers/intranetController.ts";
+} from "../controllers/filmController";
+import { getIntranet } from "../controllers/intranetController";
 import {
   addScreening,
   deleteScreeningById,
   updateScreening,
-} from "../controllers/screeningController.ts";
+} from "../controllers/screeningController";
 
 const router = express.Router();
 

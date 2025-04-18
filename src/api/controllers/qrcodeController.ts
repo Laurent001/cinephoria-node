@@ -2,8 +2,8 @@ import dotenv from "dotenv";
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import QRCode from "qrcode";
-import mariadbService from "../../services/mariadb.service.ts";
-import { getErrorMessage } from "../../utils/error.ts";
+import mariadbService from "../../services/mariadb.service";
+import { getErrorMessage } from "../../utils/error";
 dotenv.config();
 
 const JWT_SECRET = process.env.JWT_SECRET;

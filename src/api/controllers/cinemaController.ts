@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import mariadbService from "../../services/mariadb.service.ts";
-import { getErrorMessage } from "../../utils/error.ts";
+import mariadbService from "../../services/mariadb.service";
+import { getErrorMessage } from "../../utils/error";
 
 const getCinemaById = async (req: Request, res: Response) => {
   const cinemaId = parseInt(req.params.id, 10);
