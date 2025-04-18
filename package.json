@@ -4,7 +4,7 @@
   "type": "module",
   "main": "build/server.js",
   "scripts": {
-    "build": "tsc",
+    "build": "mkdir -p build/src build/db && cp -r src/* build/src/ && cp -r db/* build/db/",
     "start": "NODE_ENV=development tsx src/server.ts",
     "start:prod": "NODE_ENV=production node dist/server.js",
     "dev": "nodemon src/server.js",
