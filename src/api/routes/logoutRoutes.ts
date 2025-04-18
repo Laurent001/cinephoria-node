@@ -1,0 +1,8 @@
+import express from "express";
+import { getLogout } from "../controllers/logoutController.ts";
+
+const router = express.Router();
+
+router.get("/", getLogout);
+
+export default router;
