@@ -14,12 +14,15 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: "18"
+          node-version: "20"
 
       - name: Install dependencies
         run: npm install
 
-      - name: Build Ionic app
+      - name: Run unit tests
+        run: npm run test -- --watch=false
+
+      - name: Build app
         run: npm run build
 
       - name: Deploy to Vercel
