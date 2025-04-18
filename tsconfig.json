@@ -12,12 +12,13 @@
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "noEmit": false,
-    "types": ["node", "express", "jest"]
+    "types": ["node", "express", "jest"],
+    "allowSyntheticDefaultImports": true
   },
   "ts-node": {
     "esm": true,
     "experimentalSpecifierResolution": "node"
   },
-  "include": ["src", "db"],
+  "include": ["src"],
   "exclude": ["node_modules", "dist"]
 }
