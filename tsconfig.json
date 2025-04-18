@@ -4,7 +4,7 @@
     "module": "ESNext",
     "moduleResolution": "node",
     "lib": ["ES2020"],
-    "rootDir": "./src",
+    "rootDir": "./",
     "outDir": "./dist",
     "strict": true,
     "esModuleInterop": true,
@@ -12,13 +12,12 @@
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "noEmit": false,
-    "types": ["node", "express", "jest"],
-    "typeRoots": ["./node_modules/@types"]
+    "types": ["node", "express", "jest"]
   },
   "ts-node": {
     "esm": true,
     "experimentalSpecifierResolution": "node"
   },
-  "include": ["src", "../db"],
+  "include": ["src", "db"],
   "exclude": ["node_modules", "dist"]
 }
