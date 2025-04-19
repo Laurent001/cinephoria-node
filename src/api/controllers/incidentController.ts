@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import moment from "moment-timezone";
-import * as incidentService from "../../services/incident.service";
-import mariadbService from "../../services/mariadb.service";
-import { getErrorMessage } from "../../utils/error";
+import * as incidentService from "../../services/incident.service.js";
+import mariadbService from "../../services/mariadb.service.js";
+import { getErrorMessage } from "../../utils/error.js";
 
 const getIncidents = async (req: Request, res: Response) => {
   try {

@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
 import type { PoolConnection } from "mariadb";
-import mariadbService from "../../services/mariadb.service";
-import { getErrorMessage } from "../../utils/error";
-import { fetchFilmById } from "./filmController";
-import { fetchStatusById, fetchStatuses } from "./statusController";
-import { fetchUserById } from "./userController";
+import mariadbService from "../../services/mariadb.service.js";
+import { getErrorMessage } from "../../utils/error.js";
+import { fetchFilmById } from "./filmController.js";
+import { fetchStatusById, fetchStatuses } from "./statusController.js";
+import { fetchUserById } from "./userController.js";
 
 const STATUS_PUBLISHED = 1;
 

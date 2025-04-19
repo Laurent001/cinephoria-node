@@ -1,4 +1,4 @@
-import transport from "../config/emailConfig";
+import transport from "../config/emailConfig.js";
 
 const sendEmail = (to: string, subject: string, text: string) => {
   const mailOptions = {
