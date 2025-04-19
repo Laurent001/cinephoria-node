@@ -5,7 +5,7 @@ import {
   getBookingsByUserId,
   getLast7DaysBookingsByFilmId,
   getSeatsByScreeningId,
-} from "../controllers/bookingController";
+} from "../controllers/bookingController.js";
 
 const router = express.Router();
 

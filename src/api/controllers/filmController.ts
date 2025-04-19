@@ -2,13 +2,13 @@ import { Request, Response } from "express";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { MulterRequest } from "../../interfaces/file";
+import { MulterRequest } from "../../interfaces/file.js";
 import {
   deleteFromCloudinary,
   uploadToCloudinary,
-} from "../../services/cloudinary.service";
-import mariadbService from "../../services/mariadb.service";
-import { getErrorMessage } from "../../utils/error";
+} from "../../services/cloudinary.service.js";
+import mariadbService from "../../services/mariadb.service.js";
+import { getErrorMessage } from "../../utils/error.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

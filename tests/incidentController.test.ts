@@ -1,7 +1,7 @@
-import * as incidentController from "../src/api/controllers/incidentController";
-import * as incidentService from "../src/services/incident.service";
-import * as mariadbService from "../src/services/mariadb.service";
-import { FakeDataType } from "../src/types/fake";
+import * as incidentController from "../src/api/controllers/incidentController.js";
+import * as incidentService from "../src/services/incident.service.js";
+import * as mariadbService from "../src/services/mariadb.service.js";
+import { FakeDataType } from "../src/types/fake.js";
 
 declare module "../src/services/mariadb.service.ts" {
   export const executeTransaction: jest.Mock;

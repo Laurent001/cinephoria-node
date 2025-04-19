@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import mariadbService from "../../services/mariadb.service";
-import { getErrorMessage } from "../../utils/error";
+import mariadbService from "../../services/mariadb.service.js";
+import { getErrorMessage } from "../../utils/error.js";
 
 const fetchStatuses = async () => {
   try {

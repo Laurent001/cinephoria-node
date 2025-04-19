@@ -1,13 +1,13 @@
 import bcrypt from "bcrypt";
 import crypto from "crypto";
 import { Request, Response } from "express";
-import mariadbService from "../../services/mariadb.service";
-import { getErrorMessage } from "../../utils/error";
+import mariadbService from "../../services/mariadb.service.js";
+import { getErrorMessage } from "../../utils/error.js";
 import {
   sendAdminEmailWelcome,
   sendStaffEmailWelcome,
   sendUserEmailWelcome,
-} from "./emailController";
+} from "./emailController.js";
 
 const saltRounds = 10;
 
