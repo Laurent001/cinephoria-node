@@ -94,9 +94,10 @@ const getFilms = async (req: Request, res: Response) => {
   }
 };
 
-const fetchFilms = async () => {
+const fetchFilms = async (conn?: any) => {
   try {
-    const rows = await mariadbService.query(
+    const connection = conn || mariadbService;
+    const rows = await connection.query(
       `SELECT 
         f.id, 
         f.title, 
@@ -122,6 +123,7 @@ const fetchFilms = async () => {
 
     return films;
   } catch (error) {
+    console.error("Erreur dans fetchFilms:", error);
     return [];
   }
 };
@@ -227,36 +229,39 @@ const updateFilm = async (req: MulterRequest, res: Response) => {
   const poster_file = req.file;
 
   try {
-    const [rows] = await mariadbService.query(
-      `SELECT poster FROM film WHERE id = ?`,
-      [id]
-    );
+    const result = await mariadbService.executeTransaction(
+      async (conn: any) => {
+        const [rows] = await conn.query(
+          `SELECT poster FROM film WHERE id = ?`,
+          [id]
+        );
 
-    let poster_final = poster;
-    let oldPosterFilename = rows ? rows.poster : null;
+        let poster_final = poster;
+        const oldPosterFilename = rows && rows[0]?.poster;
 
-    if (poster_file) {
-      if (process.env.NODE_ENV === "production") {
-        const cloudinaryResult = await uploadToCloudinary(poster_file);
-        poster_final = cloudinaryResult.secure_url.split("/").pop();
-      }
+        if (poster_file) {
+          if (process.env.NODE_ENV === "production") {
+            const cloudinaryResult = await uploadToCloudinary(poster_file);
+            poster_final = cloudinaryResult.secure_url.split("/").pop();
+          }
 
-      if (oldPosterFilename) {
-        if (process.env.NODE_ENV === "production") {
-          await deleteFromCloudinary(oldPosterFilename);
-        } else {
-          deletePoster(oldPosterFilename);
+          if (oldPosterFilename) {
+            if (process.env.NODE_ENV === "production") {
+              await deleteFromCloudinary(oldPosterFilename);
+            } else {
+              deletePoster(oldPosterFilename);
+            }
+          }
         }
-      }
-    }
 
-    const result = await mariadbService.executeTransaction(async () => {
-      await mariadbService.query(
-        `UPDATE film SET title = ?, favorite = ?, age_minimum = ?, description = ?, poster = ? WHERE id = ?`,
-        [title, favoriteBoolean, age_minimum, description, poster_final, id]
-      );
-      return await fetchFilms();
-    });
+        await conn.query(
+          `UPDATE film SET title = ?, favorite = ?, age_minimum = ?, description = ?, poster = ? WHERE id = ?`,
+          [title, favoriteBoolean, age_minimum, description, poster_final, id]
+        );
+
+        return await fetchFilms();
+      }
+    );
 
     res.json(result);
   } catch (error) {
