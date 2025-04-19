@@ -1,13 +1,13 @@
 import bcrypt from "bcrypt";
 import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { ResetBody, UserWithNewPassword } from "../../interfaces/auth";
-import mariadbService from "../../services/mariadb.service";
-import { getErrorMessage } from "../../utils/error";
+import { ResetBody, UserWithNewPassword } from "../../interfaces/auth.js";
+import mariadbService from "../../services/mariadb.service.js";
+import { getErrorMessage } from "../../utils/error.js";
 import {
   sendEmailResetRequest,
   sendEmailResetSuccess,
-} from "./emailController";
+} from "./emailController.js";
 
 const saltRounds = 10;
 

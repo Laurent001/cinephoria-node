@@ -2,10 +2,10 @@ import fs from "fs";
 import moment from "moment";
 import path from "path";
 import { fileURLToPath } from "url";
-import { Auditorium } from "../src/interfaces/auditorium";
-import { Seat } from "../src/interfaces/seat";
-import mariadbService from "../src/services/mariadb.service";
-import mongodbService from "../src/services/mongodb.service";
+import { Auditorium } from "../src/interfaces/auditorium.js";
+import { Seat } from "../src/interfaces/seat.js";
+import mariadbService from "../src/services/mariadb.service.js";
+import mongodbService from "../src/services/mongodb.service.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

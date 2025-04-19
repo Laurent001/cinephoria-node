@@ -4,7 +4,7 @@ import {
   updateIncident,
   addIncident,
   deleteIncidentById,
-} from "../controllers/incidentController";
+} from "../controllers/incidentController.js";
 
 const router = express.Router();
 

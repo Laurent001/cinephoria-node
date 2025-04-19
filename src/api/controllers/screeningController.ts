@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
 import moment from "moment-timezone";
-import mariadbService from "../../services/mariadb.service";
-import { getErrorMessage } from "../../utils/error";
-import { fetchAuditoriumById } from "./auditoriumController";
-import { fetchFilmById } from "./filmController";
-import { fetchQualityById } from "./qualityController";
+import mariadbService from "../../services/mariadb.service.js";
+import { getErrorMessage } from "../../utils/error.js";
+import { fetchAuditoriumById } from "./auditoriumController.js";
+import { fetchFilmById } from "./filmController.js";
+import { fetchQualityById } from "./qualityController.js";
 
 const getScreeningById = async (req: Request, res: Response) => {
   try {

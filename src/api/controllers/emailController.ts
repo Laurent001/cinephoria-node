@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import validator from "validator";
-import { sendEmail, sendEmailSupport } from "../../services/mailer.service";
-import { getErrorMessage } from "../../utils/error";
+import { sendEmail, sendEmailSupport } from "../../services/mailer.service.js";
+import { getErrorMessage } from "../../utils/error.js";
 
 const sendUserEmailWelcome = (email: string, name: string) => {
   sendEmail(

@@ -1,5 +1,5 @@
 import express from "express";
-import { getQRCode, verifyQRCode } from "../controllers/qrcodeController";
+import { getQRCode, verifyQRCode } from "../controllers/qrcodeController.js";
 
 const router = express.Router();
 
