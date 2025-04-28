@@ -61,7 +61,16 @@ async function setupMongoDB() {
     const startDate = moment().subtract(7, "days").startOf("day");
     const endDate = moment("2025-09-30").startOf("day");
     const totalDays = endDate.diff(startDate, "days") + 1;
-    const fixtures = [];
+
+    interface BookingAnalytic {
+      booking_id: string;
+      user_id: number;
+      film_id: number;
+      film_title: string;
+      timestamp: Date;
+    }
+
+    const fixtures: BookingAnalytic[] = [];
 
     for (let day = 0; day < totalDays; day++) {
       const currentDate = moment(startDate).add(day, "days");

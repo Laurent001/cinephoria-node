@@ -3,6 +3,8 @@ import mariadbService from "../../services/mariadb.service.js";
 import mongodbService from "../../services/mongodb.service.js";
 import { getErrorMessage } from "../../utils/error.js";
 import { fetchQRCodeByBookingId } from "../controllers/qrcodeController.js";
+import { Seat } from "../../interfaces/seat.js";
+import { Screening } from "../../interfaces/screening.js";
 
 const getBookingsByUserId = async (req: Request, res: Response) => {
   const userId = parseInt(req.params.id, 10);
@@ -136,25 +138,6 @@ const updateBookingQRCode = async (bookingId: number, qrcode: string) => {
     );
   }
 };
-
-interface Screening {
-  id: number;
-  start_time: string;
-  end_time: string;
-  auditorium_name: string;
-  auditorium_seat: number;
-  auditorium_seat_handi: number;
-  auditorium_cinema_id: number;
-  auditorium_quality: string;
-  auditorium_price: number;
-}
-
-interface Seat {
-  id: number;
-  number: number;
-  is_handi: boolean;
-  is_available: boolean;
-}
 
 const getSeatsByScreeningId = async (req: Request, res: Response) => {
   const screeningId = req.params.id;
