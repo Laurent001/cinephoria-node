@@ -3,4 +3,5 @@ export interface Seat {
   auditorium_id: number;
   number: number;
   is_handi: boolean;
+  is_vailable: boolean;
 }
