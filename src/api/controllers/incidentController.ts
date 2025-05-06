@@ -80,6 +80,10 @@ const addIncident = async (req: Request, res: Response) => {
   const { description, is_solved, material, auditorium } = req.body;
   const added_date = new Date().toISOString().slice(0, 19).replace("T", " ");
 
+  if (!description || !material?.id || !auditorium?.id) {
+    return res.status(400).json({ message: "Champs requis manquants" });
+  }
+
   if (req.body.id) {
     res.status(500).json({ message: "id defined" });
   }
