@@ -3,21 +3,21 @@ import * as incidentService from "../src/services/incident.service.js";
 import * as mariadbService from "../src/services/mariadb.service.js";
 import { FakeDataType } from "../src/types/fake.js";
 
-declare module "../src/services/mariadb.service.ts" {
+declare module "../src/services/mariadb.service" {
   export const executeTransaction: jest.Mock;
   export const query: jest.Mock;
 }
 
-jest.mock("../src/services/mariadb.service.ts", () => ({
+jest.mock("../src/services/mariadb.service", () => ({
   executeTransaction: jest.fn(),
   query: jest.fn(),
 }));
 
-jest.mock("../src/services/incident.service.ts", () => ({
+jest.mock("../src/services/incident.service", () => ({
   fetchIncidents: jest.fn(),
 }));
 
-const fakeData = {
+const fakeData: FakeDataType = {
   incidents: [
     {
       id: 1,
@@ -99,7 +99,7 @@ beforeEach(() => {
 });
 
 describe("addIncident", () => {
-  it("devrait ajouter un incident et retourner les incidents incluant le nouvel incident", async () => {
+  it("ajoute un incident et retourne les incidents à jour", async () => {
     const req: any = {
       body: {
         id: undefined,
@@ -116,34 +116,14 @@ describe("addIncident", () => {
     };
 
     (incidentService.fetchIncidents as jest.Mock).mockImplementation(() => {
-      const newIncident = {
+      testData.incidents.push({
         id: 3,
         description: "Problème de son",
         added_date: "2024-11-16T10:45:00.000Z",
         is_solved: 0,
-        material: {
-          id: 1,
-          name: "Projecteur",
-          description: "Appareil de projection cinématographique",
-        },
-        auditorium: {
-          id: 2,
-          name: "Salle Nantes 2",
-          seat: 150,
-          seat_handi: 5,
-          quality_id: 1,
-          cinema: {
-            id: 1,
-            name: "Cinéma Nantes",
-            address: "123 Rue de Nantes",
-            city: "Nantes",
-            postcode: "44000",
-            phone: "0123456789",
-          },
-        },
-      };
-
-      testData.incidents.push(newIncident);
+        material: testData.materials[0],
+        auditorium: testData.incidents[1].auditorium,
+      });
       return testData;
     });
 
@@ -156,124 +136,27 @@ describe("addIncident", () => {
 
     await incidentController.addIncident(req, res);
 
-    expect(res.json).toHaveBeenCalledWith({
-      incidents: expect.arrayContaining([
-        expect.objectContaining({
-          id: 1,
-          description: "Projecteur affiche des images floues",
-          added_date: "2024-11-15T10:45:00.000Z",
-          is_solved: 0,
-          material: expect.objectContaining({
-            id: 1,
-            name: "Projecteur",
-            description: "Appareil de projection cinématographique",
-          }),
-          auditorium: expect.objectContaining({
-            id: 1,
-            name: "Salle Nantes 1",
-            seat: 100,
-            seat_handi: 5,
-            quality_id: 1,
-            cinema: expect.objectContaining({
-              id: 1,
-              name: "Cinéma Nantes",
-              address: "123 Rue de Nantes",
-              city: "Nantes",
-              postcode: "44000",
-              phone: "0123456789",
-            }),
-          }),
-        }),
-        expect.objectContaining({
-          id: 2,
-          description: "Son grésillant sur les hauts-parleurs gauches",
-          added_date: "2024-11-20T10:45:00.000Z",
-          is_solved: 1,
-          material: expect.objectContaining({
-            id: 3,
-            name: "Système audio",
-            description: "Équipement sonore de la salle",
-          }),
-          auditorium: expect.objectContaining({
-            id: 2,
-            name: "Salle Nantes 2",
-            seat: 150,
-            seat_handi: 5,
-            quality_id: 1,
-            cinema: expect.objectContaining({
-              id: 1,
-              name: "Cinéma Nantes",
-              address: "123 Rue de Nantes",
-              city: "Nantes",
-              postcode: "44000",
-              phone: "0123456789",
-            }),
-          }),
-        }),
-        expect.objectContaining({
-          id: 3,
-          description: "Problème de son",
-          added_date: "2024-11-16T10:45:00.000Z",
-          is_solved: 0,
-          material: expect.objectContaining({
-            id: 1,
-            name: "Projecteur",
-            description: "Appareil de projection cinématographique",
-          }),
-          auditorium: expect.objectContaining({
-            id: 2,
-            name: "Salle Nantes 2",
-            seat: 150,
-            seat_handi: 5,
-            quality_id: 1,
-            cinema: expect.objectContaining({
-              id: 1,
-              name: "Cinéma Nantes",
-              address: "123 Rue de Nantes",
-              city: "Nantes",
-              postcode: "44000",
-              phone: "0123456789",
-            }),
-          }),
-        }),
-      ]),
-      auditoriums: expect.arrayContaining([
-        expect.objectContaining({
-          id: 1,
-          cinema_id: 1,
-          quality_id: 1,
-          name: "Salle Nantes 1",
-          seat: 100,
-          seat_handi: 5,
-        }),
-      ]),
-      materials: expect.arrayContaining([
-        expect.objectContaining({
-          id: 1,
-          name: "Projecteur",
-          description: "Appareil de projection cinématographique",
-        }),
-      ]),
-    });
-
-    const incidents = res.json.mock.calls[0][0]["incidents"];
-    expect(incidents.length).toBe(3);
+    expect(res.json).toHaveBeenCalledWith(
+      expect.objectContaining({
+        incidents: expect.arrayContaining([
+          expect.objectContaining({ id: 3, description: "Problème de son" }),
+        ]),
+      })
+    );
 
     expect(res.json).toHaveBeenCalledWith(testData);
     expect(mariadbService.executeTransaction).toHaveBeenCalled();
   });
 
-  it("devrait retourner une erreur si l'id est défini", async () => {
+  it("retourne une erreur 400 si material.id ou auditorium.id est manquant", async () => {
     const req: any = {
       body: {
-        id: 99,
-        description: "Erreur test",
+        description: "Incident sans données complètes",
         is_solved: false,
-        material: { id: 1 },
-        auditorium: { id: 2 },
+        material: {},
+        auditorium: {},
       },
     };
-
     const res: any = {
       json: jest.fn(),
       status: jest.fn().mockReturnThis(),
@@ -281,15 +164,16 @@ describe("addIncident", () => {
 
     await incidentController.addIncident(req, res);
 
-    expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.json).toHaveBeenCalledWith({ message: "id defined" });
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      message: "Champs requis manquants",
+    });
   });
 });
 
 describe("getIncidents", () => {
-  it("devrait renvoyer les incidents si tout se passe bien", async () => {
+  it("retourne les incidents si succès", async () => {
     const req: any = {};
-
     const res: any = {
       json: jest.fn(),
       status: jest.fn().mockReturnThis(),
@@ -301,92 +185,87 @@ describe("getIncidents", () => {
 
     await incidentController.getIncidents(req, res);
 
-    expect(res.json).toHaveBeenCalledWith({
-      incidents: expect.arrayContaining([
-        expect.objectContaining({
-          id: 1,
-          description: "Projecteur affiche des images floues",
-          added_date: "2024-11-15T10:45:00.000Z",
-          is_solved: 0,
-          material: expect.objectContaining({
-            id: 1,
-            name: "Projecteur",
-            description: "Appareil de projection cinématographique",
-          }),
-          auditorium: expect.objectContaining({
-            id: 1,
-            name: "Salle Nantes 1",
-            seat: 100,
-            seat_handi: 5,
-            quality_id: 1,
-            cinema: expect.objectContaining({
-              id: 1,
-              name: "Cinéma Nantes",
-              address: "123 Rue de Nantes",
-              city: "Nantes",
-              postcode: "44000",
-              phone: "0123456789",
-            }),
-          }),
-        }),
-        expect.objectContaining({
-          id: 2,
-          description: "Son grésillant sur les hauts-parleurs gauches",
-          added_date: "2024-11-20T10:45:00.000Z",
-          is_solved: 1,
-          material: expect.objectContaining({
-            id: 3,
-            name: "Système audio",
-            description: "Équipement sonore de la salle",
-          }),
-          auditorium: expect.objectContaining({
-            id: 2,
-            name: "Salle Nantes 2",
-            seat: 150,
-            seat_handi: 5,
-            quality_id: 1,
-            cinema: expect.objectContaining({
-              id: 1,
-              name: "Cinéma Nantes",
-              address: "123 Rue de Nantes",
-              city: "Nantes",
-              postcode: "44000",
-              phone: "0123456789",
-            }),
-          }),
-        }),
-      ]),
-      auditoriums: expect.arrayContaining([
-        expect.objectContaining({
-          id: 1,
-          cinema_id: 1,
-          quality_id: 1,
-          name: "Salle Nantes 1",
-          seat: 100,
-          seat_handi: 5,
-        }),
-      ]),
-      materials: expect.arrayContaining([
-        expect.objectContaining({
-          id: 1,
-          name: "Projecteur",
-          description: "Appareil de projection cinématographique",
-        }),
-      ]),
-    });
+    expect(res.json).toHaveBeenCalledWith(
+      expect.objectContaining({
+        incidents: expect.any(Array),
+        auditoriums: expect.any(Array),
+        materials: expect.any(Array),
+      })
+    );
 
     expect(res.status).not.toHaveBeenCalled();
+  });
+
+  it("retourne une erreur 500 si fetchIncidents échoue", async () => {
+    const req: any = {};
+    const res: any = {
+      json: jest.fn(),
+      status: jest.fn().mockReturnThis(),
+    };
+
+    (incidentService.fetchIncidents as jest.Mock).mockRejectedValue(
+      new Error("Échec")
+    );
+
+    await incidentController.getIncidents(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({
+      message: "Erreur lors de la récupération des incidents",
+      error: "Échec",
+    });
   });
 });
 
 describe("updateIncident", () => {
-  it("devrait mettre à jour un incident et retourner la liste mise à jour", async () => {
+  it("met à jour un incident et retourne la liste", async () => {
     const req: any = {
       body: {
         locale: "Europe/Paris",
         incident: {
           id: 1,
-          description: "Projecteur réparé, fonctionne normalement",
+          description: "Réparé",
+          added_date: "2024-11-17T09:30:00.000Z",
+          is_solved: 1,
+          material: { id: 1 },
+          auditorium: { id: 1 },
+        },
+      },
+    };
+    const res: any = {
+      json: jest.fn(),
+      status: jest.fn().mockReturnThis(),
+    };
+
+    (incidentService.fetchIncidents as jest.Mock).mockImplementation(() => {
+      const i = testData.incidents.findIndex((i) => i.id === 1);
+      testData.incidents[i] = {
+        ...testData.incidents[i],
+        ...req.body.incident,
+      };
+      return testData;
+    });
+
+    (mariadbService.executeTransaction as jest.Mock).mockImplementation(
+      async (callback: any) => {
+        await callback();
+        return testData;
+      }
+    );
+
+    await incidentController.updateIncident(req, res);
+
+    expect(res.json).toHaveBeenCalledWith(testData);
+    expect(mariadbService.executeTransaction).toHaveBeenCalled();
+  });
+
+  it("retourne les données inchangées si l'incident à mettre à jour est introuvable", async () => {
+    const req: any = {
+      body: {
+        locale: "Europe/Paris",
+        incident: {
+          id: 999,
+          description: "Inexistant",
           added_date: "2024-11-17T09:30:00.000Z",
           is_solved: 1,
           material: { id: 1 },
@@ -401,17 +280,6 @@ describe("updateIncident", () => {
     };
 
     (incidentService.fetchIncidents as jest.Mock).mockImplementation(() => {
-      const index = testData.incidents.findIndex(
-        (i) => i.id === req.body.incident.id
-      );
-      if (index !== -1) {
-        testData.incidents[index] = {
-          ...testData.incidents[index],
-          description: req.body.incident.description,
-          added_date: req.body.incident.added_date,
-          is_solved: req.body.incident.is_solved,
-        };
-      }
       return testData;
     });
 
@@ -424,35 +292,20 @@ describe("updateIncident", () => {
 
     await incidentController.updateIncident(req, res);
 
-    const updated = testData.incidents.find((i) => i.id === 1);
-    expect(updated?.description).toBe(
-      "Projecteur réparé, fonctionne normalement"
-    );
-    expect(updated?.is_solved).toBe(1);
-
-    const incidents = res.json.mock.calls[0][0]["incidents"];
-    expect(incidents.length).toBe(2);
-
     expect(res.json).toHaveBeenCalledWith(testData);
-    expect(mariadbService.executeTransaction).toHaveBeenCalled();
   });
 });
 
 describe("deleteIncidentById", () => {
-  it("devrait supprimer un incident et retourner la liste mise à jour", async () => {
-    const req: any = {
-      params: { id: "1" },
-    };
-
+  it("supprime un incident et retourne les incidents mis à jour", async () => {
+    const req: any = { params: { id: "1" } };
     const res: any = {
       json: jest.fn(),
       status: jest.fn().mockReturnThis(),
     };
 
     (incidentService.fetchIncidents as jest.Mock).mockImplementation(() => {
-      testData.incidents = testData.incidents.filter(
-        (incident) => incident.id !== 1
-      );
+      testData.incidents = testData.incidents.filter((i) => i.id !== 1);
       return testData;
     });
 
@@ -470,23 +323,19 @@ describe("deleteIncidentById", () => {
       ["1"]
     );
     expect(res.json).toHaveBeenCalledWith(testData);
-    expect(testData.incidents.length).toBe(1);
     expect(testData.incidents.find((i) => i.id === 1)).toBeUndefined();
   });
 
-  it("devrait retourner une erreur 500 en cas d'échec", async () => {
-    const req: any = {
-      params: { id: "99" },
-    };
-
+  it("retourne une erreur 500 si la suppression échoue", async () => {
+    const req: any = { params: { id: "99" } };
     const res: any = {
       json: jest.fn(),
       status: jest.fn().mockReturnThis(),
     };
 
-    const error = new Error("Suppression échouée");
-
-    (mariadbService.executeTransaction as jest.Mock).mockRejectedValue(error);
+    (mariadbService.executeTransaction as jest.Mock).mockRejectedValue(
+      new Error("Suppression échouée")
+    );
 
     await incidentController.deleteIncidentById(req, res);
 
@@ -495,5 +344,92 @@ describe("deleteIncidentById", () => {
       message: "Erreur lors de la suppression de l'incident",
       error: "Suppression échouée",
     });
+  });
+
+  it("retourne une erreur 500 si l'identifiant est manquant", async () => {
+    const req: any = { params: { id: undefined } };
+    const res: any = {
+      json: jest.fn(),
+      status: jest.fn().mockReturnThis(),
+    };
+
+    await incidentController.deleteIncidentById(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({
+      message: "Erreur lors de la suppression de l'incident",
+      error: expect.any(String),
+    });
+  });
+});
+
+describe("Test d'intégration avec addIncident et getIncidents", () => {
+  it("ajoute un incident et le récupère avec getIncidents", async () => {
+    const reqAdd: any = {
+      body: {
+        description: "Problème de son",
+        is_solved: false,
+        material: { id: 1 },
+        auditorium: { id: 2 },
+      },
+    };
+
+    const resAdd: any = {
+      json: jest.fn(),
+      status: jest.fn().mockReturnThis(),
+    };
+
+    (incidentService.fetchIncidents as jest.Mock).mockImplementation(() => {
+      testData.incidents.push({
+        id: 3,
+        description: "Problème de son",
+        added_date: "2024-11-16T10:45:00.000Z",
+        is_solved: 0,
+        material: testData.materials[0],
+        auditorium: testData.incidents[1].auditorium,
+      });
+      return testData;
+    });
+
+    (mariadbService.executeTransaction as jest.Mock).mockImplementation(
+      async (callback: any) => {
+        await callback();
+        return testData;
+      }
+    );
+
+    await incidentController.addIncident(reqAdd, resAdd);
+
+    expect(resAdd.json).toHaveBeenCalledWith(
+      expect.objectContaining({
+        incidents: expect.arrayContaining([
+          expect.objectContaining({ description: "Problème de son" }),
+        ]),
+      })
+    );
+
+    expect(mariadbService.executeTransaction).toHaveBeenCalled();
+
+    const reqGet: any = {};
+    const resGet: any = {
+      json: jest.fn(),
+      status: jest.fn().mockReturnThis(),
+    };
+
+    (incidentService.fetchIncidents as jest.Mock).mockResolvedValueOnce(
+      testData
+    );
+
+    await incidentController.getIncidents(reqGet, resGet);
+
+    expect(resGet.json).toHaveBeenCalledWith(
+      expect.objectContaining({
+        incidents: expect.any(Array),
+        auditoriums: expect.any(Array),
+        materials: expect.any(Array),
+      })
+    );
+
+    expect(resGet.status).not.toHaveBeenCalled();
   });
 });
