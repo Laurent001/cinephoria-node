@@ -1,4 +1,5 @@
 import express from "express";
+import { loginRateLimiter } from "../../middleware/rateLimiter.js";
 import {
   getLogin,
   passwordReset,
@@ -8,7 +9,7 @@ import {
 
 const router = express.Router();
 
-router.post("/", getLogin);
+router.post("/", loginRateLimiter, getLogin);
 router.post("/password-reset/request", sendEmailReset);
 router.post("/password-reset", verifyToken, passwordReset);
 

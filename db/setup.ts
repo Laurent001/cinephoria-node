@@ -142,6 +142,7 @@ async function createFixturesSeats() {
         auditorium_id: auditorium.id,
         number: i,
         is_handi: true,
+        is_available: true,
       });
       seatId++;
     }
@@ -152,6 +153,7 @@ async function createFixturesSeats() {
         auditorium_id: auditorium.id,
         number: auditorium.seat_handi + i,
         is_handi: false,
+        is_available: true,
       });
       seatId++;
     }
