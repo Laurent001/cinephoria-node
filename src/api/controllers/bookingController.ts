@@ -56,6 +56,8 @@ const fetchBookingsByUserId = async (userId: number) => {
 
 const createBooking = async (req: Request, res: Response) => {
   const { user, screening, totalPrice, seats } = req.body;
+
+  // Comptage des sièges classiques et PMR
   const bookedSeats = seats.filter((seat: any) => seat.is_handi === 0).length;
   const bookedHandiSeats = seats.filter(
     (seat: any) => seat.is_handi === 1
@@ -63,26 +65,28 @@ const createBooking = async (req: Request, res: Response) => {
 
   try {
     const result = await mariadbService.executeTransaction(async () => {
+      // Création de la réservation
       const bookingResult = await mariadbService.query(
         "INSERT INTO booking (user_id, total_price) VALUES (?, ?)",
         [user.id, totalPrice]
       );
-
       const booking_id = bookingResult.insertId.toString();
-      const qrcode = await fetchQRCodeByBookingId(booking_id);
 
+      // Génération du QR code associé
+      const qrcode = await fetchQRCodeByBookingId(booking_id);
       if (qrcode) {
         const response = await updateBookingQRCode(booking_id, qrcode.token);
-        if (!response) {
+        if (!response)
           throw new Error("Erreur lors de la mise à jour du QR code");
-        }
       }
 
+      // Récupération de la séance actuelle
       const [currentScreening] = await mariadbService.query(
         "SELECT remaining_seat, remaining_seat_handi FROM screening WHERE id = ?",
         [screening.id]
       );
 
+      // Mise à jour du nombre de sièges restants
       const newRemainingSeat = currentScreening.remaining_seat - bookedSeats;
       const newRemainingHandiSeat =
         currentScreening.remaining_seat_handi - bookedHandiSeats;
@@ -91,6 +95,7 @@ const createBooking = async (req: Request, res: Response) => {
         [newRemainingSeat, newRemainingHandiSeat, screening.id]
       );
 
+      // Stockage des données analytiques dans MongoDB
       await mongodbService.insertBookingAnalytics({
         booking_id,
         user_id: user.id,
@@ -98,10 +103,10 @@ const createBooking = async (req: Request, res: Response) => {
         film_title: screening.film.title,
       });
 
+      // Association des sièges à la réservation
       const seatValues = seats
         .map((seat: any) => `(${booking_id}, ${seat.id}, ${screening.id})`)
         .join(", ");
-
       await mariadbService.query(
         `INSERT INTO booking_screening_seat (booking_id, seat_id, screening_id) VALUES ${seatValues}`
       );
@@ -115,7 +120,7 @@ const createBooking = async (req: Request, res: Response) => {
     });
   } catch (error) {
     res.status(500).json({
-      message: "Erreur lors de la récupération de la réservation",
+      message: "Erreur lors de la création de la réservation",
       error: getErrorMessage(error),
     });
   }
