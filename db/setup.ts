@@ -2,6 +2,7 @@ import fs from "fs";
 import moment from "moment";
 import path from "path";
 import { fileURLToPath } from "url";
+import "../src/env.js";
 import { Auditorium } from "../src/interfaces/auditorium.js";
 import { Seat } from "../src/interfaces/seat.js";
 import mariadbService from "../src/services/mariadb.service.js";
@@ -27,6 +28,8 @@ async function setupMariadb() {
       "../db/scripts/mariadb/fixtures.sql"
     );
     await mariadbService.executeSQL(fixturesAbsolutePath);
+
+    await createFixturesSeats();
 
     const seatsFixturesAbsolutePath = path.resolve(
       __dirname,
@@ -159,7 +162,16 @@ async function createFixturesSeats() {
     }
   });
 
-  sqlOutput += seats.join(",\n") + ";\n";
+  sqlOutput +=
+    seats
+      .map(
+        (seat) =>
+          `(${seat.id}, ${seat.auditorium_id}, ${seat.number}, ${
+            seat.is_handi ? 1 : 0
+          })`
+      )
+      .join(",\n") + ";\n";
+
   sqlOutput += "\n/*!40000 ALTER TABLE `seat` ENABLE KEYS */;\nUNLOCK TABLES;";
 
   fs.writeFileSync("db/scripts/mariadb/fixtures_seats.sql", sqlOutput);
@@ -169,6 +181,5 @@ async function createFixturesSeats() {
 }
 
 // Lancer les scripts
-createFixturesSeats();
 setupMariadb();
 setupMongoDB();

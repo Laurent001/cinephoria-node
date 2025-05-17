@@ -8,6 +8,7 @@
     "start:local": "NODE_ENV=development tsx src/server.ts",
     "start:prod": "NODE_ENV=production node --es-module-specifier-resolution=node dist/src/server.js",
     "setup": "tsx db/setup.ts",
+    "setup:prod": "NODE_ENV=production tsx db/setup.ts",
     "test": "jest",
     "dev": "nodemon"
   },
