@@ -1,7 +1,5 @@
-import dotenv from "dotenv";
 import { Db, MongoClient } from "mongodb";
-
-dotenv.config();
+import "../../src/env.js";
 
 class MongodbService {
   public client: MongoClient;

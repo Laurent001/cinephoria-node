@@ -1,10 +1,9 @@
-import dotenv from "dotenv";
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import QRCode from "qrcode";
+import "../../../src/env.js";
 import mariadbService from "../../services/mariadb.service.js";
 import { getErrorMessage } from "../../utils/error.js";
-dotenv.config();
 
 const JWT_SECRET = process.env.JWT_SECRET;
 if (!JWT_SECRET) {
