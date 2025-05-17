@@ -1,8 +1,6 @@
-import dotenv from "dotenv";
+import "../../src/env.js";
 import fs from "fs/promises";
 import mariadb from "mariadb";
-
-dotenv.config();
 
 class MariadbService {
   connection: mariadb.PoolConnection | null = null;
