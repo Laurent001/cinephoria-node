@@ -11,7 +11,7 @@ import mongodbService from "../src/services/mongodb.service.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-async function setupMariadb() {
+async function setupMariaDB() {
   try {
     await mariadbService.connect();
     console.log("Connecté au serveur mariadb");
@@ -180,6 +180,5 @@ async function createFixturesSeats() {
   );
 }
 
-// Lancer les scripts
-setupMariadb();
+setupMariaDB();
 setupMongoDB();
