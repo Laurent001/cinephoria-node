@@ -31,7 +31,6 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/images", async (req, res, next) => {
-  // console.log("Current NODE_ENV:", process.env.NODE_ENV);
   if (process.env.NODE_ENV === "production") {
     try {
       const imageName = req.path.substring(1);
