@@ -4,6 +4,7 @@ import { getErrorMessage } from "../../utils/error.js";
 import * as cinemaController from "../controllers/cinemaController.js";
 import { fetchCinemaById } from "./cinemaController.js";
 import { fetchQualityById } from "./qualityController.js";
+import { createSeatsForAuditorium } from "./seatController.js";
 
 const getAuditoriumById = async (req: Request, res: Response) => {
   try {
@@ -181,10 +182,18 @@ const addAuditorium = async (req: Request, res: Response) => {
 
   try {
     const result = await mariadbService.executeTransaction(async () => {
-      await mariadbService.query(
+      const auditorium = await mariadbService.query(
         `INSERT INTO auditorium (name, seat, seat_handi, quality_id, cinema_id) VALUES (?,?,?,?,?)`,
         [name, seat, seat_handi, qualityId, cinemaId]
       );
+
+      const auditoriumId = Number(auditorium.insertId);
+      await createSeatsForAuditorium(
+        auditoriumId,
+        Number(seat),
+        Number(seat_handi)
+      );
+
       return await fetchAuditoriums();
     });
     res.json(result);
