@@ -4,9 +4,8 @@ import {
   deleteBookingById,
   getBookingsByUserId,
   getLast7DaysBookingsByFilmId,
-  getSeatsByScreeningId,
 } from "../controllers/bookingController.js";
-
+import { getSeatsByScreeningId } from "../controllers/screeningController.js";
 const router = express.Router();
 
 router.get("/last7days/:filmId", getLast7DaysBookingsByFilmId);
