@@ -223,7 +223,7 @@ const getFilmsByDate = async (req: Request, res: Response) => {
   }
 };
 
-const updateFilm = async (req: MulterRequest, res: Response) => {
+const updateFilm = async (req: MulterRequest, res: Response): Promise<void> => {
   const { id, title, favorite, age_minimum, description, poster } = req.body;
   const favoriteBoolean = favorite === "true";
   const poster_file = req.file;
@@ -272,15 +272,16 @@ const updateFilm = async (req: MulterRequest, res: Response) => {
   }
 };
 
-const addFilm = async (req: Request, res: Response) => {
+const addFilm = async (req: MulterRequest, res: Response): Promise<void> => {
   const { id, title, description, age_minimum, favorite, poster } = req.body;
   const release_date = getNextWednesday();
-  const favoriteBool = favorite === "true" || favorite === true;
+  const favoriteBool = favorite === "true";
   const poster_file = req.file;
   let poster_final = poster_file ? poster_file.filename : poster;
 
   if (id !== "" && id !== undefined) {
-    return res.status(500).json({ message: "id defined" });
+    res.status(500).json({ message: "id defined" });
+    return;
   }
 
   try {
