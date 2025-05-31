@@ -1,4 +1,4 @@
-import mariadbService from "../../services/mariadb.service";
+import mariadbService from "../../services/mariadb.service.js";
 
 const createSeatsForAuditorium = async (
   auditoriumId: number,
