@@ -279,10 +279,9 @@ const addFilm = async (req: Request, res: Response) => {
   const poster_file = req.file;
   let poster_final = poster_file ? poster_file.filename : poster;
 
-  if (id !== "" && id !== undefined)
-    res.status(500).json({ message: "id defined" });
-
-  if (poster_file) poster_final = poster_file.filename;
+  if (id !== "" && id !== undefined) {
+    return res.status(500).json({ message: "id defined" });
+  }
 
   try {
     if (poster_file) {
