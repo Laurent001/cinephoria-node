@@ -285,6 +285,15 @@ const addFilm = async (req: Request, res: Response) => {
   if (poster_file) poster_final = poster_file.filename;
 
   try {
+    if (poster_file) {
+      if (process.env.NODE_ENV === "production") {
+        const cloudinaryResult = await uploadToCloudinary(poster_file);
+        poster_final = cloudinaryResult.secure_url.split("/").pop();
+      } else {
+        poster_final = poster_file.filename;
+      }
+    }
+
     const result = await mariadbService.executeTransaction(async () => {
       await mariadbService.query(
         `INSERT INTO film (title, description, release_date, age_minimum, favorite, poster) VALUES (?,?,?,?,?,?)`,
