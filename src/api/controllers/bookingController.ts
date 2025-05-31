@@ -200,6 +200,5 @@ export {
   fetchBookingsByUserId,
   getBookingsByUserId,
   getLast7DaysBookingsByFilmId,
-  getSeatsByScreeningId,
   updateBookingQRCode,
 };
