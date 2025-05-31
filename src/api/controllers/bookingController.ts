@@ -178,8 +178,7 @@ const getSeatsByScreeningId = async (req: Request, res: Response) => {
     );
 
     if (rows.length === 0) {
-      res.status(404).json({ message: "Film ou séance non trouvée" });
-      return;
+      return res.status(404).json({ message: "Film ou séance non trouvée" });
     }
 
     const screening: Screening = {
