@@ -534,15 +534,18 @@ const updateScreening = async (req: Request, res: Response) => {
 };
 
 const addScreening = async (req: Request, res: Response) => {
-  const { id, start_time, end_time, film, auditorium } = req.body;
-  const formatted_start_time = new Date(start_time)
-    .toISOString()
-    .slice(0, 19)
-    .replace("T", " ");
-  const formatted_end_time = new Date(end_time)
-    .toISOString()
-    .slice(0, 19)
-    .replace("T", " ");
+  const {
+    locale,
+    screening: { id, start_time, end_time, film, auditorium },
+  } = req.body;
+
+  const formatted_start_time = moment(start_time)
+    .tz(locale)
+    .format("YYYY-MM-DD HH:mm:ss");
+
+  const formatted_end_time = moment(end_time)
+    .tz(locale)
+    .format("YYYY-MM-DD HH:mm:ss");
 
   if (id !== undefined) res.status(500).json({ message: "id defined" });
 
