@@ -128,7 +128,8 @@ const getUserById = async (req: Request, res: Response) => {
     const user = await fetchUserById(userId);
 
     if (!user) {
-      return res.status(404).json({ message: "Utilisateur non trouvé" });
+      res.status(404).json({ message: "Utilisateur non trouvé" });
+      return;
     }
 
     res.status(200).json(user);
@@ -235,7 +236,8 @@ const updateUser = async (req: Request, res: Response) => {
     const user = await fetchUserById(id);
 
     if (!user) {
-      return res.status(404).json({ message: "Utilisateur non trouvé" });
+      res.status(404).json({ message: "Utilisateur non trouvé" });
+      return;
     }
 
     const result = await mariadbService.query(
@@ -267,7 +269,8 @@ const deleteUser = async (req: Request, res: Response) => {
     const user = await fetchUserById(id);
 
     if (!user) {
-      return res.status(404).json({ message: "Utilisateur non trouvé" });
+      res.status(404).json({ message: "Utilisateur non trouvé" });
+      return;
     }
 
     const result = await mariadbService.query(`DELETE FROM user WHERE id = ?`, [

@@ -31,7 +31,8 @@ const getLogin = async (req: Request, res: Response) => {
     );
 
     if (rows.length === 0) {
-      return res.status(404).json({ message: "No user for this role" });
+      res.status(404).json({ message: "No user for this role" });
+      return;
     }
 
     const user = {
