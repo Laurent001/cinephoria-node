@@ -12,10 +12,10 @@ const getScreeningById = async (req: Request, res: Response) => {
     const screening = await fetchScreeningById(screeningId);
 
     if (!screening) {
-      res.status(404).json({ message: "Aucun screening trouvé" });
+      return res.status(404).json({ message: "Aucun screening trouvé" });
     }
 
-    res.json(screening);
+    res.status(200).json(screening);
   } catch (error) {
     res.status(500).json({
       message: "Erreur lors de la récupération du screening",
@@ -74,6 +74,7 @@ const getSeatsByScreeningId = async (req: Request, res: Response) => {
         a.cinema_id AS auditorium_cinema_id, 
         a.seat_handi AS auditorium_seat_handi,
         a.seat AS auditorium_seat,
+        q.id AS quality_id,
         q.name AS quality_name,
         q.price AS quality_price,
         CASE 
@@ -92,7 +93,7 @@ const getSeatsByScreeningId = async (req: Request, res: Response) => {
     );
 
     if (rows.length === 0) {
-      res.status(404).json({ message: "Film ou séances non trouvé(es)" });
+      return res.status(404).json({ message: "Film ou séances non trouvé(es)" });
     }
 
     const screening = {
@@ -104,7 +105,7 @@ const getSeatsByScreeningId = async (req: Request, res: Response) => {
         seat: rows[0].auditorium_seat,
         seat_handi: rows[0].auditorium_seat_handi,
         quality: await fetchQualityById(rows[0].quality_id),
-        cinema_id: rows[0].cinema_id,
+        cinema_id: rows[0].auditorium_cinema_id,
       },
     };
 
@@ -115,7 +116,7 @@ const getSeatsByScreeningId = async (req: Request, res: Response) => {
       is_available: row.is_available,
     }));
 
-    res.json({
+    res.status(200).json({
       screening,
       seats,
     });
@@ -127,7 +128,10 @@ const getSeatsByScreeningId = async (req: Request, res: Response) => {
   }
 };
 
-const getScreeningsByFilmId = async (req: Request, res: Response) => {
+const getScreeningsByFilmId = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   const filmId = req.params.filmId;
 
   try {
@@ -244,7 +248,7 @@ const getScreeningsByFilmId = async (req: Request, res: Response) => {
       screeningsByDay: screeningsByDay[date],
     }));
 
-    res.json({
+    res.status(200).json({
       film,
       screenings: screeningsByDayArray,
     });
@@ -305,7 +309,9 @@ const getFilmScreeningsByCinemaId = async (req: Request, res: Response) => {
     );
 
     if (filmScreeningsByCinema.length === 0) {
-      res.status(404).json({ message: "Film ou séances non trouvé(es)" });
+      return res
+        .status(404)
+        .json({ message: "Film ou séances non trouvé(es)" });
     }
 
     const genres = await mariadbService.query(
@@ -318,7 +324,7 @@ const getFilmScreeningsByCinemaId = async (req: Request, res: Response) => {
     );
 
     if (genres.length === 0) {
-      res.status(404).json({ message: "Genres du film non trouvés" });
+      return res.status(404).json({ message: "Genres du film non trouvés" });
     }
 
     const film = {
@@ -473,6 +479,7 @@ const getScreenings = async (req: Request, res: Response) => {
 
     if (result.screenings.length === 0) {
       res.status(404).json({ message: "Film ou séances non trouvé(es)" });
+      return;
     }
 
     res.json(result);
@@ -538,12 +545,25 @@ const addScreening = async (req: Request, res: Response) => {
   try {
     const result = await mariadbService.executeTransaction(async () => {
       const row = await mariadbService.query(
-        `SELECT seat, seat_handi from auditorium WHERE id = ?`,
+        `SELECT seat, seat_handi, cinema_id from auditorium WHERE id = ?`,
         [auditorium.id]
       );
 
       const remaining_seat = row[0].seat;
       const remaining_seat_handi = row[0].seat_handi;
+      const cinema_id = row[0].cinema_id;
+
+      const isCinemaFilm = await mariadbService.query(
+        `SELECT * FROM cinema_film WHERE cinema_id = ? AND film_id = ?`,
+        [cinema_id, film.id]
+      );
+
+      if (isCinemaFilm.length === 0) {
+        await mariadbService.query(
+          `INSERT INTO cinema_film (cinema_id, film_id) VALUES (?, ?)`,
+          [cinema_id, film.id]
+        );
+      }
 
       await mariadbService.query(
         `INSERT INTO screening (start_time, end_time, remaining_seat, remaining_seat_handi, film_id, auditorium_id) VALUES (?,?,?,?,?,?)`,

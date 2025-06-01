@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import { BaseUser } from "../../interfaces/auth.js";
 import { MulterRequest } from "../../interfaces/file.js";
 import {
   deleteFromCloudinary,
@@ -78,7 +79,7 @@ const fetchFilmById = async (filmId: number) => {
 
 const getFilms = async (req: Request, res: Response) => {
   try {
-    const films = await fetchFilms();
+    const films = await fetchFilms(req.user as BaseUser);
 
     if (films.length === 0) {
       res.status(404).json({ message: "Film(s) non trouvé(s)" });
@@ -94,9 +95,13 @@ const getFilms = async (req: Request, res: Response) => {
   }
 };
 
-const fetchFilms = async (conn?: any) => {
+const fetchFilms = async (user?: BaseUser, conn?: any) => {
   try {
     const connection = conn || mariadbService;
+
+    const isEmployee = user && ["staff", "admin"].includes(user.role ?? "");
+    const whereClause = isEmployee ? "" : `WHERE f.release_date <= CURDATE()`;
+
     const rows = await connection.query(
       `SELECT 
         f.id, 
@@ -112,6 +117,7 @@ const fetchFilms = async (conn?: any) => {
         film f 
         LEFT JOIN film_genre fg ON f.id = fg.film_id 
         LEFT JOIN genre g ON fg.genre_id = g.id 
+      ${whereClause}
       GROUP BY 
         f.id`
     );
@@ -224,7 +230,15 @@ const getFilmsByDate = async (req: Request, res: Response) => {
 };
 
 const updateFilm = async (req: MulterRequest, res: Response): Promise<void> => {
-  const { id, title, favorite, age_minimum, description, poster } = req.body;
+  const {
+    id,
+    title,
+    favorite,
+    age_minimum,
+    description,
+    poster,
+    release_date,
+  } = req.body;
   const favoriteBoolean = favorite === "true";
   const poster_file = req.file;
 
@@ -255,8 +269,16 @@ const updateFilm = async (req: MulterRequest, res: Response): Promise<void> => {
         }
 
         await conn.query(
-          `UPDATE film SET title = ?, favorite = ?, age_minimum = ?, description = ?, poster = ? WHERE id = ?`,
-          [title, favoriteBoolean, age_minimum, description, poster_final, id]
+          `UPDATE film SET title = ?, favorite = ?, age_minimum = ?, description = ?, poster = ?, release_date = ? WHERE id = ?`,
+          [
+            title,
+            favoriteBoolean,
+            age_minimum,
+            description,
+            poster_final,
+            release_date,
+            id,
+          ]
         );
 
         return await fetchFilms();
@@ -306,7 +328,7 @@ const addFilm = async (req: MulterRequest, res: Response): Promise<void> => {
           poster_final,
         ]
       );
-      return await fetchFilms();
+      return await fetchFilms(req.user as BaseUser);
     });
     res.json(result);
   } catch (error) {

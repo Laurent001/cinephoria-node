@@ -41,7 +41,7 @@ const sendAdminEmailWelcome = (
   sendEmail(
     email,
     "Vous êtes désormais administrateur!",
-    `Hello ${name}, nous avez désormais accès à des droits administrateurs, faites-en bon usage!\n\nVoici vos identifiants de connexion :\n\nLogin : ${login}\nMot de passe : ${password}\n\nPour toute question ou problème parlez-en avec vos collègues administrateurs\n\nCinéphoria\nL\'émotion sur grand écran`
+    `Hello ${name}, vous avez désormais accès à des droits administrateurs, faites-en bon usage!\n\nVoici vos identifiants de connexion :\n\nLogin : ${login}\nMot de passe : ${password}\n\nPour toute question ou problème parlez-en avec vos collègues administrateurs\n\nCinéphoria\nL\'émotion sur grand écran`
   )
     .then(() => console.log("Email admin envoyé"))
     .catch((error: unknown) =>

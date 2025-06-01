@@ -31,7 +31,7 @@ const getLogin = async (req: Request, res: Response) => {
     );
 
     if (rows.length === 0) {
-      res.status(404).json({ message: "No user for this role" });
+      return res.status(404).json({ message: "No user for this role" });
     }
 
     const user = {
@@ -56,7 +56,11 @@ const getLogin = async (req: Request, res: Response) => {
 
       if (passwordMatch) {
         const token = jwt.sign(
-          { id: user.id.toString(), email: user.email },
+          {
+            id: user.id.toString(),
+            email: user.email,
+            role: user.role.name,
+          },
           secretKey,
           { expiresIn: "24h" }
         );

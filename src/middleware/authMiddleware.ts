@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import { DecodedToken } from "../interfaces/auth.js";
+import { DecodedToken } from "../interfaces/auth";
 
 const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
@@ -19,13 +19,15 @@ const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
   try {
     const decoded = jwt.verify(token, secretKey) as DecodedToken;
 
-    if (!decoded.id || !decoded.email) {
+    if (!decoded.id || !decoded.email || !decoded.role) {
       res.status(403).json({ message: "Token invalide" });
+      return;
     }
 
     req.user = {
       id: decoded.id,
       email: decoded.email,
+      role: decoded.role,
     } as DecodedToken;
 
     next();
