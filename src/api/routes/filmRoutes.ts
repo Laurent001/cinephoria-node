@@ -1,4 +1,5 @@
 import express from "express";
+import setUserRole from "../../middleware/setUserRole.js";
 import {
   getFilms,
   getFilmsByCinemaId,
@@ -9,7 +10,7 @@ import {
 
 const router = express.Router();
 
-router.get("/", getFilms);
+router.get("/", setUserRole, getFilms);
 router.get("/cinema/:id", getFilmsByCinemaId);
 router.get("/genre/:id", getFilmsByGenreId);
 router.get("/date/:date", getFilmsByDate);

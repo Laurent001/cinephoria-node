@@ -67,7 +67,7 @@ const getAuditoriums = async (req: Request, res: Response) => {
     const result = await fetchAuditoriums();
 
     if (result.length === 0) {
-      res.status(404).json({ message: "Salle(s) non trouvée(s)" });
+      return res.status(404).json({ message: "Salle(s) non trouvée(s)" });
     }
 
     res.json(result);

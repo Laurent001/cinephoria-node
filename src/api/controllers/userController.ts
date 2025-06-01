@@ -128,10 +128,10 @@ const getUserById = async (req: Request, res: Response) => {
     const user = await fetchUserById(userId);
 
     if (!user) {
-      res.status(404).json({ message: "Utilisateur non trouvé" });
+      return res.status(404).json({ message: "Utilisateur non trouvé" });
     }
 
-    res.json(user);
+    res.status(200).json(user);
   } catch (error) {
     res.status(500).json({
       message: "Erreur lors de la récupération de l'utilisateur",
@@ -235,7 +235,7 @@ const updateUser = async (req: Request, res: Response) => {
     const user = await fetchUserById(id);
 
     if (!user) {
-      res.status(404).json({ message: "Utilisateur non trouvé" });
+      return res.status(404).json({ message: "Utilisateur non trouvé" });
     }
 
     const result = await mariadbService.query(
@@ -246,7 +246,7 @@ const updateUser = async (req: Request, res: Response) => {
     );
 
     if (result.affectedRows > 0) {
-      res.json({ message: "Utilisateur mis à jour avec succès" });
+      res.status(200).json({ message: "Utilisateur mis à jour avec succès" });
     } else {
       res
         .status(500)
@@ -267,7 +267,7 @@ const deleteUser = async (req: Request, res: Response) => {
     const user = await fetchUserById(id);
 
     if (!user) {
-      res.status(404).json({ message: "Utilisateur non trouvé" });
+      return res.status(404).json({ message: "Utilisateur non trouvé" });
     }
 
     const result = await mariadbService.query(`DELETE FROM user WHERE id = ?`, [
@@ -275,7 +275,7 @@ const deleteUser = async (req: Request, res: Response) => {
     ]);
 
     if (result.affectedRows > 0) {
-      res.json({ message: "Utilisateur supprimé avec succès" });
+      res.status(200).json({ message: "Utilisateur supprimé avec succès" });
     } else {
       res
         .status(500)
