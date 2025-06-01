@@ -12,7 +12,8 @@ const getScreeningById = async (req: Request, res: Response) => {
     const screening = await fetchScreeningById(screeningId);
 
     if (!screening) {
-      return res.status(404).json({ message: "Aucun screening trouvé" });
+      res.status(404).json({ message: "Aucun screening trouvé" });
+      return;
     }
 
     res.status(200).json(screening);
@@ -93,7 +94,8 @@ const getSeatsByScreeningId = async (req: Request, res: Response) => {
     );
 
     if (rows.length === 0) {
-      return res.status(404).json({ message: "Film ou séances non trouvé(es)" });
+      res.status(404).json({ message: "Film ou séances non trouvé(es)" });
+      return;
     }
 
     const screening = {
@@ -180,6 +182,7 @@ const getScreeningsByFilmId = async (
 
     if (screeningsByFilm.length === 0) {
       res.status(404).json({ message: "Film ou séances non trouvé(es)" });
+      return;
     }
 
     const genres = await mariadbService.query(
@@ -193,6 +196,7 @@ const getScreeningsByFilmId = async (
 
     if (genres.length === 0) {
       res.status(404).json({ message: "Genres du film non trouvés" });
+      return;
     }
 
     const film = {
@@ -309,9 +313,8 @@ const getFilmScreeningsByCinemaId = async (req: Request, res: Response) => {
     );
 
     if (filmScreeningsByCinema.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "Film ou séances non trouvé(es)" });
+      res.status(404).json({ message: "Film ou séances non trouvé(es)" });
+      return;
     }
 
     const genres = await mariadbService.query(
@@ -324,7 +327,8 @@ const getFilmScreeningsByCinemaId = async (req: Request, res: Response) => {
     );
 
     if (genres.length === 0) {
-      return res.status(404).json({ message: "Genres du film non trouvés" });
+      res.status(404).json({ message: "Genres du film non trouvés" });
+      return;
     }
 
     const film = {
