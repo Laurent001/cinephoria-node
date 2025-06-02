@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import validator from "validator";
-import { sendEmail, sendEmailSupport } from "../../services/mailer.service.js";
+import { sendEmail } from "../../services/mailer.service.js";
 import { getErrorMessage } from "../../utils/error.js";
 
 const sendUserEmailWelcome = (email: string, name: string) => {
@@ -80,7 +80,7 @@ const sendEmailContact = async (req: Request, res: Response) => {
     res.status(400).json({ error: "Adresse e-mail invalide" });
   }
 
-  sendEmailSupport(
+  sendEmail(
     contact.email,
     contact.subject,
     `name : ${contact.name}\nfrom : ${contact.email}\ntitre: ${contact.titre}\n\nmessage :\n\n${contact.message}`

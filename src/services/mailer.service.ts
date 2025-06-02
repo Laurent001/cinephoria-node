@@ -11,15 +11,4 @@ const sendEmail = (to: string, subject: string, text: string) => {
   return transport.sendMail(mailOptions);
 };
 
-const sendEmailSupport = (email: string, subject: string, text: string) => {
-  const mailOptions = {
-    from: email,
-    to: "support@cinephoria.com",
-    subject: subject,
-    text: text,
-  };
-
-  return transport.sendMail(mailOptions);
-};
-
-export { sendEmail, sendEmailSupport };
+export { sendEmail };
