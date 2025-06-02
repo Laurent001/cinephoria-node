@@ -107,25 +107,27 @@ const fetchAuditoriums = async () => {
       return [];
     }
 
-    const auditoriums = rows.map((row: any) => ({
-      id: row.id,
-      name: row.name,
-      seat_handi: row.seat_handi,
-      seat: row.seat,
-      quality: {
-        id: row.quality_id,
-        name: row.quality_name,
-        price: row.quality_price,
-      },
-      cinema: {
-        id: row.cinema_id,
-        name: row.cinema_name,
-        address: row.cinema_address,
-        city: row.cinema_city,
-        postcode: row.cinema_postcode,
-        phone: row.cinema_phone,
-      },
-    }));
+    const auditoriums = rows
+      .map((row: any) => ({
+        id: row.id,
+        name: row.name,
+        seat_handi: row.seat_handi,
+        seat: row.seat,
+        quality: {
+          id: row.quality_id,
+          name: row.quality_name,
+          price: row.quality_price,
+        },
+        cinema: {
+          id: row.cinema_id,
+          name: row.cinema_name,
+          address: row.cinema_address,
+          city: row.cinema_city,
+          postcode: row.cinema_postcode,
+          phone: row.cinema_phone,
+        },
+      }))
+      .sort((a: { id: number }, b: { id: number }) => a.id - b.id);
 
     const cinemas = await cinemaController.fetchCinemas();
     const qualities = await mariadbService.query(`SELECT * FROM quality`);

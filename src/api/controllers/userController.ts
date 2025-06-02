@@ -95,16 +95,18 @@ const fetchUsersByRole = async (roleId: number) => {
       [roleId]
     );
 
-    const users = rows.map((row: any) => ({
-      id: row.id,
-      email: row.email,
-      first_name: row.first_name,
-      last_name: row.last_name,
-      role: {
-        id: row.role_id,
-        name: row.role_name,
-      },
-    }));
+    const users = rows
+      .map((row: any) => ({
+        id: row.id,
+        email: row.email,
+        first_name: row.first_name,
+        last_name: row.last_name,
+        role: {
+          id: row.role_id,
+          name: row.role_name,
+        },
+      }))
+      .sort((a: { id: number }, b: { id: number }) => a.id - b.id);
 
     return users;
   } catch (error) {
@@ -186,7 +188,7 @@ const getEmployees = async (req: Request, res: Response) => {
   try {
     const staffUsers = await fetchUsersByRole(ROLE_STAFF);
     const adminUsers = await fetchUsersByRole(ROLE_ADMIN);
-    const employees = [...staffUsers, ...adminUsers];
+    const employees = [...adminUsers, ...staffUsers];
     res.status(200).json(employees);
   } catch (error) {
     res.status(500).json({

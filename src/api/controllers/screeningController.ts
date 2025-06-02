@@ -437,38 +437,43 @@ const fetchScreenings = async () => {
       return { screenings: [] };
     }
 
-    const screenings = rows.map((row: any) => ({
-      id: row.screening_id,
-      start_time: new Date(row.start_time),
-      end_time: new Date(row.end_time),
-      remaining_seat: row.remaining_seat,
-      remaining_seat_handi: row.remaining_seat_handi,
-      film: {
-        id: row.film_id,
-        title: row.title,
-        description: row.description,
-        release_date: row.release_date,
-        age_minimum: row.age_minimum,
-        favorite: row.favorite,
-        poster: row.poster,
-      },
-      auditorium: {
-        id: row.auditorium_id,
-        name: row.auditorium_name,
-        seat: row.auditorium_seat,
-        seat_handi: row.auditorium_seat_handi,
-        quality: row.auditorium_quality,
-        price: row.auditorium_price,
-        cinema: {
-          id: row.cinema_id,
-          name: row.cinema_name,
-          address: row.cinema_address,
-          city: row.cinema_city,
-          postcode: row.cinema_postcode,
-          phone: row.cinema_phone,
+    const screenings = rows
+      .map((row: any) => ({
+        id: row.screening_id,
+        start_time: new Date(row.start_time),
+        end_time: new Date(row.end_time),
+        remaining_seat: row.remaining_seat,
+        remaining_seat_handi: row.remaining_seat_handi,
+        film: {
+          id: row.film_id,
+          title: row.title,
+          description: row.description,
+          release_date: row.release_date,
+          age_minimum: row.age_minimum,
+          favorite: row.favorite,
+          poster: row.poster,
         },
-      },
-    }));
+        auditorium: {
+          id: row.auditorium_id,
+          name: row.auditorium_name,
+          seat: row.auditorium_seat,
+          seat_handi: row.auditorium_seat_handi,
+          quality: row.auditorium_quality,
+          price: row.auditorium_price,
+          cinema: {
+            id: row.cinema_id,
+            name: row.cinema_name,
+            address: row.cinema_address,
+            city: row.cinema_city,
+            postcode: row.cinema_postcode,
+            phone: row.cinema_phone,
+          },
+        },
+      }))
+      .sort(
+        (a: { start_time: Date }, b: { start_time: Date }) =>
+          a.start_time.getTime() - b.start_time.getTime()
+      );
 
     const films = await mariadbService.query(`SELECT * FROM film`);
     const auditoriums = await mariadbService.query(`SELECT * FROM auditorium`);
