@@ -1,11 +1,13 @@
+import "../env.js"; // charge .env ou .env_prod
 import nodemailer from "nodemailer";
 
 const transport = nodemailer.createTransport({
-  host: "sandbox.smtp.mailtrap.io",
-  port: 2525,
+  host: process.env.SMTP_HOST,
+  port: Number(process.env.SMTP_PORT),
+  secure: false,
   auth: {
-    user: "0dbb8d69ffd600",
-    pass: "84f10f46186782",
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
   },
 });
 
