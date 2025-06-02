@@ -86,7 +86,7 @@ const fetchOpinions = async () => {
           return undefined;
         }
 
-        const opinions = await Promise.all(
+        const opinionsArray = await Promise.all(
           rows.map(async (opinion: any) => {
             const user = await fetchUserById(opinion.user_id);
             const film = await fetchFilmById(opinion.film_id);
@@ -102,6 +102,12 @@ const fetchOpinions = async () => {
             };
           })
         );
+
+        const opinions = opinionsArray.sort(
+          (a: { added_date: Date }, b: { added_date: Date }) =>
+            a.added_date.getTime() - b.added_date.getTime()
+        );
+
         const statuses = await fetchStatuses();
         return { opinions, statuses };
       }
