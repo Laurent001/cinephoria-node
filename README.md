@@ -128,6 +128,15 @@ MONGODB_NAME=cinephoria
 
 DIR_IMAGES=public/images
 
+### mailtrap
+
+SMTP_HOST=sandbox.smtp.mailtrap.io
+SMTP_PORT=2525
+SMTP_USER=<smtp_user>
+SMTP_PASS=<smtp_password>
+SMTP_FROM=<smtp_email_from>
+SUPPORT_EMAIL=<support_email>
+
 ## Structure du porjet
 
 ---
