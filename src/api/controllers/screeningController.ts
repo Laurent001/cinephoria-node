@@ -507,11 +507,11 @@ const updateScreening = async (req: Request, res: Response) => {
   } = req.body;
 
   const formatted_start_time = moment(start_time)
-    .tz(locale)
+    .utc()
     .format("YYYY-MM-DD HH:mm:ss");
 
   const formatted_end_time = moment(end_time)
-    .tz(locale)
+    .utc()
     .format("YYYY-MM-DD HH:mm:ss");
 
   try {
@@ -545,11 +545,11 @@ const addScreening = async (req: Request, res: Response) => {
   } = req.body;
 
   const formatted_start_time = moment(start_time)
-    .tz(locale)
+    .utc()
     .format("YYYY-MM-DD HH:mm:ss");
 
   const formatted_end_time = moment(end_time)
-    .tz(locale)
+    .utc()
     .format("YYYY-MM-DD HH:mm:ss");
 
   if (id !== undefined) res.status(500).json({ message: "id defined" });
