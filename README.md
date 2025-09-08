@@ -70,14 +70,6 @@ services:
     volumes:
       - mongodb_data:/data/db
 
-  gitingest:
-    image: gitingest
-    build:
-      context: ./gitingest
-    ports:
-      - "8000:8000"
-    restart: unless-stopped
-
   proxy:
     image: nginx:alpine
     ports:
